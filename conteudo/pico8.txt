@@ -1,0 +1,5 @@
+# Cartuchos de PICO-8 para o cartao de teste (spec 010, plano D-08). Nunca vao para o git.
+# Campos: arquivo|url|autor|licenca|sha256
+celeste.p8.png|https://www.lexaloffle.com/bbs/cposts/1/15133.p8.png|Matt Thorson e Noel Berry|sem licenca declarada no BBS (so no cartao de teste do mantenedor)|b8c78f53bc18cd9c8830c794093a3b724d6208de9eae290f0b84403225740188
+platformer_starter_kit.p8.png|https://www.lexaloffle.com/bbs/cposts/4/46760.p8.png|krajzeg|CC4-BY-NC-SA|57b6815c74bd30d39752223a52f204e59418fa86417676b07966503000b09452
+cratesncrushers.p8.png|https://www.lexaloffle.com/bbs/cposts/cr/cratesncrushers-1.p8.png|st33d|CC4-BY-NC-SA|a012017dee43a8f8991bd828bef4452cf9fd11de27a629522ac31ad11d634cce

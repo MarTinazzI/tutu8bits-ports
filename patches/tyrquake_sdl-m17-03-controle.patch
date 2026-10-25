@@ -1,0 +1,442 @@
+Licença: GPL-2.0 (a do TyrQuake, onde o patch entra) (spec 053)
+
+diff --git a/Makefile b/Makefile
+index 3279ee3..3a8b039 100644
+--- a/Makefile
++++ b/Makefile
+@@ -979,6 +979,7 @@ CL_OBJS += in_win.o
+ endif
+ ifeq ($(IN_TARGET),sdl)
+ CL_OBJS += in_sdl.o sdl_common.o
++CL_OBJS += m17_controle.o
+ endif
+ ifeq ($(IN_TARGET),null)
+ CL_OBJS += in_null.o
+diff --git a/common/in_sdl.c b/common/in_sdl.c
+index fcb7c6a..ff3a6eb 100644
+--- a/common/in_sdl.c
++++ b/common/in_sdl.c
+@@ -19,6 +19,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+ 
+ #include "SDL.h"
++#ifdef M17
++#include "m17.h"
++#endif
+ 
+ #include "cdaudio.h"
+ #include "client.h"
+@@ -646,6 +649,9 @@ IN_MouseMove(usercmd_t *cmd)
+ void
+ IN_AddCommands()
+ {
++#ifdef M17
++    M17_ControleComandos();
++#endif
+ }
+ 
+ void
+@@ -666,6 +672,9 @@ IN_Init(void)
+ 
+     mouse_x = mouse_y = 0.0;
+     mouse_available = !COM_CheckParm("-nomouse");
++#ifdef M17
++    M17_ControleIniciar();
++#endif
+ }
+ 
+ void
+@@ -682,6 +691,9 @@ void IN_Move(usercmd_t *cmd)
+ {
+     IN_MouseMove(cmd);
+     //IN_JoyMove(cmd);
++#ifdef M17
++    M17_ControleMove(cmd);
++#endif
+ }
+ 
+ void IN_Commands(void)
+diff --git a/common/keys.c b/common/keys.c
+index ce7bfab..ee9b616 100644
+--- a/common/keys.c
++++ b/common/keys.c
+@@ -115,23 +115,91 @@ static const keyname_t keynames[] = {
+     {"JOY3", K_JOY3},
+     {"JOY4", K_JOY4},
+ 
++#ifdef M17
++    {"PAD_A", K_AUX1},   /* spec 050: as teclas do controle (m17_controle.c) */
++#else
+     {"AUX1", K_AUX1},
++#endif
++#ifdef M17
++    {"PAD_B", K_AUX2},   /* spec 050: as teclas do controle (m17_controle.c) */
++#else
+     {"AUX2", K_AUX2},
++#endif
++#ifdef M17
++    {"PAD_X", K_AUX3},   /* spec 050: as teclas do controle (m17_controle.c) */
++#else
+     {"AUX3", K_AUX3},
++#endif
++#ifdef M17
++    {"PAD_Y", K_AUX4},   /* spec 050: as teclas do controle (m17_controle.c) */
++#else
+     {"AUX4", K_AUX4},
++#endif
++#ifdef M17
++    {"PAD_SELECT", K_AUX5},   /* spec 050: as teclas do controle (m17_controle.c) */
++#else
+     {"AUX5", K_AUX5},
++#endif
++#ifdef M17
++    {"PAD_GUIA", K_AUX6},   /* spec 050: as teclas do controle (m17_controle.c) */
++#else
+     {"AUX6", K_AUX6},
++#endif
++#ifdef M17
++    {"PAD_START", K_AUX7},   /* spec 050: as teclas do controle (m17_controle.c) */
++#else
+     {"AUX7", K_AUX7},
++#endif
++#ifdef M17
++    {"PAD_L3", K_AUX8},   /* spec 050: as teclas do controle (m17_controle.c) */
++#else
+     {"AUX8", K_AUX8},
++#endif
++#ifdef M17
++    {"PAD_R3", K_AUX9},   /* spec 050: as teclas do controle (m17_controle.c) */
++#else
+     {"AUX9", K_AUX9},
++#endif
++#ifdef M17
++    {"PAD_L1", K_AUX10},   /* spec 050: as teclas do controle (m17_controle.c) */
++#else
+     {"AUX10", K_AUX10},
++#endif
++#ifdef M17
++    {"PAD_R1", K_AUX11},   /* spec 050: as teclas do controle (m17_controle.c) */
++#else
+     {"AUX11", K_AUX11},
++#endif
++#ifdef M17
++    {"PAD_CIMA", K_AUX12},   /* spec 050: as teclas do controle (m17_controle.c) */
++#else
+     {"AUX12", K_AUX12},
++#endif
++#ifdef M17
++    {"PAD_BAIXO", K_AUX13},   /* spec 050: as teclas do controle (m17_controle.c) */
++#else
+     {"AUX13", K_AUX13},
++#endif
++#ifdef M17
++    {"PAD_ESQ", K_AUX14},   /* spec 050: as teclas do controle (m17_controle.c) */
++#else
+     {"AUX14", K_AUX14},
++#endif
++#ifdef M17
++    {"PAD_DIR", K_AUX15},   /* spec 050: as teclas do controle (m17_controle.c) */
++#else
+     {"AUX15", K_AUX15},
++#endif
++#ifdef M17
++    {"PAD_L2", K_AUX16},   /* spec 050: as teclas do controle (m17_controle.c) */
++#else
+     {"AUX16", K_AUX16},
++#endif
++#ifdef M17
++    {"PAD_R2", K_AUX17},   /* spec 050: as teclas do controle (m17_controle.c) */
++#else
+     {"AUX17", K_AUX17},
++#endif
+     {"AUX18", K_AUX18},
+     {"AUX19", K_AUX19},
+     {"AUX20", K_AUX20},
+diff --git a/common/m17_controle.c b/common/m17_controle.c
+new file mode 100644
+index 0000000..1e9bd85
+--- /dev/null
++++ b/common/m17_controle.c
+@@ -0,0 +1,228 @@
++/*
++ * m17_controle.c — o controle do M17 pela API de game controller do SDL (spec 050, plano D-02/D-03/D-04).
++ *
++ * Cada botao vira uma tecla do Quake (PAD_A ... PAD_R2, no lugar de AUX1..AUX17) e o motor roda o bind dela (o
++ * config.cfg do produto; o jogador troca pelo menu "Customize controls"). Fora do jogo (menu, console) o D-pad
++ * vira as setas, o A o ENTER e o B o ESC; o START e sempre o ESC (o menu do Quake; o toque no VOL+ chega como
++ * START pela libSDL2 do projeto, M17_VOLMAIS). Os gatilhos (L2/R2) sao eixos: viram tecla na metade do curso.
++ * Analogico esquerdo = andar e ir de lado, proporcional; direito = girar e olhar, proporcional, com o olhar livre
++ * sempre ligado: 180 graus/s no maximo com a sensibilidade 5 (o "sensitivity 3" do nucleo libretro a 60 quadros),
++ * escala M17_MIRA_SENS/5 (1..10) e o vertical invertido com M17_MIRA_INV=1. Zona morta de 15 % (a do nucleo).
++ * O comando m17_devagar (L3) alterna andar devagar; cada partida comeca correndo.
++ */
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++
++#include "SDL.h"
++
++#include "client.h"
++#include "cmd.h"
++#include "console.h"
++#include "cvar.h"
++#include "host.h"
++#include "keys.h"
++#include "menu.h"
++#include "quakedef.h"
++#include "screen.h"
++
++#include "m17.h"
++
++#define FAIXA 32768
++#define ZONA_MORTA (FAIXA * 15 / 100)
++#define GIRO_MAX 180.0f   /* graus/s no maximo, com a sensibilidade 5 */
++#define BOTOES 17         /* os 15 do SDL 2.28 (A ... DPAD_RIGHT) + L2 + R2 */
++#define B_L2 15
++#define B_R2 16
++
++static SDL_GameController *controle;
++static int eixos[SDL_CONTROLLER_AXIS_MAX];
++static knum_t tecla_do_botao[BOTOES];   /* a tecla entregue no aperto, para soltar a mesma */
++static float mira_escala = 1.0f;
++static int mira_inv;
++static qboolean devagar;
++static qboolean velocidade_aplicada;
++static qboolean registrar;               /* so com o M17_ROTEIRO (testes): linhas de botao e de mira */
++static float giro_yaw, giro_pitch, giro_tempo;
++
++static const char *nomes[BOTOES] = {
++    "A", "B", "X", "Y", "SELECT", "GUIA", "START", "L3", "R3", "L1", "R1", "CIMA", "BAIXO", "ESQ", "DIR", "L2", "R2"
++};
++
++static void
++velocidade(void)
++{
++    Cvar_SetValue("cl_forwardspeed", devagar ? 200 : 400);
++    Cvar_SetValue("cl_backspeed", devagar ? 200 : 400);
++    Cvar_SetValue("cl_sidespeed", devagar ? 200 : 350);
++}
++
++static void
++M17_Devagar_f(void)
++{
++    devagar = !devagar;
++    velocidade();
++    SCR_CenterPrint(devagar ? "Andar devagar: ligado" : "Andar devagar: desligado");
++    if (registrar)
++        fprintf(stderr, "[M17] devagar: %s (cl_forwardspeed %d)\n", devagar ? "ligado" : "desligado", devagar ? 200 : 400);
++}
++
++void
++M17_ControleIniciar(void)
++{
++    const char *s = getenv("M17_MIRA_SENS");
++    int n = s ? atoi(s) : 5;
++    int i;
++
++    if (n < 1 || n > 10)
++        n = 5;
++    mira_escala = n / 5.0f;
++    s = getenv("M17_MIRA_INV");
++    mira_inv = s && !strcmp(s, "1");
++    s = getenv("M17_ROTEIRO");
++    registrar = s && *s;
++    if (SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER) < 0) {
++        fprintf(stderr, "[M17] controle: SDL sem game controller (%s)\n", SDL_GetError());
++        return;
++    }
++    for (i = 0; i < SDL_NumJoysticks() && !controle; i++)
++        if (SDL_IsGameController(i))
++            controle = SDL_GameControllerOpen(i);
++    fprintf(stderr, "[M17] controle: %s; mira %d inverter %d\n",
++            controle ? SDL_GameControllerName(controle) : "nenhum (so eventos)", n, mira_inv);
++}
++
++void
++M17_ControleComandos(void)
++{
++    Cmd_AddCommand("m17_devagar", M17_Devagar_f);
++}
++
++/* a tecla do Quake para um botao, conforme o destino das teclas agora */
++static knum_t
++tecla_para(int b)
++{
++    if (b == SDL_CONTROLLER_BUTTON_START)
++        return K_ESCAPE;
++    if (key_dest == key_game || M17_MenuEsperaTecla())
++        return K_AUX1 + b;
++    switch (b) {
++        case SDL_CONTROLLER_BUTTON_A: return K_ENTER;
++        case SDL_CONTROLLER_BUTTON_B: return K_ESCAPE;
++        case SDL_CONTROLLER_BUTTON_DPAD_UP: return K_UPARROW;
++        case SDL_CONTROLLER_BUTTON_DPAD_DOWN: return K_DOWNARROW;
++        case SDL_CONTROLLER_BUTTON_DPAD_LEFT: return K_LEFTARROW;
++        case SDL_CONTROLLER_BUTTON_DPAD_RIGHT: return K_RIGHTARROW;
++    }
++    return K_AUX1 + b;
++}
++
++static void
++botao(int b, qboolean aperto)
++{
++    knum_t k;
++
++    if (b < 0 || b >= BOTOES)
++        return;
++    if (aperto) {
++        if (tecla_do_botao[b])
++            return;   /* ja apertado */
++        k = tecla_para(b);
++        tecla_do_botao[b] = k;
++        if (registrar) {
++            const char *bind = (k >= K_AUX1 && k < K_AUX1 + BOTOES) ? keybindings[k] : NULL;
++            fprintf(stderr, "[M17] botao %s -> %s\n", nomes[b],
++                    (k >= K_AUX1 && k < K_AUX1 + BOTOES) ? (bind && *bind ? bind : "(nada)") : Key_KeynumToString(k));
++        }
++        Key_Event(k, true);
++    } else {
++        k = tecla_do_botao[b];
++        if (!k)
++            return;
++        tecla_do_botao[b] = 0;
++        Key_Event(k, false);
++    }
++}
++
++void
++M17_ControleEvento(const SDL_Event *e)
++{
++    switch (e->type) {
++        case SDL_CONTROLLERDEVICEADDED:
++            if (!controle && SDL_IsGameController(e->cdevice.which)) {
++                controle = SDL_GameControllerOpen(e->cdevice.which);
++                fprintf(stderr, "[M17] controle: %s\n", controle ? SDL_GameControllerName(controle) : "falhou");
++            }
++            break;
++        case SDL_CONTROLLERBUTTONDOWN:
++        case SDL_CONTROLLERBUTTONUP:
++            if (e->cbutton.button < SDL_CONTROLLER_BUTTON_MISC1)
++                botao(e->cbutton.button, e->type == SDL_CONTROLLERBUTTONDOWN);
++            break;
++        case SDL_CONTROLLERAXISMOTION:
++            if (e->caxis.axis >= SDL_CONTROLLER_AXIS_MAX)
++                break;
++            eixos[e->caxis.axis] = e->caxis.value;
++            if (e->caxis.axis == SDL_CONTROLLER_AXIS_TRIGGERLEFT || e->caxis.axis == SDL_CONTROLLER_AXIS_TRIGGERRIGHT) {
++                int b = e->caxis.axis == SDL_CONTROLLER_AXIS_TRIGGERLEFT ? B_L2 : B_R2;
++                if (e->caxis.value > FAIXA / 2 && !tecla_do_botao[b])
++                    botao(b, true);
++                else if (e->caxis.value < FAIXA / 4 && tecla_do_botao[b])
++                    botao(b, false);
++            }
++            break;
++    }
++}
++
++/* -1..1 fora da zona morta, 0 dentro */
++static float
++eixo(int a)
++{
++    int v = eixos[a];
++
++    if (v > ZONA_MORTA)
++        return (float)(v - ZONA_MORTA) / (FAIXA - 1 - ZONA_MORTA);
++    if (v < -ZONA_MORTA)
++        return (float)(v + ZONA_MORTA) / (FAIXA - ZONA_MORTA);
++    return 0.0f;
++}
++
++void
++M17_ControleMove(usercmd_t *cmd)
++{
++    float lx, ly, rx, ry, g;
++
++    if (!velocidade_aplicada) {
++        velocidade_aplicada = true;
++        velocidade();
++    }
++    if (key_dest != key_game)
++        return;
++    lx = eixo(SDL_CONTROLLER_AXIS_LEFTX);
++    ly = eixo(SDL_CONTROLLER_AXIS_LEFTY);
++    rx = eixo(SDL_CONTROLLER_AXIS_RIGHTX);
++    ry = eixo(SDL_CONTROLLER_AXIS_RIGHTY);
++    cmd->sidemove += cl_sidespeed.value * lx;
++    cmd->forwardmove -= (ly < 0 ? cl_forwardspeed.value : cl_backspeed.value) * ly;
++    if (rx || ry) {
++        g = GIRO_MAX * mira_escala * host_frametime;
++        cl.viewangles[YAW] -= g * rx;
++        cl.viewangles[PITCH] += g * (mira_inv ? -ry : ry);
++        if (cl.viewangles[PITCH] > cl_maxpitch.value)
++            cl.viewangles[PITCH] = cl_maxpitch.value;
++        if (cl.viewangles[PITCH] < cl_minpitch.value)
++            cl.viewangles[PITCH] = cl_minpitch.value;
++        V_StopPitchDrift();
++        if (registrar) {
++            giro_yaw += g * rx;
++            giro_pitch += g * (mira_inv ? -ry : ry);
++            giro_tempo += host_frametime;
++        }
++    } else if (registrar && giro_tempo > 0) {
++        /* fim de um giro: graus por segundo no maximo do analogico (o teste confere a escala e a inversao) */
++        fprintf(stderr, "[M17] mira: yaw=%.1f pitch=%.1f em %.3f s (%.1f graus/s)\n", giro_yaw, giro_pitch, giro_tempo,
++                (giro_yaw > 0 ? giro_yaw : -giro_yaw) / giro_tempo > (giro_pitch > 0 ? giro_pitch : -giro_pitch) / giro_tempo
++                    ? (giro_yaw > 0 ? giro_yaw : -giro_yaw) / giro_tempo : (giro_pitch > 0 ? giro_pitch : -giro_pitch) / giro_tempo);
++        giro_yaw = giro_pitch = giro_tempo = 0;
++    }
++}
+diff --git a/common/menu.c b/common/menu.c
+index 9922d03..7538b7d 100644
+--- a/common/menu.c
++++ b/common/menu.c
+@@ -666,6 +666,9 @@ static const char *const m_keys_bindnames[M_KEYS_CURSOR_LINES][2] = {
+ 
+ static m_keys_cursor_t m_keys_cursor;
+ static int m_keys_bind_grab;
++#ifdef M17
++int M17_MenuEsperaTecla(void) { return m_keys_bind_grab; }   /* spec 050 (m17_controle.c) */
++#endif
+ 
+ static void
+ M_Menu_Keys_f(void)
+diff --git a/common/vid_sdl.c b/common/vid_sdl.c
+index d789f7e..9b4e4a1 100644
+--- a/common/vid_sdl.c
++++ b/common/vid_sdl.c
+@@ -351,6 +351,14 @@ VID_ProcessEvents()
+             case SDL_MOUSEMOTION:
+                 IN_SDL_HandleEvent(&event);
+                 break;
++#ifdef M17
++            case SDL_CONTROLLERDEVICEADDED:
++            case SDL_CONTROLLERBUTTONDOWN:
++            case SDL_CONTROLLERBUTTONUP:
++            case SDL_CONTROLLERAXISMOTION:
++                M17_ControleEvento(&event);
++                break;
++#endif
+             case SDL_QUIT:
+                 Sys_Quit();
+                 break;
+diff --git a/include/m17.h b/include/m17.h
+index 3edb9ea..da36feb 100644
+--- a/include/m17.h
++++ b/include/m17.h
+@@ -5,4 +5,16 @@
+ /* testes do PC (plano D-09): um passo do M17_ROTEIRO; chamado a cada quadro, antes de ler os eventos */
+ void M17_Roteiro(void);
+ 
++/* controle (plano D-02/D-03/D-04): m17_controle.c; o SDL_Event e o usercmd_t vem de quem chama */
++union SDL_Event;
++void M17_ControleIniciar(void);
++void M17_ControleComandos(void);
++void M17_ControleEvento(const union SDL_Event *e);
++#ifdef NQ_HACK
++#include "client.h"
++void M17_ControleMove(usercmd_t *cmd);
++#endif
++/* o menu "Customize controls" esperando uma tecla (menu.c): o botao vai cru, para virar o novo bind */
++int M17_MenuEsperaTecla(void);
++
+ #endif /* M17_H */

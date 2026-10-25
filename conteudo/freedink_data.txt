@@ -1,0 +1,6 @@
+# freedink-data 1.08.20190120 (spec 047, plano D-11): os dados livres do Dink Smallwood (graficos, sons, musica e
+# scripts). Os dados originais (Seth A. Robinson, RTsoft) tem licenca no estilo zlib (README.txt); os sons trocados por
+# livres tem as licencas listadas no README-REPLACEMENTS.txt (GPLv2+, GPLv3+, CC-BY, CC-BY-SA, dominio publico). Vai no
+# pacote (tutu8bits/jogos/dink/) pelo completar_cartao.sh e serve aos testes do qemu. Nao vai para o git.
+# Campos: arquivo|url|autor|licenca|sha256
+freedink-data-1.08.20190120.tar.gz|https://ftp.gnu.org/gnu/freedink/freedink-data-1.08.20190120.tar.gz|RTsoft e projeto GNU FreeDink|estilo zlib (dados originais) + as dos sons trocados (README-REPLACEMENTS.txt)|715f44773b05b73a9ec9b62b0e152f3f281be1a1512fbaaa386176da94cffb9d

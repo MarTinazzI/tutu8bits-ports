@@ -1,0 +1,18 @@
+Licença: GPL-2.0-or-later (a do PPSSPP, onde o patch entra) (spec 053)
+
+diff --git a/libretro/libretro.cpp b/libretro/libretro.cpp
+index 3b2f103..d1f3db6 100644
+--- a/libretro/libretro.cpp
++++ b/libretro/libretro.cpp
+@@ -1836,6 +1836,11 @@ bool retro_serialize(void *data, size_t size)
+ 
+ bool retro_unserialize(const void *data, size_t size)
+ {
++   // M17 (spec 023, sessao 1): estado vazio/inexistente (RetroArch: "Loading state ..., 0 bytes")
++   // chegava aqui, a carga lia lixo e a emulacao parava: o jogo fechava sozinho. Recusa sem mexer
++   // em nada; o jogo segue e o RetroArch avisa que nao carregou.
++   if (!data || size == 0)
++      return false;
+    // The HW renderer isn't ready on first pass.
+    // So we save the data until we are ready to use it.
+    if (!gpu) {

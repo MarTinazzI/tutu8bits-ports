@@ -1,0 +1,23 @@
+Rogue 5.4.4 (Michael Toy, Ken Arnold e Glenn Wichman, 1980-1999; BSD), com a tela e o controle do tutu8bits.
+O jogo vem pronto: abra "Rogue" no menu "Jogos".
+
+Andar (8 direcoes):
+  D-pad ou analogico esquerdo. Diagonal: aperte duas setas quase juntas, ou use o analogico, ou segure R1
+  (gira o D-pad: cima = cima-direita, direita = baixo-direita...). Segurar repete o passo.
+  B segurado + direcao: correr.
+Botoes:
+  A  pegar (ou descer, em cima da escada %); nas perguntas: sim / confirmar
+  B  voltar / nao / cancelar
+  X  inventario      Y  procurar      L1  descansar um turno
+  L2 repetir a ultima mensagem        R2  repetir o ultimo comando
+  SELECT  menu com todos os comandos (beber, ler, comer, empunhar, vestir, arremessar, varinha...)
+  START   menu do jogo (ajuda, opcoes, descobertas, versao, salvar e sair, desistir)
+Quando o jogo pergunta "qual objeto?", abre a lista da mochila: D-pad escolhe, A confirma.
+Quando pergunta "como quer chamar isto?" (dar nome a um objeto), B cancela.
+
+O nome do personagem vem da sua lista de nomes (home/config/nomes.txt; sem ela, a do sistema).
+Os tempos do controle (diagonal, repeticao, zona morta) ficam em tutu8bits/dados/rogue.cfg; para mudar,
+copie para home/config/rogue.cfg e edite.
+
+Para sair: segure VOL+ por 2 s; a partida e salva e o jogo fecha; ao abrir de novo, ela continua.
+Morrer ou desistir encerra a partida, como no original. Save e placar em saves/jogos/rogue/.

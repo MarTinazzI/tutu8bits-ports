@@ -1,0 +1,123 @@
+Licença: GPL-2.0 nos trechos do jogo (src/); licenca do Build de Ken Silverman (nao comercial) nos trechos de jfbuild/ (spec 053)
+
+diff --git a/jfbuild/src/sdlayer2.c b/jfbuild/src/sdlayer2.c
+--- a/jfbuild/src/sdlayer2.c
++++ b/jfbuild/src/sdlayer2.c
+@@ -1112,6 +1112,24 @@
+ 	} else {
+ 		SDL_UnlockSurface(sdl_surface);
+ 	}
++#ifdef M17
++	{
++		// testes: a ultima tela (M17_TELA=<arq.bmp>), da imagem de 8 bits com a paleta atual
++		const char *arq = getenv("M17_TELA");
++		if (arq && *arq) {
++			SDL_Surface *s = SDL_CreateRGBSurfaceWithFormat(0, xres, yres, 32, SDL_PIXELFORMAT_RGB888);   // bytes B G R x, como a paleta
++			if (s) {
++				unsigned char *o = (unsigned char *)s->pixels, *i2 = frame;
++				int yy, xx;
++				for (yy = 0; yy < yres; yy++, o += s->pitch, i2 += bytesperline)
++					for (xx = 0; xx < xres; xx++)
++						memcpy(&o[xx<<2], &curpalettefaded[i2[xx]], 4);
++				SDL_SaveBMP(s, arq);
++				SDL_FreeSurface(s);
++			}
++		}
++	}
++#endif
+ 
+ 	if (usesdlrenderer) {
+ 		SDL_GetRendererOutputSize(sdl_renderer, &rendx, &rendy);
+@@ -1259,6 +1277,81 @@
+ // handleevents() -- process the SDL message queue
+ //   returns !0 if there was an important event worth checking (like quitting)
+ //
++#ifdef M17
++// M17 (spec 040): ganchos dos testes do PC. M17_ROTEIRO=<arq>: teclas injetadas como eventos do SDL, uma a cada
++// ~150 ms (aperta e solta): letras e algarismos; {ESC} {ENTER} {UP} {DOWN} {LEFT} {RIGHT} {SPACE}; | = pausa de 1 s;
++// no fim, "[M17] roteiro: fim". M17_TELA=<arq.bmp>: a ultima tela desenhada (showframe). Sem as variaveis, nada muda.
++static char *m17_rot;
++static size_t m17_rot_i;
++static int m17_rot_lido, m17_rot_solta;
++static Uint32 m17_rot_prox;
++
++static void m17_tecla(int sc, int desce)
++{
++	SDL_Event e;
++	memset(&e, 0, sizeof(e));
++	e.type = desce ? SDL_KEYDOWN : SDL_KEYUP;
++	e.key.keysym.scancode = (SDL_Scancode)sc;
++	e.key.keysym.sym = SDL_GetKeyFromScancode((SDL_Scancode)sc);
++	e.key.state = desce ? SDL_PRESSED : SDL_RELEASED;
++	SDL_PushEvent(&e);
++}
++
++static void m17_roteiro(void)
++{
++	if (!m17_rot_lido) {
++		const char *arq = getenv("M17_ROTEIRO");
++		FILE *f = (arq && *arq) ? fopen(arq, "r") : NULL;
++		m17_rot_lido = 1;
++		if (f) {
++			long t;
++			fseek(f, 0, SEEK_END); t = ftell(f); fseek(f, 0, SEEK_SET);
++			m17_rot = (char *)calloc((size_t)t + 1, 1);
++			if (fread(m17_rot, 1, (size_t)t, f) != (size_t)t) m17_rot[0] = 0;
++			fclose(f);
++			m17_rot_prox = SDL_GetTicks() + 1500;
++		}
++	}
++	if (!m17_rot || SDL_GetTicks() < m17_rot_prox) return;
++	if (m17_rot_solta) {
++		m17_tecla(m17_rot_solta, 0);
++		m17_rot_solta = 0;
++		m17_rot_prox = SDL_GetTicks() + 150;
++		return;
++	}
++	{
++		char c = m17_rot[m17_rot_i];
++		int sc = 0;
++		while (c == '\n' || c == '\r') c = m17_rot[++m17_rot_i];
++		if (!c) {
++			free(m17_rot); m17_rot = NULL;
++			fprintf(stderr, "[M17] roteiro: fim\n");
++			return;
++		}
++		m17_rot_i++;
++		if (c == '|') { m17_rot_prox = SDL_GetTicks() + 1000; return; }
++		if (c == '{') {
++			static const struct { const char *n; int sc; } T[] = {
++				{ "ESC", SDL_SCANCODE_ESCAPE }, { "ENTER", SDL_SCANCODE_RETURN }, { "UP", SDL_SCANCODE_UP },
++				{ "DOWN", SDL_SCANCODE_DOWN }, { "LEFT", SDL_SCANCODE_LEFT }, { "RIGHT", SDL_SCANCODE_RIGHT },
++				{ "SPACE", SDL_SCANCODE_SPACE },
++			};
++			char *f = strchr(m17_rot + m17_rot_i, '}');
++			if (f) {
++				size_t t = (size_t)(f - (m17_rot + m17_rot_i)), k;
++				for (k = 0; k < sizeof(T) / sizeof(T[0]); k++)
++					if (strlen(T[k].n) == t && !strncmp(T[k].n, m17_rot + m17_rot_i, t)) sc = T[k].sc;
++				m17_rot_i += t + 1;
++			}
++		} else if (c >= 'a' && c <= 'z') sc = SDL_SCANCODE_A + (c - 'a');
++		else if (c >= '1' && c <= '9') sc = SDL_SCANCODE_1 + (c - '1');
++		else if (c == '0') sc = SDL_SCANCODE_0;
++		if (sc) { m17_tecla(sc, 1); m17_rot_solta = sc; }
++		m17_rot_prox = SDL_GetTicks() + 150;
++	}
++}
++#endif
++
+ int handleevents(void)
+ {
+ 	int code, rv=0, j, control;
+@@ -1266,6 +1359,10 @@
+ 	static int firstcall = 1;
+ 	int eattextinput = 0;
+ 
++#ifdef M17
++	m17_roteiro();
++#endif
++
+ 	while (SDL_PollEvent(&ev)) {
+ 		switch (ev.type) {
+ 			case SDL_TEXTINPUT:

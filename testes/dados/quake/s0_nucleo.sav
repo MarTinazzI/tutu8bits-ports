@@ -1,0 +1,1257 @@
+5
+Tainted Tech Thresholdkills:  0/  0____
+4097.000000
+100.000000
+0.000000
+25.000000
+0.000000
+0.000000
+0.000000
+1.000000
+0.000000
+0.000000
+0.000000
+0.000000
+0.000000
+0.000000
+0.000000
+0.000000
+1
+start
+3.683333
+m
+mmnmmommommnonmmonqnmmo
+abcdefghijklmnopqrstuvwxyzyxwvutsrqponmlkjihgfedcba
+mmmmmaaaaammmmmaaaaaabcdefgabcdefg
+mamamamamama
+jklmnopqrstuvwxyzyxwvutsrqponmlkj
+nmonqnmomnmomomno
+mmmaaaabcdefgmmmmaaaammmaamm
+mmmaaammmaaammmabcdefaaaammmmabcdefmmmaaaa
+aaaaaaaazzzzzzzz
+mmamammmmammamamaaamammma
+abcdefghijklmnopqrrqponmlkjihgfedcba
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+m
+a
+{
+"self" "1"
+"other" "0"
+"world" "0"
+"time" "3.666667"
+"frametime" "0.016667"
+"force_retouch" "0.000000"
+"mapname" "start"
+"deathmatch" "0.000000"
+"coop" "0.000000"
+"teamplay" "0.000000"
+"serverflags" "0.000000"
+"total_secrets" "1.000000"
+"total_monsters" "0.000000"
+"found_secrets" "0.000000"
+"killed_monsters" "0.000000"
+"parm1" "4097.000000"
+"parm2" "100.000000"
+"parm3" "0.000000"
+"parm4" "25.000000"
+"parm5" "0.000000"
+"parm6" "0.000000"
+"parm7" "0.000000"
+"parm8" "1.000000"
+"parm9" "0.000000"
+"parm10" "0.000000"
+"parm11" "0.000000"
+"parm12" "0.000000"
+"parm13" "0.000000"
+"parm14" "0.000000"
+"parm15" "0.000000"
+"parm16" "0.000000"
+"trace_allsolid" "0.000000"
+"trace_startsolid" "0.000000"
+"trace_fraction" "0.000000"
+"trace_plane_dist" "0.000000"
+"trace_ent" "0"
+"trace_inopen" "0.000000"
+"trace_inwater" "0.000000"
+"msg_entity" "0"
+"movedist" "0.000000"
+"gameover" "0.000000"
+"string_null" ""
+"newmis" "0"
+"activator" "0"
+"damage_attacker" "0"
+"damage_inflictor" "0"
+"framecount" "151.000000"
+"skill" "1.000000"
+"timelimit" "0.000000"
+"fraglimit" "0.000000"
+"enemy_vis" "0.000000"
+"enemy_infront" "0.000000"
+"enemy_range" "0.000000"
+"enemy_yaw" "0.000000"
+"sight_entity" "0"
+"sight_entity_time" "0.000000"
+"cameras_in_world" "0.000000"
+"clients_at_camera" "0.000000"
+"time_between_cameras" "0.000000"
+"multi_ent" "0"
+"multi_damage" "0.000000"
+"lastspawn" "0"
+"bodyqueue_head" "2"
+"modelindex_eyes" "33.000000"
+"modelindex_player" "32.000000"
+"nextmap" ""
+"intermission_running" "0.000000"
+"intermission_exittime" "0.000000"
+"intermission_levels[0].map_name" "maps/lq_e0m7.bsp"
+"intermission_levels[0].cd_track" "2.000000"
+"intermission_levels[0].epilogue_text" "
+As the ethereal essence of your very
+being drifts through time and space,
+you experience relentless calm and
+serene determinat"
+"intermission_levels[0].freeware_text" ""
+"intermission_levels[1].map_name" "maps/lq_e1m7.bsp"
+"intermission_levels[1].cd_track" "2.000000"
+"intermission_levels[1].epilogue_text" "Congratulations! You have beaten Episode 1 of LibreQuake!"
+"intermission_levels[1].freeware_text" "Congratulations! You have beaten Episode 1 of LibreQuake!"
+"intermission_levels[2].map_name" "maps/lq_e2m6.bsp"
+"intermission_levels[2].cd_track" "2.000000"
+"intermission_levels[2].epilogue_text" "Congratulations! You have beaten Episode 2 of LibreQuake!"
+"intermission_levels[2].freeware_text" ""
+"intermission_levels[3].map_name" "maps/lq_e3m6.bsp"
+"intermission_levels[3].cd_track" "2.000000"
+"intermission_levels[3].epilogue_text" "Congratulations! You have beaten Episode 3 of LibreQuake!"
+"intermission_levels[3].freeware_text" ""
+"intermission_levels[4].map_name" "maps/lq_e4m7.bsp"
+"intermission_levels[4].cd_track" "2.000000"
+"intermission_levels[4].epilogue_text" "Congratulations! You have beaten Episode 4 of LibreQuake!"
+"intermission_levels[4].freeware_text" ""
+"s" "0"
+"le1" "0"
+"le2" "0"
+"lightning_end" "0.000000"
+"hknight_type" "0.000000"
+"shub" "0"
+}
+{
+"modelindex" "1.000000"
+"movetype" "7.000000"
+"solid" "4.000000"
+"classname" "worldspawn"
+"model" "maps/start.bsp"
+"message" "Tainted Tech Threshold"
+"sounds" "2.000000"
+"wad" "../../../../texture-wads/lq_dev.wad;../../../../texture-wads/lq_liquidsky.wad;../../../../texture-wads/lq_tech.wad;../../../../"
+"worldtype" "2.000000"
+}
+{
+"modelindex" "32.000000"
+"absmin" "-17.000000 -177.000000 399.031250"
+"absmax" "17.000000 -143.000000 457.031250"
+"movetype" "3.000000"
+"solid" "3.000000"
+"origin" "0.000000 -160.000000 424.031250"
+"oldorigin" "0.000000 -160.000000 424.031250"
+"angles" "-0.000000 90.000000 0.000000"
+"classname" "player"
+"model" "progs/player.mdl"
+"frame" "16.000000"
+"mins" "-16.000000 -16.000000 -24.000000"
+"maxs" "16.000000 16.000000 32.000000"
+"size" "32.000000 32.000000 56.000000"
+"think" "player_stand1"
+"nextthink" "3.733332"
+"health" "100.000000"
+"weapon" "1.000000"
+"weaponmodel" "progs/v_shot.mdl"
+"currentammo" "25.000000"
+"ammo_shells" "25.000000"
+"items" "4353.000000"
+"takedamage" "2.000000"
+"view_ofs" "0.000000 0.000000 22.000000"
+"v_angle" "0.000000 90.000000 0.000000"
+"netname" "LQ Player"
+"flags" "4616.000000"
+"colormap" "1.000000"
+"team" "11.000000"
+"max_health" "100.000000"
+"watertype" "-1.000000"
+"th_pain" "player_pain"
+"th_die" "PlayerDie"
+"walkframe" "5.000000"
+"attack_finished" "1.233333"
+"jump_flag" "-26.666668"
+"air_finished" "15.666667"
+"dmg" "2.000000"
+}
+{
+"absmin" "-1.000000 -1.000000 -1.000000"
+"absmax" "1.000000 1.000000 1.000000"
+"classname" "bodyqueue"
+"owner" "3"
+}
+{
+"absmin" "-1.000000 -1.000000 -1.000000"
+"absmax" "1.000000 1.000000 1.000000"
+"classname" "bodyqueue"
+"owner" "4"
+}
+{
+"absmin" "-1.000000 -1.000000 -1.000000"
+"absmax" "1.000000 1.000000 1.000000"
+"classname" "bodyqueue"
+"owner" "5"
+}
+{
+"absmin" "-1.000000 -1.000000 -1.000000"
+"absmax" "1.000000 1.000000 1.000000"
+"classname" "bodyqueue"
+"owner" "2"
+}
+{
+"absmin" "-1.000000 -225.000000 399.000000"
+"absmax" "1.000000 -223.000000 401.000000"
+"origin" "0.000000 -224.000000 400.000000"
+"classname" "info_intermission"
+"mangle" "0.000000 -90.000000 0.000000"
+}
+{
+"modelindex" "2.000000"
+"absmin" "-369.000000 2207.000000 -1.000000"
+"absmax" "-287.000000 2401.000000 41.000000"
+"movetype" "7.000000"
+"solid" "4.000000"
+"classname" "func_wall"
+"model" "*1"
+"mins" "-368.000000 2208.000000 0.000000"
+"maxs" "-288.000000 2400.000000 40.000000"
+"size" "80.000000 192.000000 40.000000"
+"use" "func_wall_use"
+}
+{
+"modelindex" "3.000000"
+"absmin" "-369.000000 863.000000 -1.000000"
+"absmax" "-287.000000 1057.000000 41.000000"
+"movetype" "7.000000"
+"solid" "4.000000"
+"classname" "func_wall"
+"model" "*2"
+"mins" "-368.000000 864.000000 0.000000"
+"maxs" "-288.000000 1056.000000 40.000000"
+"size" "80.000000 192.000000 40.000000"
+"use" "func_wall_use"
+}
+{
+"absmin" "-17.000000 1615.000000 15.000000"
+"absmax" "17.000000 1649.000000 321.000000"
+"solid" "1.000000"
+"classname" "trigger_push"
+"mins" "-16.000000 1616.000000 16.000000"
+"maxs" "16.000000 1648.000000 320.000000"
+"size" "32.000000 32.000000 304.000000"
+"touch" "trigger_push_touch"
+"movedir" "0.000000 0.000000 1.000000"
+"speed" "50.000000"
+}
+{
+"absmin" "-17.000000 1615.000000 347.000000"
+"absmax" "17.000000 2305.000000 369.000000"
+"solid" "1.000000"
+"classname" "trigger_push"
+"mins" "-16.000000 1616.000000 348.000000"
+"maxs" "16.000000 2304.000000 368.000000"
+"size" "32.000000 688.000000 20.000000"
+"touch" "trigger_push_touch"
+"movedir" "-0.000000 1.000000 -0.000000"
+"speed" "50.000000"
+}
+{
+"absmin" "-17.000000 2287.000000 127.000000"
+"absmax" "17.000000 2305.000000 349.000000"
+"solid" "1.000000"
+"classname" "trigger_push"
+"mins" "-16.000000 2288.000000 128.000000"
+"maxs" "16.000000 2304.000000 348.000000"
+"size" "32.000000 16.000000 220.000000"
+"touch" "trigger_push_touch"
+"movedir" "0.000000 0.000000 -1.000000"
+"speed" "50.000000"
+}
+{
+"modelindex" "58.000000"
+"absmin" "1167.000000 839.000000 -0.968750"
+"absmax" "1201.000000 873.000000 65.031250"
+"solid" "2.000000"
+"origin" "1168.000000 840.000000 0.031250"
+"classname" "misc_explobox"
+"model" "maps/b_explob.bsp"
+"maxs" "32.000000 32.000000 64.000000"
+"size" "32.000000 32.000000 64.000000"
+"health" "20.000000"
+"takedamage" "2.000000"
+"netname" "exploding barrel"
+"flags" "512.000000"
+"th_die" "barrel_explode"
+"killstring" " was sent sky high"
+}
+{
+"modelindex" "58.000000"
+"absmin" "735.000000 2367.000000 -0.968750"
+"absmax" "769.000000 2401.000000 65.031250"
+"solid" "2.000000"
+"origin" "736.000000 2368.000000 0.031250"
+"classname" "misc_explobox"
+"model" "maps/b_explob.bsp"
+"maxs" "32.000000 32.000000 64.000000"
+"size" "32.000000 32.000000 64.000000"
+"health" "20.000000"
+"takedamage" "2.000000"
+"netname" "exploding barrel"
+"flags" "512.000000"
+"th_die" "barrel_explode"
+"killstring" " was sent sky high"
+}
+{
+"modelindex" "58.000000"
+"absmin" "559.000000 1667.000000 -80.968750"
+"absmax" "593.000000 1701.000000 -14.968750"
+"solid" "2.000000"
+"origin" "560.000000 1668.000000 -79.968750"
+"classname" "misc_explobox"
+"model" "maps/b_explob.bsp"
+"maxs" "32.000000 32.000000 64.000000"
+"size" "32.000000 32.000000 64.000000"
+"health" "20.000000"
+"takedamage" "2.000000"
+"netname" "exploding barrel"
+"flags" "512.000000"
+"th_die" "barrel_explode"
+"killstring" " was sent sky high"
+}
+{
+"modelindex" "58.000000"
+"absmin" "575.000000 1707.000000 -80.968750"
+"absmax" "609.000000 1741.000000 -14.968750"
+"solid" "2.000000"
+"origin" "576.000000 1708.000000 -79.968750"
+"classname" "misc_explobox"
+"model" "maps/b_explob.bsp"
+"maxs" "32.000000 32.000000 64.000000"
+"size" "32.000000 32.000000 64.000000"
+"health" "20.000000"
+"takedamage" "2.000000"
+"netname" "exploding barrel"
+"flags" "512.000000"
+"th_die" "barrel_explode"
+"killstring" " was sent sky high"
+}
+{
+"absmin" "-97.000000 1215.000000 -1.000000"
+"absmax" "97.000000 1393.000000 129.000000"
+"solid" "1.000000"
+"classname" "trigger_multiple"
+"mins" "-96.000000 1216.000000 0.000000"
+"maxs" "96.000000 1392.000000 128.000000"
+"size" "192.000000 176.000000 128.000000"
+"touch" "multi_touch"
+"use" "multi_use"
+"spawnflags" "2048.000000"
+"message" "easy skill"
+"wait" "2.000000"
+}
+{
+"absmin" "-97.000000 1455.000000 -1.000000"
+"absmax" "97.000000 1473.000000 129.000000"
+"solid" "1.000000"
+"classname" "trigger_setskill"
+"mins" "-96.000000 1456.000000 0.000000"
+"maxs" "96.000000 1472.000000 128.000000"
+"size" "192.000000 16.000000 128.000000"
+"touch" "trigger_skill_touch"
+"spawnflags" "2048.000000"
+"message" "0"
+}
+{
+"absmin" "-577.000000 1327.000000 47.000000"
+"absmax" "-383.000000 1345.000000 209.000000"
+"solid" "1.000000"
+"classname" "trigger_setskill"
+"mins" "-576.000000 1328.000000 48.000000"
+"maxs" "-384.000000 1344.000000 208.000000"
+"size" "192.000000 16.000000 160.000000"
+"touch" "trigger_skill_touch"
+"spawnflags" "2048.000000"
+"message" "1"
+}
+{
+"absmin" "-353.000000 863.000000 -1.000000"
+"absmax" "-159.000000 1057.000000 129.000000"
+"solid" "1.000000"
+"classname" "trigger_multiple"
+"mins" "-352.000000 864.000000 0.000000"
+"maxs" "-160.000000 1056.000000 128.000000"
+"size" "192.000000 192.000000 128.000000"
+"touch" "multi_touch"
+"use" "multi_use"
+"spawnflags" "2048.000000"
+"message" "normal skill"
+"wait" "2.000000"
+}
+{
+"absmin" "191.000000 863.000000 -1.000000"
+"absmax" "353.000000 1057.000000 129.000000"
+"solid" "1.000000"
+"classname" "trigger_multiple"
+"mins" "192.000000 864.000000 0.000000"
+"maxs" "352.000000 1056.000000 128.000000"
+"size" "160.000000 192.000000 128.000000"
+"touch" "multi_touch"
+"use" "multi_use"
+"spawnflags" "2048.000000"
+"message" "hard skill"
+"wait" "2.000000"
+}
+{
+"absmin" "383.000000 831.000000 -1.000000"
+"absmax" "577.000000 865.000000 145.000000"
+"solid" "1.000000"
+"classname" "trigger_setskill"
+"mins" "384.000000 832.000000 0.000000"
+"maxs" "576.000000 864.000000 144.000000"
+"size" "192.000000 32.000000 144.000000"
+"touch" "trigger_skill_touch"
+"spawnflags" "2048.000000"
+"message" "2"
+}
+{
+"absmin" "479.000000 1631.000000 -257.000000"
+"absmax" "513.000000 1761.000000 -127.000000"
+"solid" "1.000000"
+"classname" "trigger_multiple"
+"mins" "480.000000 1632.000000 -256.000000"
+"maxs" "512.000000 1760.000000 -128.000000"
+"size" "32.000000 128.000000 128.000000"
+"touch" "multi_touch"
+"use" "multi_use"
+"spawnflags" "2048.000000"
+"message" "nightmare!"
+"wait" "2.000000"
+}
+{
+"absmin" "-1.000000 2159.000000 58.000000"
+"absmax" "1.000000 2161.000000 60.000000"
+"origin" "0.000000 2160.000000 59.000000"
+"classname" "info_teleport_destination"
+"targetname" "tele_target_nightmare"
+"mangle" "0.000000 90.000000 0.000000"
+}
+{
+"absmin" "79.000000 1631.000000 -257.000000"
+"absmax" "97.000000 1761.000000 -127.000000"
+"solid" "1.000000"
+"classname" "trigger_teleport"
+"mins" "80.000000 1632.000000 -256.000000"
+"maxs" "96.000000 1760.000000 -128.000000"
+"size" "16.000000 128.000000 128.000000"
+"touch" "teleport_touch"
+"use" "teleport_use"
+"target" "tele_target_nightmare"
+}
+{
+"absmin" "95.000000 1631.000000 -257.000000"
+"absmax" "113.000000 1761.000000 -127.000000"
+"solid" "1.000000"
+"classname" "trigger_setskill"
+"mins" "96.000000 1632.000000 -256.000000"
+"maxs" "112.000000 1760.000000 -128.000000"
+"size" "16.000000 128.000000 128.000000"
+"touch" "trigger_skill_touch"
+"message" "3"
+}
+{
+"modelindex" "58.000000"
+"absmin" "719.000000 959.000000 31.031250"
+"absmax" "753.000000 993.000000 97.031250"
+"solid" "2.000000"
+"origin" "720.000000 960.000000 32.031250"
+"classname" "misc_explobox"
+"model" "maps/b_explob.bsp"
+"maxs" "32.000000 32.000000 64.000000"
+"size" "32.000000 32.000000 64.000000"
+"health" "20.000000"
+"takedamage" "2.000000"
+"netname" "exploding barrel"
+"flags" "512.000000"
+"th_die" "barrel_explode"
+"killstring" " was sent sky high"
+}
+{
+"modelindex" "58.000000"
+"absmin" "735.000000 1059.000000 31.031250"
+"absmax" "769.000000 1093.000000 97.031250"
+"solid" "2.000000"
+"origin" "736.000000 1060.000000 32.031250"
+"classname" "misc_explobox"
+"model" "maps/b_explob.bsp"
+"maxs" "32.000000 32.000000 64.000000"
+"size" "32.000000 32.000000 64.000000"
+"health" "20.000000"
+"takedamage" "2.000000"
+"netname" "exploding barrel"
+"flags" "512.000000"
+"th_die" "barrel_explode"
+"killstring" " was sent sky high"
+}
+{
+"modelindex" "16.000000"
+"absmin" "-129.000000 319.000000 -33.000000"
+"absmax" "129.000000 449.000000 385.000000"
+"ltime" "0.100000"
+"movetype" "7.000000"
+"solid" "4.000000"
+"classname" "door"
+"model" "*15"
+"mins" "-128.000000 320.000000 -32.000000"
+"maxs" "128.000000 448.000000 384.000000"
+"size" "256.000000 128.000000 416.000000"
+"touch" "door_touch"
+"use" "door_use"
+"think" "LinkDoors"
+"blocked" "door_blocked"
+"enemy" "28"
+"spawnflags" "2048.000000"
+"targetname" "door_start"
+"owner" "28"
+"movedir" "0.000000 0.000000 -1.000000"
+"sounds" "2.000000"
+"noise1" "doors/hydro2.wav"
+"noise2" "doors/hydro1.wav"
+"noise3" "doors/basetry.wav"
+"speed" "150.000000"
+"wait" "-1.000000"
+"noise4" "doors/baseuse.wav"
+"dmg" "2.000000"
+"lip" "32.000000"
+"state" "1.000000"
+"pos2" "0.000000 0.000000 -384.000000"
+}
+{
+"modelindex" "17.000000"
+"absmin" "-39.000000 445.000000 421.000000"
+"absmax" "39.000000 463.000000 445.000000"
+"movetype" "7.000000"
+"solid" "4.000000"
+"classname" "func_button"
+"model" "*16"
+"mins" "-38.000000 446.000000 422.000000"
+"maxs" "38.000000 462.000000 444.000000"
+"size" "76.000000 16.000000 22.000000"
+"touch" "button_touch"
+"use" "button_use"
+"blocked" "button_blocked"
+"spawnflags" "2048.000000"
+"target" "door_start"
+"movedir" "-0.000000 1.000000 -0.000000"
+"sounds" "2.000000"
+"noise" "buttons/switch02.wav"
+"speed" "500.000000"
+"wait" "-1.000000"
+"lip" "4.000000"
+"state" "1.000000"
+"pos2" "-0.000001 11.999997 0.000000"
+}
+{
+"absmin" "-33.000000 2767.000000 63.000000"
+"absmax" "33.000000 2833.000000 129.000000"
+"solid" "1.000000"
+"classname" "trigger_changelevel"
+"mins" "-32.000000 2768.000000 64.000000"
+"maxs" "32.000000 2832.000000 128.000000"
+"size" "64.000000 64.000000 64.000000"
+"touch" "changelevel_touch"
+"netname" "changelevel"
+"spawnflags" "2049.000000"
+"map" "lq_e0m1"
+"killstring" " tried to escape"
+}
+{
+"modelindex" "59.000000"
+"absmin" "431.000000 591.000000 -0.968750"
+"absmax" "465.000000 625.000000 33.031250"
+"solid" "2.000000"
+"origin" "432.000000 592.000000 0.031250"
+"classname" "misc_explobox2"
+"model" "maps/b_exbox2.bsp"
+"maxs" "32.000000 32.000000 32.000000"
+"size" "32.000000 32.000000 32.000000"
+"health" "20.000000"
+"takedamage" "2.000000"
+"netname" "exploding barrel"
+"flags" "512.000000"
+"th_die" "barrel_explode"
+"killstring" " was sent sky high"
+}
+{
+"modelindex" "59.000000"
+"absmin" "591.000000 1675.000000 -79.000000"
+"absmax" "625.000000 1709.000000 -45.000000"
+"solid" "2.000000"
+"origin" "592.000000 1676.000000 -78.000000"
+"classname" "misc_explobox2"
+"model" "maps/b_exbox2.bsp"
+"maxs" "32.000000 32.000000 32.000000"
+"size" "32.000000 32.000000 32.000000"
+"health" "20.000000"
+"takedamage" "2.000000"
+"netname" "exploding barrel"
+"th_die" "barrel_explode"
+"killstring" " was sent sky high"
+}
+{
+"modelindex" "58.000000"
+"absmin" "1175.000000 1631.000000 -0.968750"
+"absmax" "1209.000000 1665.000000 65.031250"
+"solid" "2.000000"
+"origin" "1176.000000 1632.000000 0.031250"
+"classname" "misc_explobox"
+"model" "maps/b_explob.bsp"
+"maxs" "32.000000 32.000000 64.000000"
+"size" "32.000000 32.000000 64.000000"
+"health" "20.000000"
+"takedamage" "2.000000"
+"netname" "exploding barrel"
+"flags" "512.000000"
+"th_die" "barrel_explode"
+"killstring" " was sent sky high"
+}
+{
+"modelindex" "58.000000"
+"absmin" "1099.000000 1679.000000 -0.968750"
+"absmax" "1133.000000 1713.000000 65.031250"
+"solid" "2.000000"
+"origin" "1100.000000 1680.000000 0.031250"
+"classname" "misc_explobox"
+"model" "maps/b_explob.bsp"
+"maxs" "32.000000 32.000000 64.000000"
+"size" "32.000000 32.000000 64.000000"
+"health" "20.000000"
+"takedamage" "2.000000"
+"netname" "exploding barrel"
+"flags" "512.000000"
+"th_die" "barrel_explode"
+"killstring" " was sent sky high"
+}
+{
+"modelindex" "58.000000"
+"absmin" "1099.000000 2003.000000 -0.968750"
+"absmax" "1133.000000 2037.000000 65.031250"
+"solid" "2.000000"
+"origin" "1100.000000 2004.000000 0.031250"
+"classname" "misc_explobox"
+"model" "maps/b_explob.bsp"
+"maxs" "32.000000 32.000000 64.000000"
+"size" "32.000000 32.000000 64.000000"
+"health" "20.000000"
+"takedamage" "2.000000"
+"netname" "exploding barrel"
+"flags" "512.000000"
+"th_die" "barrel_explode"
+"killstring" " was sent sky high"
+}
+{
+"modelindex" "60.000000"
+"absmin" "82.000000 1552.000000 -229.000000"
+"absmax" "116.000000 1586.000000 -163.000000"
+"solid" "3.000000"
+"origin" "99.000000 1569.000000 -204.000000"
+"classname" "monster_zombie"
+"model" "progs/zombie.mdl"
+"frame" "193.000000"
+"mins" "-16.000000 -16.000000 -24.000000"
+"maxs" "16.000000 16.000000 40.000000"
+"size" "32.000000 32.000000 64.000000"
+"think" "zombie_cruc3"
+"nextthink" "3.790962"
+"health" "60.000000"
+"netname" "zombie"
+"max_health" "60.000000"
+"spawnflags" "1.000000"
+"noise" "zombie/z_idle.wav"
+"th_stand" "zombie_stand1"
+"th_walk" "zombie_walk1"
+"th_run" "zombie_run1"
+"th_missile" "zombie_missile"
+"th_pain" "zombie_pain"
+"th_die" "zombie_die"
+"killstring" " was pelted by a Deathless Cultist"
+}
+{
+"modelindex" "60.000000"
+"absmin" "82.000000 1808.000000 -229.000000"
+"absmax" "116.000000 1842.000000 -163.000000"
+"solid" "3.000000"
+"origin" "99.000000 1825.000000 -204.000000"
+"classname" "monster_zombie"
+"model" "progs/zombie.mdl"
+"frame" "192.000000"
+"mins" "-16.000000 -16.000000 -24.000000"
+"maxs" "16.000000 16.000000 40.000000"
+"size" "32.000000 32.000000 64.000000"
+"think" "zombie_cruc2"
+"nextthink" "3.743228"
+"health" "60.000000"
+"netname" "zombie"
+"max_health" "60.000000"
+"spawnflags" "1.000000"
+"noise" "zombie/z_idle.wav"
+"th_stand" "zombie_stand1"
+"th_walk" "zombie_walk1"
+"th_run" "zombie_run1"
+"th_missile" "zombie_missile"
+"th_pain" "zombie_pain"
+"th_die" "zombie_die"
+"killstring" " was pelted by a Deathless Cultist"
+}
+{
+"absmin" "-1.000000 2071.000000 79.000000"
+"absmax" "1.000000 2073.000000 81.000000"
+"origin" "0.000000 2072.000000 80.000000"
+"classname" "ambient_comp_hum"
+}
+{
+"modelindex" "19.000000"
+"absmin" "-371.000000 2111.000000 47.000000"
+"absmax" "-365.000000 2195.000000 83.000000"
+"movetype" "7.000000"
+"solid" "4.000000"
+"classname" "func_wall"
+"model" "*18"
+"mins" "-370.000000 2112.000000 48.000000"
+"maxs" "-366.000000 2194.000000 82.000000"
+"size" "4.000000 82.000000 34.000000"
+"use" "func_wall_use"
+}
+{
+"modelindex" "20.000000"
+"absmin" "-371.000000 2413.000000 47.000000"
+"absmax" "-365.000000 2497.000000 83.000000"
+"movetype" "7.000000"
+"solid" "4.000000"
+"classname" "func_wall"
+"model" "*19"
+"mins" "-370.000000 2414.000000 48.000000"
+"maxs" "-366.000000 2496.000000 82.000000"
+"size" "4.000000 82.000000 34.000000"
+"use" "func_wall_use"
+}
+{
+"modelindex" "21.000000"
+"absmin" "-371.000000 1069.000000 47.000000"
+"absmax" "-365.000000 1185.000000 83.000000"
+"movetype" "7.000000"
+"solid" "4.000000"
+"classname" "func_wall"
+"model" "*20"
+"mins" "-370.000000 1070.000000 48.000000"
+"maxs" "-366.000000 1184.000000 82.000000"
+"size" "4.000000 114.000000 34.000000"
+"use" "func_wall_use"
+}
+{
+"modelindex" "22.000000"
+"absmin" "-371.000000 735.000000 47.000000"
+"absmax" "-365.000000 851.000000 83.000000"
+"movetype" "7.000000"
+"solid" "4.000000"
+"classname" "func_wall"
+"model" "*21"
+"mins" "-370.000000 736.000000 48.000000"
+"maxs" "-366.000000 850.000000 82.000000"
+"size" "4.000000 114.000000 34.000000"
+"use" "func_wall_use"
+}
+{
+"modelindex" "58.000000"
+"absmin" "1159.000000 1439.000000 -0.968750"
+"absmax" "1193.000000 1473.000000 65.031250"
+"solid" "2.000000"
+"origin" "1160.000000 1440.000000 0.031250"
+"classname" "misc_explobox"
+"model" "maps/b_explob.bsp"
+"maxs" "32.000000 32.000000 64.000000"
+"size" "32.000000 32.000000 64.000000"
+"health" "20.000000"
+"takedamage" "2.000000"
+"netname" "exploding barrel"
+"flags" "512.000000"
+"th_die" "barrel_explode"
+"killstring" " was sent sky high"
+}
+{
+"absmin" "539.000000 1647.000000 -105.000000"
+"absmax" "621.000000 1745.000000 -87.000000"
+"solid" "1.000000"
+"classname" "trigger_secret"
+"mins" "540.000000 1648.000000 -104.000000"
+"maxs" "620.000000 1744.000000 -88.000000"
+"size" "80.000000 96.000000 16.000000"
+"touch" "multi_touch"
+"use" "multi_use"
+"message" "You found a secret!"
+"sounds" "1.000000"
+"noise" "misc/secret.wav"
+"wait" "-1.000000"
+}
+{
+"modelindex" "32.000000"
+"absmin" "543.000000 935.000000 7.000000"
+"absmax" "577.000000 969.000000 41.000000"
+"origin" "560.000000 952.000000 24.000000"
+"angles" "0.000000 180.000000 0.000000"
+"classname" "viewthing"
+"model" "progs/player.mdl"
+"frame" "69.000000"
+"mins" "-16.000000 -16.000000 -16.000000"
+"maxs" "16.000000 16.000000 16.000000"
+"size" "32.000000 32.000000 32.000000"
+}
+{
+"modelindex" "32.000000"
+"absmin" "1083.000000 1563.000000 -85.000000"
+"absmax" "1117.000000 1597.000000 -51.000000"
+"origin" "1100.000000 1580.000000 -68.000000"
+"angles" "0.000000 45.000000 0.000000"
+"classname" "viewthing"
+"model" "progs/player.mdl"
+"frame" "49.000000"
+"mins" "-16.000000 -16.000000 -16.000000"
+"maxs" "16.000000 16.000000 16.000000"
+"size" "32.000000 32.000000 32.000000"
+}
+{
+"modelindex" "58.000000"
+"absmin" "815.000000 615.000000 -0.968750"
+"absmax" "849.000000 649.000000 65.031250"
+"solid" "2.000000"
+"origin" "816.000000 616.000000 0.031250"
+"classname" "misc_explobox"
+"model" "maps/b_explob.bsp"
+"maxs" "32.000000 32.000000 64.000000"
+"size" "32.000000 32.000000 64.000000"
+"health" "20.000000"
+"takedamage" "2.000000"
+"netname" "exploding barrel"
+"flags" "512.000000"
+"th_die" "barrel_explode"
+"killstring" " was sent sky high"
+}
+{
+"modelindex" "24.000000"
+"absmin" "1032.000000 1508.000000 -129.000000"
+"absmax" "1192.000000 1671.000000 -91.000000"
+"movetype" "7.000000"
+"solid" "4.000000"
+"classname" "func_wall"
+"model" "*23"
+"mins" "1033.000000 1509.000000 -128.000000"
+"maxs" "1191.000000 1670.000000 -92.000000"
+"size" "158.000000 161.000000 36.000000"
+"use" "func_wall_use"
+}
+{
+"modelindex" "25.000000"
+"absmin" "791.000000 1687.000000 -98.299965"
+"absmax" "809.000000 1705.000000 -48.299965"
+"ltime" "2.637037"
+"movetype" "7.000000"
+"solid" "4.000000"
+"origin" "0.000000 0.000000 -33.299965"
+"velocity" "0.000000 0.000000 54.000000"
+"classname" "train"
+"model" "*24"
+"mins" "792.000000 1688.000000 -64.000000"
+"maxs" "808.000000 1704.000000 -16.000000"
+"size" "16.000000 16.000000 48.000000"
+"use" "train_use"
+"think" "SUB_CalcMoveDone"
+"blocked" "train_blocked"
+"nextthink" "3.105556"
+"target" "pump2_1"
+"noise" "misc/null.wav"
+"noise1" "misc/null.wav"
+"speed" "54.000000"
+"wait" "0.250000"
+"dmg" "2.000000"
+"cnt" "1.000000"
+"think1" "train_wait"
+"finaldest" "0.000000 0.000000 -8.000000"
+}
+{
+"modelindex" "26.000000"
+"absmin" "791.000000 1735.000000 -115.166672"
+"absmax" "809.000000 1753.000000 -65.166672"
+"ltime" "2.633333"
+"movetype" "7.000000"
+"solid" "4.000000"
+"origin" "0.000000 0.000000 -50.166668"
+"velocity" "0.000000 0.000000 46.000000"
+"classname" "train"
+"model" "*25"
+"mins" "792.000000 1736.000000 -64.000000"
+"maxs" "808.000000 1752.000000 -16.000000"
+"size" "16.000000 16.000000 48.000000"
+"use" "train_use"
+"think" "SUB_CalcMoveDone"
+"blocked" "train_blocked"
+"nextthink" "3.550000"
+"target" "pump1_1"
+"noise" "misc/null.wav"
+"noise1" "misc/null.wav"
+"speed" "46.000000"
+"wait" "0.250000"
+"dmg" "2.000000"
+"cnt" "1.000000"
+"think1" "train_wait"
+"finaldest" "0.000000 0.000000 -8.000000"
+}
+{
+"modelindex" "27.000000"
+"absmin" "791.000000 1639.000000 -106.500015"
+"absmax" "809.000000 1657.000000 -56.500019"
+"ltime" "2.640000"
+"movetype" "7.000000"
+"solid" "4.000000"
+"origin" "0.000000 0.000000 -41.500019"
+"velocity" "0.000000 0.000000 50.000000"
+"classname" "train"
+"model" "*26"
+"mins" "792.000000 1640.000000 -64.000000"
+"maxs" "808.000000 1656.000000 -16.000000"
+"size" "16.000000 16.000000 48.000000"
+"use" "train_use"
+"think" "SUB_CalcMoveDone"
+"blocked" "train_blocked"
+"nextthink" "3.310000"
+"target" "pump3_1"
+"noise" "misc/null.wav"
+"noise1" "misc/null.wav"
+"speed" "50.000000"
+"wait" "0.250000"
+"dmg" "2.000000"
+"cnt" "1.000000"
+"think1" "train_wait"
+"finaldest" "0.000000 0.000000 -8.000000"
+}
+{
+"absmin" "783.000000 1631.000000 -81.000000"
+"absmax" "801.000000 1649.000000 -63.000000"
+"solid" "1.000000"
+"origin" "792.000000 1640.000000 -72.000000"
+"angles" "0.000000 270.000000 0.000000"
+"classname" "path_corner"
+"mins" "-8.000000 -8.000000 -8.000000"
+"maxs" "8.000000 8.000000 8.000000"
+"size" "16.000000 16.000000 16.000000"
+"touch" "t_movetarget"
+"target" "pump3_1"
+"targetname" "pump3_2"
+"wait" "0.250000"
+}
+{
+"absmin" "783.000000 1679.000000 -81.000000"
+"absmax" "801.000000 1697.000000 -63.000000"
+"solid" "1.000000"
+"origin" "792.000000 1688.000000 -72.000000"
+"angles" "0.000000 270.000000 0.000000"
+"classname" "path_corner"
+"mins" "-8.000000 -8.000000 -8.000000"
+"maxs" "8.000000 8.000000 8.000000"
+"size" "16.000000 16.000000 16.000000"
+"touch" "t_movetarget"
+"target" "pump2_1"
+"targetname" "pump2_2"
+"wait" "0.250000"
+}
+{
+"absmin" "783.000000 1727.000000 -81.000000"
+"absmax" "801.000000 1745.000000 -63.000000"
+"solid" "1.000000"
+"origin" "792.000000 1736.000000 -72.000000"
+"angles" "0.000000 270.000000 0.000000"
+"classname" "path_corner"
+"mins" "-8.000000 -8.000000 -8.000000"
+"maxs" "8.000000 8.000000 8.000000"
+"size" "16.000000 16.000000 16.000000"
+"touch" "t_movetarget"
+"target" "pump1_1"
+"targetname" "pump1_2"
+"wait" "0.250000"
+}
+{
+"absmin" "783.000000 1727.000000 -127.000000"
+"absmax" "801.000000 1745.000000 -109.000000"
+"solid" "1.000000"
+"origin" "792.000000 1736.000000 -118.000000"
+"angles" "0.000000 270.000000 0.000000"
+"classname" "path_corner"
+"mins" "-8.000000 -8.000000 -8.000000"
+"maxs" "8.000000 8.000000 8.000000"
+"size" "16.000000 16.000000 16.000000"
+"touch" "t_movetarget"
+"target" "pump1_2"
+"targetname" "pump1_1"
+}
+{
+"absmin" "783.000000 1679.000000 -127.000000"
+"absmax" "801.000000 1697.000000 -109.000000"
+"solid" "1.000000"
+"origin" "792.000000 1688.000000 -118.000000"
+"angles" "0.000000 270.000000 0.000000"
+"classname" "path_corner"
+"mins" "-8.000000 -8.000000 -8.000000"
+"maxs" "8.000000 8.000000 8.000000"
+"size" "16.000000 16.000000 16.000000"
+"touch" "t_movetarget"
+"target" "pump2_2"
+"targetname" "pump2_1"
+}
+{
+"absmin" "783.000000 1631.000000 -127.000000"
+"absmax" "801.000000 1649.000000 -109.000000"
+"solid" "1.000000"
+"origin" "792.000000 1640.000000 -118.000000"
+"angles" "0.000000 270.000000 0.000000"
+"classname" "path_corner"
+"mins" "-8.000000 -8.000000 -8.000000"
+"maxs" "8.000000 8.000000 8.000000"
+"size" "16.000000 16.000000 16.000000"
+"touch" "t_movetarget"
+"target" "pump3_2"
+"targetname" "pump3_1"
+}
+{
+"modelindex" "28.000000"
+"absmin" "767.000000 1623.000000 -129.000000"
+"absmax" "833.000000 1769.000000 -71.000000"
+"movetype" "7.000000"
+"solid" "4.000000"
+"classname" "func_wall"
+"model" "*27"
+"mins" "768.000000 1624.000000 -128.000000"
+"maxs" "832.000000 1768.000000 -72.000000"
+"size" "64.000000 144.000000 56.000000"
+"use" "func_wall_use"
+}
+{
+"absmin" "-1.000000 2799.000000 167.000000"
+"absmax" "1.000000 2801.000000 169.000000"
+"origin" "0.000000 2800.000000 168.000000"
+"classname" "ambient_drone"
+}
+{
+"modelindex" "59.000000"
+"absmin" "1183.000000 715.000000 1.000000"
+"absmax" "1217.000000 749.000000 35.000000"
+"solid" "2.000000"
+"origin" "1184.000000 716.000000 2.000000"
+"classname" "misc_explobox2"
+"model" "maps/b_exbox2.bsp"
+"maxs" "32.000000 32.000000 32.000000"
+"size" "32.000000 32.000000 32.000000"
+"health" "20.000000"
+"takedamage" "2.000000"
+"netname" "exploding barrel"
+"th_die" "barrel_explode"
+"killstring" " was sent sky high"
+}
+{
+"modelindex" "32.000000"
+"absmin" "367.000000 1787.000000 -247.000000"
+"absmax" "401.000000 1821.000000 -213.000000"
+"origin" "384.000000 1804.000000 -230.000000"
+"angles" "0.000000 225.000000 0.000000"
+"classname" "viewthing"
+"model" "progs/player.mdl"
+"frame" "60.000000"
+"mins" "-16.000000 -16.000000 -16.000000"
+"maxs" "16.000000 16.000000 16.000000"
+"size" "32.000000 32.000000 32.000000"
+}
+{
+"absmin" "375.000000 1879.000000 -233.000000"
+"absmax" "377.000000 1881.000000 -231.000000"
+"origin" "376.000000 1880.000000 -232.000000"
+"classname" "ambient_drip"
+}
+{
+"modelindex" "29.000000"
+"absmin" "-961.000000 1247.000000 -1.000000"
+"absmax" "-767.000000 1329.000000 41.000000"
+"movetype" "7.000000"
+"solid" "4.000000"
+"classname" "func_wall"
+"model" "*28"
+"mins" "-960.000000 1248.000000 0.000000"
+"maxs" "-768.000000 1328.000000 40.000000"
+"size" "192.000000 80.000000 40.000000"
+"use" "func_wall_use"
+}
+{
+"modelindex" "30.000000"
+"absmin" "-961.000000 1935.000000 -1.000000"
+"absmax" "-767.000000 2017.000000 41.000000"
+"movetype" "7.000000"
+"solid" "4.000000"
+"classname" "func_wall"
+"model" "*29"
+"mins" "-960.000000 1936.000000 0.000000"
+"maxs" "-768.000000 2016.000000 40.000000"
+"size" "192.000000 80.000000 40.000000"
+"use" "func_wall_use"
+}
+{
+"absmin" "-1337.000000 1463.000000 55.000000"
+"absmax" "-1335.000000 1465.000000 57.000000"
+"origin" "-1336.000000 1464.000000 56.000000"
+"classname" "ambient_comp_hum"
+}
+{
+"absmin" "-1337.000000 1463.000000 55.000000"
+"absmax" "-1335.000000 1465.000000 57.000000"
+"origin" "-1336.000000 1464.000000 56.000000"
+"classname" "ambient_comp_hum"
+}
+{
+"absmin" "-1337.000000 1847.000000 55.000000"
+"absmax" "-1335.000000 1849.000000 57.000000"
+"origin" "-1336.000000 1848.000000 56.000000"
+"classname" "ambient_comp_hum"
+}
+{
+"absmin" "-825.000000 983.000000 71.000000"
+"absmax" "-823.000000 985.000000 73.000000"
+"origin" "-824.000000 984.000000 72.000000"
+"classname" "ambient_comp_hum"
+}
+{
+"absmin" "-1.000000 -161.000000 423.000000"
+"absmax" "1.000000 -159.000000 425.000000"
+"origin" "0.000000 -160.000000 424.000000"
+"angles" "0.000000 90.000000 0.000000"
+"classname" "info_player_start"
+}
+{
+"absmin" "111.000000 -65.000000 423.000000"
+"absmax" "113.000000 -63.000000 425.000000"
+"origin" "112.000000 -64.000000 424.000000"
+"angles" "0.000000 90.000000 0.000000"
+"classname" "info_player_coop"
+}
+{
+"absmin" "63.000000 -65.000000 423.000000"
+"absmax" "65.000000 -63.000000 425.000000"
+"origin" "64.000000 -64.000000 424.000000"
+"angles" "0.000000 90.000000 0.000000"
+"classname" "info_player_coop"
+}
+{
+"absmin" "15.000000 -65.000000 423.000000"
+"absmax" "17.000000 -63.000000 425.000000"
+"origin" "16.000000 -64.000000 424.000000"
+"angles" "0.000000 90.000000 0.000000"
+"classname" "info_player_coop"
+}
+{
+"absmin" "-33.000000 -65.000000 423.000000"
+"absmax" "-31.000000 -63.000000 425.000000"
+"origin" "-32.000000 -64.000000 424.000000"
+"angles" "0.000000 90.000000 0.000000"
+"classname" "info_player_coop"
+}
+{
+"absmin" "-81.000000 -65.000000 423.000000"
+"absmax" "-79.000000 -63.000000 425.000000"
+"origin" "-80.000000 -64.000000 424.000000"
+"angles" "0.000000 90.000000 0.000000"
+"classname" "info_player_coop"
+}
+{
+"absmin" "-481.000000 623.000000 71.000000"
+"absmax" "-479.000000 625.000000 73.000000"
+"origin" "-480.000000 624.000000 72.000000"
+"angles" "0.000000 90.000000 0.000000"
+"classname" "info_player_deathmatch"
+}
+{
+"absmin" "479.000000 2191.000000 23.000000"
+"absmax" "481.000000 2193.000000 25.000000"
+"origin" "480.000000 2192.000000 24.000000"
+"angles" "0.000000 90.000000 0.000000"
+"classname" "info_player_deathmatch"
+}
+{
+"absmin" "1119.000000 623.000000 23.000000"
+"absmax" "1121.000000 625.000000 25.000000"
+"origin" "1120.000000 624.000000 24.000000"
+"angles" "0.000000 90.000000 0.000000"
+"classname" "info_player_deathmatch"
+}
+{
+"absmin" "-689.000000 2159.000000 23.000000"
+"absmax" "-687.000000 2161.000000 25.000000"
+"origin" "-688.000000 2160.000000 24.000000"
+"angles" "0.000000 180.000000 0.000000"
+"classname" "info_player_deathmatch"
+}
+{
+}

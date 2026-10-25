@@ -1,0 +1,8 @@
+Jogo,A,B,X,Y,L1,R1,L2,R2,L3,R3,SELECT,START,VOL+ (toque),D-pad cima/baixo,D-pad esq/dir,Analógico esq.,Analógico dir. horizontal,Analógico dir. vertical
+Doom (Crispy Doom),pular,—,usar/abrir,—,arma anterior,próxima arma,—,atirar,andar devagar (liga/desliga),—,mapa,menu do jogo,menu do jogo,andar,girar,andar / de lado,girar,olhar cima/baixo
+Heretic (Crispy Heretic),— (o jogo não pula),—,usar/abrir,usar item,arma anterior,próxima arma,—,atirar,andar devagar (liga/desliga),centralizar o voo,mapa,menu do jogo,menu do jogo,voar sobe/desce,escolher item,andar / de lado,girar,olhar cima/baixo
+Hexen (Crispy Hexen),pular,—,usar/abrir,usar item,arma anterior,próxima arma,—,atirar,andar devagar (liga/desliga),centralizar o voo,mapa,menu do jogo,menu do jogo,voar sobe/desce,escolher item,andar / de lado,girar,olhar cima/baixo
+Strife (Crispy Strife),pular,—,usar/abrir/falar,usar item,arma anterior,próxima arma,—,atirar,andar devagar (liga/desliga),—,mapa,menu do jogo,menu do jogo,andar,escolher item,andar / de lado,girar,olhar cima/baixo (por limiar)
+Wolfenstein 3D (Wolf4SDL),— (o jogo não pula),—,usar/abrir,—,arma anterior,próxima arma,—,atirar,andar devagar (liga/desliga),—,— (o jogo não tem mapa),menu do jogo,menu do jogo,andar,girar,andar / de lado,girar,— (o jogo não olha cima/baixo)
+Duke Nukem 3D (JFDuke3D),pular,agachar,abrir,usar item,arma anterior,próxima arma,—,atirar,andar devagar (liga/desliga),—,mapa,menu do jogo,menu do jogo,andar,escolher item,andar / de lado,girar,olhar cima/baixo
+Quake (TyrQuake),pular / nadar para cima,nadar para baixo,— (no Quake as portas abrem ao chegar perto),—,arma anterior,próxima arma,—,atirar,andar devagar (liga/desliga),—,placar,menu do jogo,menu do jogo,andar,girar,andar / de lado,girar,olhar cima/baixo

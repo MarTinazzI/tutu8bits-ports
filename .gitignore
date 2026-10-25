@@ -1,0 +1,5 @@
+# tutu8bits-ports: os fontes baixados e o que o build gera ficam no .cache/ do tutu8bits (a pasta de cima);
+# aqui so temporarios
+*.log
+*.tmp
+*.bak

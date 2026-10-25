@@ -1,0 +1,4 @@
+# Freedoom 0.13.0 (spec 031, plano D-07): os dois jogos livres (Phase 1 e Phase 2) para o Crispy Doom. Vai no
+# pacote (BSD) pelo completar_cartao.sh e serve aos testes do qemu. O zip nao vai para o git.
+# Campos: arquivo|url|autor|licenca|sha256
+freedoom-0.13.0.zip|https://github.com/freedoom/freedoom/releases/download/v0.13.0/freedoom-0.13.0.zip|Freedoom project|BSD-3-Clause (COPYING.txt do zip)|3f9b264f3e3ce503b4fb7f6bdcb1f419d93c7b546f4df3e874dd878db9688f59

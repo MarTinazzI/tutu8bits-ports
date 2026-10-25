@@ -1,0 +1,30 @@
+{
+  "_origem": "spec 023 (T07): mapeamento SDL de game controller do i2c-keys para o PPSSPP standalone (PPSSPPSDLTUTU).",
+  "_medido": "spec 012, sessao 1 (ports/config/gametank_controle.json; KB §11k): UP b13, DOWN b16, LEFT b14, RIGHT b15, A b6, B b11, X b9, START b5, SELECT b12.",
+  "_deduzido": "Os demais saem da ordem em que o SDL 2.28.5 numera os botoes (src/joystick/linux/SDL_sysjoystick.c: primeiro os codigos >= BTN_JOYSTICK=288, depois 0..287 em ordem) aplicada aos 17 keycodes declarados pelo event0 (KB §7.1: 288, 314, 315, 19, 21, 28, 30, 38, 44, 45, 46, 48, 54, 103, 105, 106, 108 -> b0..b16). A conta bate com os 9 medidos. Y=21->b4, R1=19->b3, L1=38->b7, L2=44->b8, R2=46->b10, L3=314->b1, R3=315->b2. Eixos na ordem dos codigos ABS 0,1,2,5 -> a0..a3 (KB §11h: esquerdo = 0/1, direito = 2/5).",
+  "_nota": "SELECT entra (back): no PPSSPP e o Select do PSP. VOL+/VOL- nao sao do i2c-keys (chegam como teclado, KB §11i).",
+  "guid": "19001e5a010000001200000000010000",
+  "nome": "i2c-keys",
+  "layout": {
+    "A": "b6",
+    "B": "b11",
+    "X": "b9",
+    "Y": "b4",
+    "UP": "b13",
+    "DOWN": "b16",
+    "LEFT": "b14",
+    "RIGHT": "b15",
+    "START": "b5",
+    "SELECT": "b12",
+    "L1": "b7",
+    "R1": "b3",
+    "L2": "b8",
+    "R2": "b10",
+    "L3": "b1",
+    "R3": "b2",
+    "LX": "a0",
+    "LY": "a1",
+    "RX": "a2",
+    "RY": "a3"
+  }
+}

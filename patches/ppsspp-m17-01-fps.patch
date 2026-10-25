@@ -1,0 +1,72 @@
+Licença: GPL-2.0-or-later (a do PPSSPP, onde o patch entra) (spec 053)
+
+diff --git a/Core/HW/Display.cpp b/Core/HW/Display.cpp
+index 1ac986a..bb061ea 100644
+--- a/Core/HW/Display.cpp
++++ b/Core/HW/Display.cpp
+@@ -16,6 +16,8 @@
+ // https://github.com/hrydgard/ppsspp and http://www.ppsspp.org/.
+ 
+ #include <algorithm>
++#include <cstdio>
++#include <unistd.h>
+ #include <cmath>
+ #include <mutex>
+ #include <vector>
+@@ -71,12 +73,48 @@ static int frameTimeHistoryPos = 0;
+ static int frameTimeHistoryValid = 0;
+ static double lastFrameTimeHistory = 0.0;
+ 
++// M17 (spec 023, plano D-05): a velocidade do jogo no log, igual para o nucleo libretro e o
++// standalone. A cada ~5 s: "[M17] psp vps=V fps=F desenhado=D" (V = vblanks por segundo, 60 =
++// velocidade cheia; F = quadros do jogo; D = quadros desenhados depois do frameskip). Ao fechar o
++// jogo: "[M17] psp_media ..." com as medias desde o primeiro segundo.
++static double m17Seg = 0.0, m17SegJanela = 0.0, m17VBlanks = 0.0, m17Flips = 0.0, m17Desenhados = 0.0;
++static double m17JVBlanks = 0.0, m17JFlips = 0.0, m17JDesenhados = 0.0;
++
++// write(2) direto: no libretro, o file_stream_transforms.h troca fprintf/fflush pelas do VFS
++static void M17Escrever(const char *rotulo, double vps, double fpsJogo, double desenhado, double seg) {
++	char linha[160];
++	int n = snprintf(linha, sizeof(linha), "[M17] %s vps=%.2f fps=%.2f desenhado=%.2f segundos=%.1f\n",
++		rotulo, vps, fpsJogo, desenhado, seg);
++	if (n > 0)
++		(void)!write(2, linha, n < (int)sizeof(linha) ? n : (int)sizeof(linha) - 1);
++}
++
++static void M17RegistrarSegundo(double seg, double vblanks, int numFlipsDelta, int desenhados) {
++	if (lastFpsTime == 0.0 || seg <= 0.0 || seg > 10.0)
++		return;  // o primeiro intervalo vai do zero ao boot: nao conta
++	m17Seg += seg; m17VBlanks += vblanks; m17Flips += numFlipsDelta; m17Desenhados += desenhados;
++	m17SegJanela += seg; m17JVBlanks += vblanks; m17JFlips += numFlipsDelta; m17JDesenhados += desenhados;
++	if (m17SegJanela >= 5.0) {
++		M17Escrever("psp", m17JVBlanks / m17SegJanela, m17JFlips / m17SegJanela, m17JDesenhados / m17SegJanela, m17Seg);
++		m17SegJanela = m17JVBlanks = m17JFlips = m17JDesenhados = 0.0;
++	}
++}
++
++static void M17RegistrarMedia() {
++	if (m17Seg > 0.0) {
++		M17Escrever("psp_media", m17VBlanks / m17Seg, m17Flips / m17Seg, m17Desenhados / m17Seg, m17Seg);
++	}
++	m17Seg = m17SegJanela = m17VBlanks = m17Flips = m17Desenhados = 0.0;
++	m17JVBlanks = m17JFlips = m17JDesenhados = 0.0;
++}
++
+ static void CalculateFPS() {
+ 	double now = time_now_d();
+ 
+ 	if (now >= lastFpsTime + 1.0) {
+ 		double frames = (numVBlanks - lastFpsFrame);
+ 		actualFps = (float)(actualFlips - lastActualFlips);
++		M17RegistrarSegundo(now - lastFpsTime, frames, gpuStats.numFlips - lastNumFlips, actualFlips - lastActualFlips);
+ 
+ 		fps = frames / (now - lastFpsTime);
+ 		flips = (float)(g_Config.iDisplayRefreshRate * (double)(gpuStats.numFlips - lastNumFlips) / frames);
+@@ -312,6 +350,7 @@ void DisplayHWInit() {
+ }
+ 
+ void DisplayHWShutdown() {
++	M17RegistrarMedia();
+ 	std::lock_guard<std::mutex> guard(listenersLock);
+ 	flipListeners.clear();
+ }

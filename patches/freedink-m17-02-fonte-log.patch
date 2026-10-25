@@ -1,0 +1,57 @@
+Licença: GPL-3.0-or-later (a do GNU FreeDink, onde o patch entra) (spec 053)
+
+Spec 047 (plano D-02, RF-04, P8): com -DM17, a fonte dos dialogos em 24 (escolha do mantenedor), o pkgdatadir
+(onde fica a LiberationSans) pelo M17_PKGDATA do lancador e as linhas INFO no stderr (sem DEBUG.TXT).
+
+diff -ru a/src/gfx_fonts.h b/src/gfx_fonts.h
+--- a/src/gfx_fonts.h	2026-10-23 16:13:58.355386508 -0300
++++ b/src/gfx_fonts.h	2026-10-23 16:14:08.154830207 -0300
+@@ -44,7 +44,13 @@
+    different part of the font glyph (see doc/fonts.txt for
+    details). 16 matches that size with SDL_ttf (possibly only for
+    LiberationSans). */
++#ifdef M17
++/* M17 (spec 047, RF-04): 24 na tela de 480x272 (a imagem de 640x480 encolhe); escolha do mantenedor pelos prints do
++   spike. Vale tambem para a fonte do sistema (o "v1.08 FreeDink" do titulo) */
++#define FONT_SIZE 24
++#else
+ #define FONT_SIZE 16
++#endif
+ 
+ 
+ // D-Mod-defined font colors
+diff -ru a/src/paths.cpp b/src/paths.cpp
+--- a/src/paths.cpp	2026-10-23 16:13:58.355891325 -0300
++++ b/src/paths.cpp	2026-10-23 16:14:08.154878487 -0300
+@@ -189,6 +189,14 @@
+     /* (e.g. "/usr/share/freedink") */
+     pkgdatadir = br_build_path(BUILD_DATA_DIR, PACKAGE);
+ #endif
++#ifdef M17
++    /* M17 (spec 047): o lancador diz onde fica a fonte (tutu8bits/jogos/dink/), sem caminho de instalacao */
++    if (getenv("M17_PKGDATA") != NULL && *getenv("M17_PKGDATA"))
++      {
++        free(pkgdatadir);
++        pkgdatadir = strdup(getenv("M17_PKGDATA"));
++      }
++#endif
+   }
+ 
+   /** refdir  (e.g. "/usr/share/dink") **/
+diff -ru a/src/log.cpp b/src/log.cpp
+--- a/src/log.cpp	2026-10-23 16:18:05.821833513 -0300
++++ b/src/log.cpp	2026-10-23 16:18:05.830568260 -0300
+@@ -87,7 +87,13 @@
+   out = NULL;
+   debug_mode = 0;
+   SDL_LogResetPriorities();
++#ifdef M17
++  /* M17 (spec 047, P8): as linhas INFO (scripts, musica, graficos) vao para o stderr, que o lancador guarda no
++     ultimo.txt; sem o modo debug, que tambem gravaria um DEBUG.TXT na pasta do jogo (P6) */
++  SDL_LogSetAllPriority(SDL_LOG_PRIORITY_INFO);
++#else
+   SDL_LogSetAllPriority(SDL_LOG_PRIORITY_ERROR);
++#endif
+   /* Avoid startup error about X11 missing symbols */
+   SDL_LogSetPriority(SDL_LOG_CATEGORY_ERROR, SDL_LOG_PRIORITY_CRITICAL);
+   /* If you need to debug early: */

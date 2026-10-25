@@ -1,0 +1,6 @@
+# Duke Nukem 3D shareware 1.3d (spec 040, plano D-08): o 1o episodio. O LICENSE.TXT dele: "Individuals can -- and are
+# encouraged! -- to give away copies of the Game without charge", com "all of the Game's files as released by 3D Realms
+# ... included without modification". Vai no pacote INTEIRO e sem mudanca (completar_cartao.sh) e serve ao teste do
+# qemu. O arquivo e um 7z (abre com o 7z do PC). Nada disso vai para o git.
+# Campos: arquivo|url|autor|licenca|sha256
+3dduke13_data.7z|https://hendricks266.duke4.net/files/3dduke13_data.7z|3D Realms|shareware (LICENSE.TXT)|3fcdc3cb4c16e44a6a15f9a916ae9d2f131dc6297b324fbd656dd404f2050dec

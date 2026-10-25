@@ -1,0 +1,37 @@
+Licença: GPL-2.0 (a do Crispy Doom, onde o patch entra) (spec 053)
+
+diff --git a/src/strife/m_menu.c b/src/strife/m_menu.c
+index 231fccf..1574b3b 100644
+--- a/src/strife/m_menu.c
++++ b/src/strife/m_menu.c
+@@ -1034,7 +1034,15 @@ void M_SaveSelect(int choice)
+ 
+     M_StringCopy(saveOldString, savegamestrings[choice], sizeof(saveOldString));
+     if (!strcmp(savegamestrings[choice], DEH_String(EMPTYSTRING)))
++    {
+         savegamestrings[choice][0] = 0;
++#if defined(M17)
++        // M17 (spec 033): o aparelho nao tem teclado e o Strife exige um nome (o "Name your character" do New Game
++        // nao avanca com o nome vazio). Slot vazio ja vem com "STRIFE <n>"; o A confirma (o Doom e o Heretic ja
++        // preenchem o nome sozinhos)
++        M_snprintf(savegamestrings[choice], SAVESTRINGSIZE, "STRIFE %d", choice + 1);
++#endif
++    }
+     saveCharIndex = strlen(savegamestrings[choice]);
+ }
+ 
+@@ -2416,6 +2424,14 @@ boolean M_Responder (event_t* ev)
+             {
+                 key = key_menu_abort;
+             }
++#if defined(M17)
++            // M17 (spec 033): no nome do save, o voltar cancela (Esc), como no Doom e no Heretic; sem isto ele era
++            // o Backspace e apagava o nome, e com o nome vazio o "Name your character" nao sai
++            else if (saveStringEnter)
++            {
++                key = KEY_ESCAPE;
++            }
++#endif
+             else
+             {
+                 key = key_menu_back;

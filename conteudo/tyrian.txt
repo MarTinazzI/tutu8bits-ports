@@ -1,0 +1,5 @@
+# Tyrian 2.1 (spec 034, plano D-10): os dados do jogo, so para os testes do qemu. NAO vai no pacote nem no cartao:
+# o unico texto de licenca do zip (license.doc) e o contrato comercial da Epic MegaGames (proibe copias); o jogador
+# baixa e copia (roms/jogos/tyrian/LEIA-ME.txt). O zip nao vai para o git.
+# Campos: arquivo|url|autor|licenca|sha256
+tyrian21.zip|https://camanis.net/tyrian/tyrian21.zip|Epic MegaGames / Jason Emery (freeware 2004)|licenca comercial da Epic no zip (so teste)|7790d09a2a3addcd33c66ef063d5900eb81cc9c342f4807eb8356364dd1d9277

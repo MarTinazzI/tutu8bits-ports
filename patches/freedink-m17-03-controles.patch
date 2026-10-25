@@ -1,0 +1,257 @@
+Licença: GPL-3.0-or-later (a do GNU FreeDink, onde o patch entra) (spec 053)
+
+Spec 047 (plano D-03, D-04): com -DM17, o controle do aparelho no FreeDink.
+- input.cpp/.h: o indice fisico do SDL vira o "botao do Dink" (1-10) antes do mapa botao -> acao (que os D-Mods
+  trocam com set_button): A 6->1, B 11->2, X 9->3, Y 4->4, START 5->5, SELECT 12->6, L1 7->7, R1 3->8, L2 8->9,
+  R2 10->10; o D-pad (13-16) vira as setas; o analogico esquerdo anda (30 %). Ganchos de teste (botoes e eixos
+  simulados) para o roteiro do patch 05.
+- update_frame.cpp: o check_joystick usa a camada.
+- brain_mouse.cpp: nos menus de cursor, o direcional salta para o botao clicavel mais proximo naquela direcao, e o
+  analogico direito (eixos 2/3) move o cursor livre e proporcional (zona morta de 25 %, ate 6 px por quadro).
+- input.cpp: as teclas de volume (VOL-/VOL+ do rk29-keypad) nao chegam ao jogo (o motor procuraria um key-N).
+
+diff -ru a/src/brain_mouse.cpp b/src/brain_mouse.cpp
+--- a/src/brain_mouse.cpp	2026-10-23 16:14:08.163502951 -0300
++++ b/src/brain_mouse.cpp	2026-10-23 16:33:09.990116547 -0300
+@@ -2,6 +2,7 @@
+ #include <config.h>
+ #endif
+ 
++#include <stdlib.h>
+ #include "brain.h"
+ #include "live_sprites_manager.h"
+ #include "input.h"
+@@ -60,6 +61,89 @@
+ 	
+ }
+ 
++#ifdef M17
++/* M17 (spec 047, plano D-04): nos menus de cursor (o titulo e as telas de escolha, scripts de cada D-Mod), cada toque
++   no direcional leva o cursor ao centro do botao clicavel (touch_damage -1 com script, os mesmos que o clique procura)
++   mais proximo naquela direcao, em vez do andar continuo. Um D-Mod pode deixar um botao escondido mas ativo (o
++   Pilgrim's Quest deixa o "Begin" atras da tela de escolha), e o salto o acha tambem (spike). */
++static void m17_salto(int h)
++{
++	int ux = sjoy.rightd ? 1 : sjoy.leftd ? -1 : 0;
++	int uy = sjoy.downd ? 1 : sjoy.upd ? -1 : 0;
++	if (ux == 0 && uy == 0)
++		return;
++	if (ux != 0)
++		uy = 0;
++	int melhor = -1, mx = 0, my = 0;
++	for (int i = 1; i <= last_sprite_created; i++) {
++		if (!spr[i].active || i == h || spr[i].touch_damage != -1 || spr[i].script == 0)
++			continue;
++		rect box;
++		rect_copy(&box, &k[getpic(i)].hardbox);
++		rect_offset(&box, spr[i].x, spr[i].y);
++		int cx = (box.left + box.right) / 2, cy = (box.top + box.bottom) / 2;
++		int dx = cx - spr[h].x, dy = cy - spr[h].y;
++		int proj = dx * ux + dy * uy;
++		if (proj <= 4)
++			continue;
++		int perp = abs(dx * uy - dy * ux);
++		int nota = proj + 2 * perp;
++		if (melhor < 0 || nota < melhor) {
++			melhor = nota;
++			mx = cx;
++			my = cy;
++		}
++	}
++	if (melhor >= 0) {
++		spr[h].x = mx;
++		spr[h].y = my;
++		log_info("[M17] salto para %d,%d", mx, my);
++	}
++}
++
++/* M17 (spec 047, plano D-04): o analogico direito (eixos 2 e 3 do SDL, KB 11zg) move o cursor livre e proporcional:
++   zona morta de 25 % do curso, ate M17_CURSOR_MAX pixels por quadro (na resolucao do jogo, 640x480) com o analogico
++   na borda, com as fracoes acumuladas (anda devagar perto da zona morta). Quando para, o log diz onde ficou. */
++#define M17_CURSOR_ZONA 8192
++#define M17_CURSOR_MAX 6.0f
++static float m17_veloc(int v)
++{
++	int a = v < 0 ? -v : v;
++	if (a <= M17_CURSOR_ZONA)
++		return 0.0f;
++	float f = (float)(a - M17_CURSOR_ZONA) / (float)(32767 - M17_CURSOR_ZONA);
++	if (f > 1.0f)
++		f = 1.0f;
++	return (v < 0 ? -f : f) * M17_CURSOR_MAX;
++}
++
++static void m17_cursor(int h)
++{
++	static float fx = 0.0f, fy = 0.0f;
++	static int andando = 0;
++	float vx = m17_veloc(m17_eixo(2)), vy = m17_veloc(m17_eixo(3));
++	if (vx == 0.0f && vy == 0.0f) {
++		if (andando)
++			log_info("[M17] cursor em %d,%d", spr[h].x, spr[h].y);
++		andando = 0;
++		fx = fy = 0.0f;
++		return;
++	}
++	andando = 1;
++	fx += vx;
++	fy += vy;
++	int dx = (int)fx, dy = (int)fy;
++	fx -= dx;
++	fy -= dy;
++	spr[h].x += dx;
++	spr[h].y += dy;
++	if (spr[h].x > 640 - 1) spr[h].x = 640 - 1;
++	if (spr[h].y > 480 - 1) spr[h].y = 480 - 1;
++	if (spr[h].x < 0) spr[h].x = 0;
++	if (spr[h].y < 0) spr[h].y = 0;
++}
++#endif
++
+ void mouse_brain(int h)
+ {
+ 	
+@@ -76,6 +160,11 @@
+ 	if (sjoy.left) diag++;
+ 	if (sjoy.down) diag++;
+ 	if (sjoy.up) diag++;
++#ifdef M17
++	m17_salto(h);
++	m17_cursor(h);
++	diag = 0;   /* sem o andar continuo: o direcional so salta, o analogico direito anda */
++#endif
+ 	
+ 	
+     //*********************************PROCESS MOVEMENT							
+diff -ru a/src/input.cpp b/src/input.cpp
+--- a/src/input.cpp	2026-10-23 16:14:08.163469014 -0300
++++ b/src/input.cpp	2026-10-23 19:30:36.596430898 -0300
+@@ -54,6 +54,66 @@
+ SDL_Joystick* jinfo;
+ int joystick = /*true*/1;
+ 
++#ifdef M17
++/* indice fisico do SDL (KB 11k, 11zg) -> botao do Dink (1-10, o mapa padrao: 1 atacar, 2 falar, 3 magia, 4 inventario,
++   5 menu, 6 mapa, 7-10 os botoes extras dos D-Mods); negativo = uma seta (-acao). Tabela da spec 047, secao 8 */
++static const int m17_dink[17] = {
++  0,              /* 0  -                                                */
++  0,              /* 1  L3: livre                                        */
++  0,              /* 2  R3: a roda (patch 04)                            */
++  8,              /* 3  R1                                               */
++  4,              /* 4  Y: inventario                                    */
++  5,              /* 5  START: menu                                      */
++  1,              /* 6  A: atacar / clicar                               */
++  7,              /* 7  L1                                               */
++  9,              /* 8  L2                                               */
++  3,              /* 9  X: magia                                         */
++  10,             /* 10 R2                                               */
++  2,              /* 11 B: falar                                         */
++  6,              /* 12 SELECT: mapa                                     */
++  -ACTION_UP,     /* 13 D-pad cima                                       */
++  -ACTION_LEFT,   /* 14 D-pad esquerda                                   */
++  -ACTION_RIGHT,  /* 15 D-pad direita                                    */
++  -ACTION_DOWN,   /* 16 D-pad baixo                                      */
++};
++int m17_teste_ligado = 0;
++unsigned m17_teste_botoes = 0;
++int m17_teste_eixos[4] = { 0, 0, 0, 0 };
++
++int m17_botao(int i) {
++  if (m17_teste_ligado)
++    return i >= 0 && i < 32 && (m17_teste_botoes & (1u << i)) != 0;
++  return joystick && jinfo != NULL && SDL_JoystickGetButton(jinfo, i);
++}
++
++int m17_eixo(int a) {
++  if (m17_teste_ligado)
++    return (a >= 0 && a < 4) ? m17_teste_eixos[a] : 0;
++  return (joystick && jinfo != NULL && a < SDL_JoystickNumAxes(jinfo)) ? SDL_JoystickGetAxis(jinfo, a) : 0;
++}
++
++void m17_ler_controle(void) {
++  if (!joystick && !m17_teste_ligado)
++    return;
++  if (joystick && jinfo != NULL)
++    SDL_JoystickUpdate();
++  for (int i = 0; i < 17; i++) {
++    if (!m17_botao(i))
++      continue;
++    if (m17_dink[i] > 0)
++      sjoy.joybit[input_get_button_action(m17_dink[i] - 1)] = 1;
++    else if (m17_dink[i] < 0)
++      sjoy.joybit[-m17_dink[i]] = 1;
++  }
++  /* o analogico esquerdo anda, como no motor original (30 % do curso) */
++  int threshold = 32767 * 30 / 100, x = m17_eixo(0), y = m17_eixo(1);
++  if (x < -threshold) sjoy.left  = 1;
++  if (x > +threshold) sjoy.right = 1;
++  if (y < -threshold) sjoy.up    = 1;
++  if (y > +threshold) sjoy.down  = 1;
++}
++#endif
++
+ 
+ /* Access keyboard cached state */
+ Uint8 input_getscancodestate(SDL_Scancode scancode)
+@@ -228,6 +288,10 @@
+   log_info("Number of hats: %d", SDL_JoystickNumHats(jinfo));
+   
+   joystick = 1;
++#ifdef M17
++  log_info("[M17] botoes: dink (A=1 atacar, B=2 falar, X=3 magia, Y=4 inventario, START=5 menu, SELECT=6 mapa, "
++           "L1/R1/L2/R2=7-10, D-pad=setas)");
++#endif
+ }
+ 
+ void input_quit(void)
+@@ -305,6 +369,13 @@
+     return;
+ 
+   int scancode = ev->key.keysym.scancode;
++#ifdef M17
++  /* M17 (spec 047, sessao 2 no aparelho): o VOL- e o VOL+ chegam tambem como teclas (o rk29-keypad), e o motor
++     procura um key-N do D-Mod para toda tecla apertada ("Script key-129 not found" a cada toque no volume). O volume e
++     do aparelho (m17atalhos), nunca do jogo */
++  if (scancode == SDL_SCANCODE_VOLUMEDOWN || scancode == SDL_SCANCODE_VOLUMEUP)
++    return;
++#endif
+   scancodestate[scancode] = ev->key.state;
+ 
+   if (ev->key.state == SDL_PRESSED)
+diff -ru a/src/input.h b/src/input.h
+--- a/src/input.h	2026-10-23 16:14:08.161889116 -0300
++++ b/src/input.h	2026-10-23 16:24:22.599216288 -0300
+@@ -75,6 +75,17 @@
+   /* Joystick */
+   extern /*BOOL*/int joystick;
+   extern SDL_Joystick* jinfo;
++#ifdef M17
++  /* M17 (spec 047, plano D-03): o controle do aparelho. O indice fisico do SDL vira o "botao do Dink" (1-10) antes do
++     mapa botao -> acao, que os D-Mods podem trocar (set_button); o D-pad vira as setas. Os testes do qemu (sem
++     joystick) simulam botoes e eixos pelo roteiro (patch 05). */
++  extern int m17_botao(int i);             /* o botao fisico i esta apertado? */
++  extern int m17_eixo(int a);              /* o eixo a (-32768..32767) */
++  extern void m17_ler_controle(void);      /* botoes e analogico esquerdo -> sjoy (check_joystick) */
++  extern int m17_teste_ligado;             /* 1 = botoes e eixos do roteiro, nao do SDL */
++  extern unsigned m17_teste_botoes;        /* bit i = botao fisico i */
++  extern int m17_teste_eixos[4];
++#endif
+ 
+   extern void input_update(SDL_Event *ev);
+   extern void input_init();
+diff -ru a/src/update_frame.cpp b/src/update_frame.cpp
+--- a/src/update_frame.cpp	2026-10-23 16:14:08.163478174 -0300
++++ b/src/update_frame.cpp	2026-10-23 16:24:22.599334102 -0300
+@@ -90,7 +90,12 @@
+   sjoy.upd = 0;
+   sjoy.downd = 0;
+ 	
++#ifdef M17
++  m17_ler_controle();   /* spec 047 (D-03): botao fisico -> botao do Dink -> acao; D-pad = setas */
++  if (0)
++#else
+   if (joystick)
++#endif
+     {
+       SDL_JoystickUpdate(); // required even with joystick events enabled
+       Sint16 x_pos = 0, y_pos = 0;

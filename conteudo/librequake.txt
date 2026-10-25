@@ -1,0 +1,6 @@
+# LibreQuake v0.09-beta, pacote "lite" (spec 039, plano D-04): dados livres no lugar do id1 do Quake (BSD-3 nos modelos,
+# texturas e sons; GPL-2 no QuakeC; docs/README-IMPORTANT-LICENCE-INFO). Vai no pacote (completar_cartao.sh, em
+# tutu8bits/jogos/librequake/id1/) e serve ao teste do qemu. O "lite" e o feito para "low-powered hardware or older
+# source ports". O TyrQuake original le o colormap.lmp de 16384 bytes sem patch (spec 050, D-10). Nada disso vai para o git.
+# Campos: arquivo|url|autor|licenca|sha256
+lite.zip|https://github.com/lavenderdotpet/LibreQuake/releases/download/v0.09-beta/lite.zip|LibreQuake project|BSD-3-Clause / GPL-2.0 (docs/COPYING)|428e736b2f01d953e09a08c60bee975bdc4a0ac2219e97fa095c8af41754da83

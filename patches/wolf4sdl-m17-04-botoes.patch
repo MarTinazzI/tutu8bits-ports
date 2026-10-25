@@ -1,0 +1,67 @@
+Licença: GPL-2.0 ou a licenca da id (as do Wolf4SDL, onde o patch entra) (spec 053)
+
+diff --git a/id_in.c b/id_in.c
+index 8e46a57..dca484b 100644
+--- a/id_in.c
++++ b/id_in.c
+@@ -185,7 +185,8 @@ int IN_JoyButtons (void)
+     // (voltar), 2 X, 3 Y, 4 R2 (atirar), 5 L2 (andar devagar), 6 L1 (arma anterior), 7 R1 (proxima), 8 START (menu).
+     // Os menus usam os 4 primeiros (button0 = escolher, button1 = voltar); o jogo, a tabela buttonjoy (wl_play.c)
+     {
+-        static const int fisico[] = { 6, 11, 9, 4, 10, 8, 7, 3, 5 };
++        // M17 (spec 043, D-06): o botao logico 5 (andar devagar) passa do L2 (8) para o L3 (1; KB 11k, H)
++        static const int fisico[] = { 6, 11, 9, 4, 10, 1, 7, 3, 5 };
+         for (i = 0; i < (int) (sizeof(fisico) / sizeof(fisico[0])); i++)
+             if (fisico[i] < JoyNumButtons)
+                 res |= SDL_JoystickGetButton(Joystick, fisico[i]) << i;
+diff --git a/wl_play.c b/wl_play.c
+index 2327195..619c501 100644
+--- a/wl_play.c
++++ b/wl_play.c
+@@ -60,7 +60,9 @@ int buttonjoy[32] = {
+ #if defined(M17)
+     // M17 (spec 037, D-04): os botoes logicos do IN_JoyButtons (id_in.c): A usa, B e X/Y nada, R2 atira, L2 anda
+     // devagar (bt_run invertido em PollControls: sempre correndo), L1/R1 armas, START menu
+-    bt_use, bt_nobutton, bt_nobutton, bt_nobutton, bt_attack, bt_run, bt_prevweapon, bt_nextweapon,
++    // spec 043 (D-06): o esquema comum dos jogos de tiro: X (logico 2) usa; A, B e Y nada (o Wolf3D nao pula,
++    // nao agacha nem tem itens); o andar devagar (logico 5) e o L3, liga/desliga (PollControls)
++    bt_nobutton, bt_nobutton, bt_use, bt_nobutton, bt_attack, bt_run, bt_prevweapon, bt_nextweapon,
+     bt_esc, bt_nobutton, bt_nobutton, bt_nobutton, bt_nobutton, bt_nobutton, bt_nobutton, bt_nobutton,
+ #elif defined(_arch_dreamcast)
+     bt_attack, bt_strafe, bt_use, bt_run, bt_esc, bt_prevweapon, bt_nobutton, bt_nextweapon,
+@@ -368,6 +370,16 @@ void PollJoystickMove (void)
+     int lx = SDL_JoystickNumAxes (j) > 0 ? SDL_JoystickGetAxis (j, 0) / 256 : 0;
+     int ly = SDL_JoystickNumAxes (j) > 1 ? SDL_JoystickGetAxis (j, 1) / 256 : 0;
+     int rx = SDL_JoystickNumAxes (j) > 2 ? SDL_JoystickGetAxis (j, 2) / 256 : 0;
++    // spec 043 (D-04): sensibilidade do giro do analogico direito, 1..10 (padrao 5), do menu do jogo (M17_MIRA_SENS)
++    static int m17_sens = -1;
++    if (m17_sens < 0)
++    {
++        const char *e = getenv ("M17_MIRA_SENS");
++        m17_sens = e ? atoi (e) : 5;
++        if (m17_sens < 1 || m17_sens > 10)
++            m17_sens = 5;
++    }
++    rx = rx * m17_sens / 5;
+     int delta = buttonstate[bt_run] ? RUNMOVE * tics : BASEMOVE * tics;
+     const int zona = 24;   // de 127
+ 
+@@ -485,8 +497,16 @@ void PollControls (void)
+         PollJoystickButtons ();
+ 
+ #ifdef M17
+-    // M17 (spec 037, D-04): sempre correndo; segurar o botao de correr (L2 ou o Shift) anda devagar
+-    buttonstate[bt_run] = !buttonstate[bt_run];
++    // M17 (spec 037, D-04; spec 043, D-06): sempre correndo; o botao de correr (L3 ou o Shift) liga e desliga o
++    // andar devagar (antes: segurar)
++    {
++        static boolean m17_devagar, m17_antes;
++        const boolean m17_agora = buttonstate[bt_run];
++        if (m17_agora && !m17_antes)
++            m17_devagar = !m17_devagar;
++        m17_antes = m17_agora;
++        buttonstate[bt_run] = !m17_devagar;
++    }
+ #endif
+ 
+ //

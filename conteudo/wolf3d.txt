@@ -1,0 +1,6 @@
+# Wolfenstein 3D 1.4 shareware (spec 037, plano D-08): o 1o episodio, de distribuicao livre como shareware (o
+# READ1ST.TXT: "the author specifically grants the right to copy and distribute the software"; o VENDOR.DOC pede os
+# arquivos juntos). Vai no pacote INTEIRO e sem mudanca (completar_cartao.sh) e serve ao teste do qemu.
+# Nada disso vai para o git.
+# Campos: arquivo|url|autor|licenca|sha256
+wolf3d14.zip|https://maniacsvault.net/ecwolf/files/shareware/wolf3d14.zip|id Software / Apogee|shareware (READ1ST.TXT, VENDOR.DOC)|23efc1839b9bd91de43fbd036e55aca94271293dd46d176dafd40378b2f94108

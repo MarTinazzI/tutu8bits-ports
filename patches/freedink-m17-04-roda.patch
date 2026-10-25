@@ -1,0 +1,158 @@
+Licença: GPL-3.0-or-later (a do GNU FreeDink, onde o patch entra) (spec 053)
+
+Spec 047 (plano D-05, RF-11): com -DM17, a roda de opcoes (spec 048, src/emu/roda_m17/) no FreeDink.
+- input.cpp: o R3 (M17_R3, padrao 2) abre a roda por cima do ultimo quadro; a acao escolhida vira teclas SEGURADAS
+  por 150 ms (o motor so roda o key-N.c do D-Mod com a tecla apertada quando confere; depois espera 200 ms); os
+  eventos do joystick ficam ligados so com a roda aberta (o motor le o estado).
+- update_frame.cpp: m17_roda_quadro() a cada quadro.
+
+diff -ru a/src/input.cpp b/src/input.cpp
+--- a/src/input.cpp	2026-10-23 16:24:22.599309593 -0300
++++ b/src/input.cpp	2026-10-23 16:41:44.167874306 -0300
+@@ -76,6 +76,124 @@
+   -ACTION_RIGHT,  /* 15 D-pad direita                                    */
+   -ACTION_DOWN,   /* 16 D-pad baixo                                      */
+ };
++#include <ctype.h>
++#include "roda_sdl.h"
++#include "gfx.h"
++#include "IOGfxDisplay.h"
++
++/* M17 (spec 047, plano D-05): a roda de opcoes (048) no FreeDink. O R3 (M17_R3, padrao 2) abre a roda por cima do
++   ultimo quadro do jogo; a acao escolhida vira teclas SEGURADAS por M17_TECLA_MS: o motor so roda o key-N.c do
++   D-Mod se a tecla estiver apertada quando ele confere (brain_keyboard.cpp, input_getscancodestate), e depois espera
++   200 ms (but_timer) antes de aceitar outra. Uma tecla que desce e sobe no mesmo instante nao dispararia nada. */
++#define M17_TECLA_MS 150
++#define M17_TECLA_PAUSA 100
++static Roda m17_rd;
++static int m17_rd_lida = 0, m17_rd_tem = 0, m17_rd_rapido = 0, m17_r3 = -1, m17_r3_antes = 0;
++static SDL_Scancode m17_fila[16];
++static int m17_fila_n = 0;
++static SDL_Scancode m17_tecla = SDL_SCANCODE_UNKNOWN;
++static Uint32 m17_tecla_fim = 0, m17_proxima = 0;
++static void m17_soltar_tudo(void);
++
++/* o jogo parado ao fundo: o backbuffer do motor na textura, sem apresentar (a roda desenha por cima) */
++static void m17_fundo(void *ctx) {
++  (void)ctx;
++  SDL_Renderer* r = SDL_GetRenderer(g_display->window);
++  SDL_SetRenderDrawColor(r, 0, 0, 0, 255);
++  SDL_RenderClear(r);
++  SDL_Rect d;
++  g_display->centerScaledSurface(IOGFX_backbuffer, &d);
++  g_display->flip(IOGFX_backbuffer, &d, true, false);
++}
++
++/* a notacao da roda (D-04): letras/digitos = teclas; <Nome> = a tecla do SDL pelo nome; ^X, #, @ nao valem aqui */
++static void m17_executar(const char* acao) {
++  for (const char* a = acao; *a && m17_fila_n < 16; a++) {
++    SDL_Scancode sc = SDL_SCANCODE_UNKNOWN;
++    if (*a == '<') {
++      const char* f = strchr(a, '>');
++      char nome[32];
++      if (f == NULL || f - a - 1 >= (int)sizeof(nome)) {
++        log_error("[M17] roda: acao \"%s\" com <...> errado", acao);
++        return;
++      }
++      memcpy(nome, a + 1, f - a - 1);
++      nome[f - a - 1] = '\0';
++      sc = SDL_GetScancodeFromName(nome);
++      a = f;
++    } else if (*a == '^' || *a == '#' || *a == '@') {
++      log_error("[M17] roda: acao \"%s\" o FreeDink nao executa (so teclas)", acao);
++      return;
++    } else {
++      sc = SDL_GetScancodeFromKey(tolower((unsigned char)*a));
++    }
++    if (sc == SDL_SCANCODE_UNKNOWN) {
++      log_error("[M17] roda: tecla desconhecida em \"%s\"", acao);
++      return;
++    }
++    m17_fila[m17_fila_n++] = sc;
++  }
++}
++
++/* a cada quadro: segura a tecla da vez por M17_TECLA_MS, solta, espera M17_TECLA_PAUSA, passa a seguinte */
++static void m17_teclas_quadro(void) {
++  Uint32 agora = SDL_GetTicks();
++  if (m17_tecla != SDL_SCANCODE_UNKNOWN) {
++    if (SDL_TICKS_PASSED(agora, m17_tecla_fim)) {
++      scancodestate[m17_tecla] = 0;
++      m17_tecla = SDL_SCANCODE_UNKNOWN;
++      m17_proxima = agora + M17_TECLA_PAUSA;
++    } else {
++      scancodestate[m17_tecla] = 1;
++    }
++    return;
++  }
++  if (m17_fila_n > 0 && SDL_TICKS_PASSED(agora, m17_proxima)) {
++    m17_tecla = m17_fila[0];
++    memmove(m17_fila, m17_fila + 1, (--m17_fila_n) * sizeof(m17_fila[0]));
++    m17_tecla_fim = agora + M17_TECLA_MS;
++    scancodestate[m17_tecla] = 1;
++    scancodejustpressed[m17_tecla] = 1;
++    log_info("[M17] roda: tecla %s segurada", SDL_GetScancodeName(m17_tecla));
++  }
++}
++
++static void m17_soltar_tudo(void) {
++  if (m17_tecla != SDL_SCANCODE_UNKNOWN)
++    scancodestate[m17_tecla] = 0;
++  m17_tecla = SDL_SCANCODE_UNKNOWN;
++  m17_fila_n = 0;
++}
++
++void m17_roda_quadro(void) {
++  m17_teclas_quadro();
++  if (m17_r3 < 0)
++    m17_r3 = m17_roda_r3();
++  int r3 = m17_botao(m17_r3);
++  int desceu = r3 && !m17_r3_antes;
++  m17_r3_antes = r3;
++  if (!desceu)
++    return;
++  if (!m17_rd_lida) {
++    m17_rd_lida = 1;
++    m17_rd_tem = m17_roda_carregar(&m17_rd, &m17_rd_rapido);
++  }
++  if (!m17_rd_tem) {
++    log_info("[M17] roda: R3 sem roda");
++    return;
++  }
++  m17_soltar_tudo();
++  char acao[RODA_ACAO + 1];
++  /* o motor le o joystick pelo estado, com os eventos desligados; a roda le por eventos */
++  SDL_JoystickEventState(SDL_ENABLE);
++  int r = m17_roda(SDL_GetRenderer(g_display->window), &m17_rd, m17_rd_rapido, m17_fundo, NULL, acao, sizeof(acao));
++  SDL_JoystickEventState(SDL_IGNORE);
++  SDL_FlushEvents(SDL_JOYAXISMOTION, SDL_JOYDEVICEREMOVED);
++  m17_r3_antes = m17_botao(m17_r3);
++  if (r == 1)
++    m17_executar(acao);
++}
++
+ int m17_teste_ligado = 0;
+ unsigned m17_teste_botoes = 0;
+ int m17_teste_eixos[4] = { 0, 0, 0, 0 };
+diff -ru a/src/input.h b/src/input.h
+--- a/src/input.h	2026-10-23 16:24:22.599216288 -0300
++++ b/src/input.h	2026-10-23 16:41:25.474590635 -0300
+@@ -85,6 +85,7 @@
+   extern int m17_teste_ligado;             /* 1 = botoes e eixos do roteiro, nao do SDL */
+   extern unsigned m17_teste_botoes;        /* bit i = botao fisico i */
+   extern int m17_teste_eixos[4];
++  extern void m17_roda_quadro(void);       /* patch 04: o R3 abre a roda; as teclas escolhidas, seguradas */
+ #endif
+ 
+   extern void input_update(SDL_Event *ev);
+diff -ru a/src/update_frame.cpp b/src/update_frame.cpp
+--- a/src/update_frame.cpp	2026-10-23 16:24:22.599334102 -0300
++++ b/src/update_frame.cpp	2026-10-23 16:41:25.474672865 -0300
+@@ -92,6 +92,7 @@
+ 	
+ #ifdef M17
+   m17_ler_controle();   /* spec 047 (D-03): botao fisico -> botao do Dink -> acao; D-pad = setas */
++  m17_roda_quadro();    /* spec 047 (D-05): o R3 abre a roda; a tecla escolhida fica segurada alguns quadros */
+   if (0)
+ #else
+   if (joystick)

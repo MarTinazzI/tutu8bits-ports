@@ -1,0 +1,24 @@
+Licença: GPL-3.0 (a do NXEngine-evo, onde o patch entra) (spec 053)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index adc3e3e..6fe8599 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -57,7 +57,7 @@ ENDIF()
+ find_package(SDL2_mixer REQUIRED)
+ find_package(SDL2_image REQUIRED)
+ find_package(PNG REQUIRED)
+-find_package(JPEG REQUIRED)
++# M17 (spec 030, plano D-03): nenhum fonte inclui jpeglib.h; sem JPEG
+ 
+ include_directories(${SDL2_INCLUDE_DIR})
+ include_directories(${SDL2_MIXER_INCLUDE_DIR})
+@@ -128,7 +128,7 @@ IF(PLATFORM STREQUAL "pc")
+             add_definitions(-DDATADIR="${CMAKE_INSTALL_FULL_DATADIR}/nxengine/data/")
+         ENDIF()
+     ENDIF()
+-    target_link_libraries(nx ${SDL2_LIBRARY} ${SDL2_MIXER_LIBRARY} ${SDL2_IMAGE_LIBRARY} ${PNG_LIBRARY} ${JPEG_LIBRARY})
++    target_link_libraries(nx ${SDL2_LIBRARY} ${SDL2_MIXER_LIBRARY} ${SDL2_IMAGE_LIBRARY} ${PNG_LIBRARY})
+ 
+ ELSEIF(PLATFORM STREQUAL "vita")
+     add_definitions("-std=gnu++11")

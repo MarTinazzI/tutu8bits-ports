@@ -1,0 +1,46 @@
+Licença: GPL-2.0 nos trechos do jogo (src/); licenca do Build de Ken Silverman (nao comercial) nos trechos de jfbuild/ (spec 053)
+
+diff --git a/src/game.c b/src/game.c
+index d6c2782..489d8e8 100644
+--- a/src/game.c
++++ b/src/game.c
+@@ -2063,6 +2063,19 @@ void showtwoscreens(void)
+     }
+ }
+ 
++#ifdef M17
++// M17 (spec 040, D-06): chamada pelo SDL_QUIT (jfbuild/src/sdlayer2.c): saida rapida (qe) pela rotina do jogo, que
++// grava a configuracao (Shutdown -> CONFIG_WriteSetup); o lancar.sh confere a linha "[M17] saida"
++void m17_sair(void)
++{
++    qe = 1;
++    buildprintf("[M17] saida\n");
++    fprintf(stderr, "[M17] saida\n");
++    fflush(stderr);
++    gameexit("");
++}
++#endif
++
+ void gameexit(const char *t)
+ {
+     if(*t != 0) ps[myconnectindex].palette = &palette[0];
+diff --git a/jfbuild/src/sdlayer2.c b/jfbuild/src/sdlayer2.c
+index fb4ed55..4e86dbd 100644
+--- a/jfbuild/src/sdlayer2.c
++++ b/jfbuild/src/sdlayer2.c
+@@ -1418,6 +1418,15 @@ int handleevents(void)
+ 				break;
+ 
+ 			case SDL_QUIT:
++#ifdef M17
++				{
++					// M17 (spec 040, D-06): o SIGTERM do SELECT+START vira SDL_QUIT; o jogo (game.c) nao olha o quitevent:
++					// sai pela rotina normal dele (grava a configuracao), sem as telas do shareware
++					extern void m17_sair(void) __attribute__((weak));   // so o jogo a tem (o editor nao)
++					if (m17_sair)
++						m17_sair();
++				}
++#endif
+ 				quitevent = 1;
+ 				rv=-1;
+ 				break;

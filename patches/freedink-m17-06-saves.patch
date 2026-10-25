@@ -1,0 +1,47 @@
+Licença: GPL-3.0-or-later (a do GNU FreeDink, onde o patch entra) (spec 053)
+
+Spec 047 (RF-07, P6; achado na sessao 1 no aparelho): com -DM17, o save do FreeDink so e gravado em
+$HOME/.dink/<D-Mod>/ (o lancador aponta o HOME para saves/jogos/dink). O motor gravava primeiro na pasta do jogo,
+que no cartao aceita escrita (o save do Dink foi parar em tutu8bits/jogos/dink/dink/save1.dat). A pasta do jogo
+continua sendo lida. E o nome do D-Mod (a pasta de ~/.dink/) sai do comprimento do nome, nao do prefixo do caminho.
+
+diff -ru a/src/paths.cpp b/src/paths.cpp
+--- a/src/paths.cpp	2026-10-23 18:14:52.898377398 -0300
++++ b/src/paths.cpp	2026-10-23 18:16:39.002306751 -0300
+@@ -338,7 +338,13 @@
+ 	log_error("Error: not loading nameless D-Mod '%s'", start);
+ 	return false;
+       }
++#ifdef M17
++    /* M17 (spec 047): o comprimento do NOME (o original media o prefixo do caminho: com --game relativo o nome saia
++       vazio e todos os D-Mods dividiam ~/.dink/; com um caminho curto, um nome longo era cortado) */
++    int dmodname_len = strlen(start);
++#else
+     int dmodname_len = start - dmoddir;
++#endif
+     dmodname = (char*)malloc(dmodname_len+1);
+     strncpy(dmodname, start, dmodname_len);
+     dmodname[dmodname_len] = '\0';
+@@ -487,13 +493,21 @@
+   /* Try ~/.dink (if present) when reading - but don't try that first
+      when writing - except in Emscripten where we need a stable,
+      exclusive mount point. */
+-#ifndef __EMSCRIPTEN__
++#if !defined(__EMSCRIPTEN__) && !defined(M17)
+   if (strchr(mode, 'r') != NULL)
+ #endif
+     fp = fopen(fullpath_in_userappdir, mode);
+ 
+   /* Try in the D-Mod dir */
++#ifdef M17
++  /* M17 (spec 047, RF-07, P6; sessao 1 no aparelho): o save so e GRAVADO em $HOME/.dink/<D-Mod>/ (saves/jogos/dink/,
++     a area do usuario). Sem isto o motor gravava primeiro na pasta do jogo, que no cartao aceita escrita: o save do Dink
++     caiu em tutu8bits/jogos/dink/dink/ (o levar.sh o apagaria) e o de um D-Mod cairia na pasta dele. A pasta do jogo
++     ainda e LIDA (um save que ja esteja la continua abrindo). */
++  if (fp == NULL && strchr(mode, 'w') == NULL && strchr(mode, 'a') == NULL)
++#else
+   if (fp == NULL)
++#endif
+     fp = fopen(fullpath_in_dmoddir, mode);
+ 
+   /* Then try in ~/.dink */

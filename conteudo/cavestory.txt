@@ -1,0 +1,5 @@
+# Cave Story freeware (traducao em ingles da Aeon Genesis) para os testes do NXEngine-evo (spec 030, plano D-10).
+# Nunca vai para o git nem para o pacote: o jogador baixa (cartao/roms/jogos/cavestory/LEIA-ME.txt).
+# O zip traz CaveStory/Doukutsu.exe e CaveStory/data/. cavestory.org redireciona para cavestory.one (2026-10-20).
+# Campos: arquivo|url|autor|licenca|sha256
+cavestoryen.zip|https://www.cavestory.org/downloads/cavestoryen.zip|Studio Pixel (2004); traducao Aeon Genesis|freeware (Readme.txt do zip: "This program is freeware."); sem redistribuicao pelo projeto|aa87fa30bee9b4980640c7e104791354e0f1f6411ee0d45a70af70046aa0685f

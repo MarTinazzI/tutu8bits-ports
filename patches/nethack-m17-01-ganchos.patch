@@ -1,0 +1,171 @@
+Licença: NGPL (NetHack General Public License, a do NetHack, onde o patch entra) (spec 053)
+
+diff --git a/include/config.h b/include/config.h
+index b606b5d..515fbb5 100644
+--- a/include/config.h
++++ b/include/config.h
+@@ -261,7 +261,8 @@
+  *
+  */
+ 
+-#if defined(UNIX) && !defined(ZLIB_COMP) && !defined(COMPRESS)
++/* M17 (spec 036, plano D-17): save sem compressao externa (o aparelho nao tem o compress) */
++#if defined(UNIX) && !defined(ZLIB_COMP) && !defined(COMPRESS) && !defined(M17)
+ /* path and file name extension for compression program */
+ #define COMPRESS "/usr/bin/compress" /* Lempel-Ziv compression */
+ #define COMPRESS_EXTENSION ".Z"      /* compress's extension */
+diff --git a/src/do_name.c b/src/do_name.c
+index 2c3f4e6..13ff875 100644
+--- a/src/do_name.c
++++ b/src/do_name.c
+@@ -625,6 +625,9 @@ int gloc;
+     return (pick_cnt > 0);
+ }
+ 
++#ifdef M17 /* spec 036 (D-09): a interface sabe quando o jogo pede uma posicao no mapa */
++#define getpos getpos_m17orig
++#endif
+ int
+ getpos(ccp, force, goal)
+ coord *ccp;
+@@ -986,6 +989,24 @@ const char *goal;
+     return result;
+ }
+ 
++#ifdef M17
++#undef getpos
++extern void FDECL(m17nh_contexto_posicao, (int));
++int
++getpos(ccp, force, goal)
++coord *ccp;
++boolean force;
++const char *goal;
++{
++    int r;
++
++    m17nh_contexto_posicao(1);
++    r = getpos_m17orig(ccp, force, goal);
++    m17nh_contexto_posicao(0);
++    return r;
++}
++#endif
++
+ /* allocate space for a monster's name; removes old name if there is one */
+ void
+ new_mname(mon, lth)
+diff --git a/src/end.c b/src/end.c
+index 4df88ce..f141d53 100644
+--- a/src/end.c
++++ b/src/end.c
+@@ -1708,6 +1708,9 @@ void
+ nh_terminate(status)
+ int status;
+ {
++#ifdef M17 /* spec 036: fim normal do programa (salvo, morte, desistencia) */
++    fprintf(stderr, "[M17] fim\n");
++#endif
+     program_state.in_moveloop = 0; /* won't be returning to normal play */
+ #ifdef MAC
+     getreturn("to exit");
+diff --git a/src/save.c b/src/save.c
+index e0af4b8..ac910b7 100644
+--- a/src/save.c
++++ b/src/save.c
+@@ -272,6 +272,9 @@ dosave0()
+     nh_compress(fq_save);
+     /* this should probably come sooner... */
+     program_state.something_worth_saving = 0;
++#ifdef M17 /* spec 036 (D-15): o lancador ve que salvou */
++    fprintf(stderr, "[M17] salvo\n");
++#endif
+     return 1;
+ }
+ 
+diff --git a/src/windows.c b/src/windows.c
+index 94ac40f..47241a3 100644
+--- a/src/windows.c
++++ b/src/windows.c
+@@ -6,6 +6,9 @@
+ #ifdef TTY_GRAPHICS
+ #include "wintty.h"
+ #endif
++#ifdef M17_GRAPHICS /* M17 (spec 036, plano D-02): a interface do aparelho, em SDL2 */
++extern struct window_procs m17_procs;
++#endif
+ #ifdef CURSES_GRAPHICS
+ extern struct window_procs curses_procs;
+ #endif
+@@ -92,6 +95,9 @@ static struct win_choices {
+     void *FDECL((*chain_routine), (int, int, void *, void *, void *));
+ #endif
+ } winchoices[] = {
++#ifdef M17_GRAPHICS
++    { &m17_procs, 0 CHAINR(0) },
++#endif
+ #ifdef TTY_GRAPHICS
+     { &tty_procs, win_tty_init CHAINR(0) },
+ #endif
+diff --git a/sys/share/unixtty.c b/sys/share/unixtty.c
+index 3196f3b..b382340 100644
+--- a/sys/share/unixtty.c
++++ b/sys/share/unixtty.c
+@@ -38,9 +38,11 @@
+ #endif /* POSIX_TYPES */
+ #ifdef LINUX
+ #include <sys/ioctl.h>
++#ifndef M17 /* M17 (spec 036): sem a curses do sistema (a interface e a m17, em SDL2) */
+ #undef delay_output /* curses redefines this */
+ #include <curses.h>
+ #endif
++#endif
+ #define kill_sym c_cc[VKILL]
+ #define erase_sym c_cc[VERASE]
+ #define intr_sym c_cc[VINTR]
+diff --git a/sys/unix/unixmain.c b/sys/unix/unixmain.c
+index 1e78801..fb7ad12 100644
+--- a/sys/unix/unixmain.c
++++ b/sys/unix/unixmain.c
+@@ -45,6 +45,16 @@ static void NDECL(wd_message);
+ static boolean wiz_error_flag = FALSE;
+ static struct passwd *NDECL(get_unix_pw);
+ 
++#ifdef M17
++static void
++m17_sigterm(sig)
++int sig;
++{
++    nhUse(sig);
++    program_state.done_hup++;
++}
++#endif
++
+ int
+ main(argc, argv)
+ int argc;
+@@ -203,6 +213,12 @@ char *argv[];
+     program_state.preserve_locks = 1;
+ #ifndef NO_SIGNAL
+     sethanguphandler((SIG_RET_TYPE) hangup);
++#ifdef M17
++    /* spec 036 (D-15): o SELECT+START do aparelho manda SIGTERM. O tratador so marca o pedido: a interface m17 para de
++       esperar tecla e o jogo salva pelo caminho normal do hangup (rhack -> end_of_input), fora do tratador de sinal
++       (salvar dentro dele travava com o SDL esperando eventos) */
++    (void) signal(SIGTERM, m17_sigterm);
++#endif
+ #endif
+ 
+     process_options(argc, argv); /* command line options */
+diff --git a/util/makedefs.c b/util/makedefs.c
+index cd971bc..e71198d 100644
+--- a/util/makedefs.c
++++ b/util/makedefs.c
+@@ -1731,6 +1731,9 @@ struct win_info {
+         *name;      /* description, often same as id */
+ };
+ static struct win_info window_opts[] = {
++#ifdef M17_GRAPHICS /* M17 (spec 036): a interface do aparelho */
++    { "m17", "M17 (SDL2)" },
++#endif
+ #ifdef TTY_GRAPHICS
+     { "tty",
+       /* testing 'USE_TILES' here would bring confusion because it could

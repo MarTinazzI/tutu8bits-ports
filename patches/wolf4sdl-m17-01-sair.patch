@@ -1,0 +1,23 @@
+Licença: GPL-2.0 ou a licenca da id (as do Wolf4SDL, onde o patch entra) (spec 053)
+
+diff --git a/wl_main.c b/wl_main.c
+index 840c6de..3da362d 100644
+--- a/wl_main.c
++++ b/wl_main.c
+@@ -1415,6 +1415,16 @@ void Quit (const char *errorStr, ...)
+ 
+     ShutdownId ();
+ 
++#ifdef M17
++    // M17 (spec 037, D-05): o SIGTERM do SELECT+START vira SDL_QUIT -> Quit(NULL) (id_in.c), que grava a configuracao;
++    // o lancar.sh confere esta linha (fim normal)
++    if (!ret)
++    {
++        fprintf (stderr, "[M17] saida\n");
++        fflush (stderr);
++    }
++#endif
++
+     if (ret)
+         Error (error);
+ 

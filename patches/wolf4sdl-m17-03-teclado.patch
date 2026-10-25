@@ -1,0 +1,92 @@
+Licença: GPL-2.0 ou a licenca da id (as do Wolf4SDL, onde o patch entra) (spec 053)
+
+diff --git a/Makefile b/Makefile
+index dde53d0..04fa28f 100644
+--- a/Makefile
++++ b/Makefile
+@@ -60,6 +60,8 @@ else
+     SRCS += dosbox/dbopl.cpp
+ endif
+ SRCS += id_ca.c
++# M17 (spec 037, D-06): o teclado virtual da spec 036 (a receita copia teclado*.c para ca e passa M17_SRCS)
++SRCS += $(M17_SRCS)
+ SRCS += id_in.c
+ SRCS += id_pm.c
+ SRCS += id_sd.c
+diff --git a/id_us.c b/id_us.c
+index 88a5590..adaab09 100644
+--- a/id_us.c
++++ b/id_us.c
+@@ -481,10 +481,32 @@ char USL_RotateChar(char ch, int dir)
+ //		returned
+ //
+ ///////////////////////////////////////////////////////////////////////////
++#ifdef M17
++#include "teclado.h"
++// M17 (spec 037, D-06): o texto (nome do save e do placar) pelo teclado virtual da spec 036; quem chama poe o titulo
++const char *m17_titulo;
++extern SDL_Renderer *renderer;
++#endif
+ boolean
+ US_LineInput(int x,int y,char *buf,const char *def,boolean escok,
+ 				int maxchars,int maxwidth)
+ {
++#ifdef M17
++	{
++		char b[256];
++		int ok;
++		snprintf (b, sizeof(b), "%s", def ? def : buf);
++		if (maxchars > (int) sizeof(b) - 1)
++			maxchars = sizeof(b) - 1;
++		ok = m17_teclado (renderer, m17_titulo ? m17_titulo : "Texto", b, maxchars);
++		m17_titulo = NULL;
++		if (ok)
++			snprintf (buf, maxchars + 1, "%s", b);
++		IN_ClearKeysDown ();
++		(void) x; (void) y; (void) escok; (void) maxwidth;
++		return ok ? true : false;
++	}
++#endif
+ 	boolean		redraw,
+ 				cursorvis,cursormoved,
+ 				done,result, checkkey;
+diff --git a/wl_inter.c b/wl_inter.c
+index d25bc8b..33dd11e 100644
+--- a/wl_inter.c
++++ b/wl_inter.c
+@@ -1168,6 +1168,15 @@ CheckHighScore (int32_t score, word other)
+         // got a high score
+         //
+         PrintY = 76 + (16 * n);
++#ifdef M17
++        {
++            extern const char *m17_titulo;
++            extern int m17_teclado_nome (char *dst, int tam);
++            m17_titulo = "Seu nome no placar";   // spec 037, D-06
++            // spec 042: o teclado ja abre com um nome da lista (M17_NOMES), no lugar do ALT+X
++            m17_teclado_nome (Scores[n].name, MaxHighName + 1);
++        }
++#endif
+ #ifndef SPEAR
+         PrintX = 4 * 8;
+         backcolor = BORDCOLOR;
+diff --git a/wl_menu.c b/wl_menu.c
+index 0b72c63..96ec38e 100644
+--- a/wl_menu.c
++++ b/wl_menu.c
+@@ -1576,6 +1576,15 @@ CP_SaveGame (int quick)
+ 
+             snprintf (input,sizeof(input),"%s",SaveGameNames[which]);
+             name[7] = which + '0';
++#ifdef M17
++            {
++                // M17 (spec 037, D-06): vaga vazia ja vem com um nome (episodio e fase); START confirma no teclado
++                extern const char *m17_titulo;
++                if (!SaveGamesAvail[which] || !input[0])
++                    snprintf (input, sizeof(input), "E%d F%d", gamestate.episode + 1, gamestate.mapon + 1);
++                m17_titulo = "Nome do save";
++            }
++#endif
+ 
+             fontnumber = 0;
+             if (!SaveGamesAvail[which])

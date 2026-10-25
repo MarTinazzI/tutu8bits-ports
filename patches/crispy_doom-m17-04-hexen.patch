@@ -1,0 +1,79 @@
+Licença: GPL-2.0 (a do Crispy Doom, onde o patch entra) (spec 053)
+
+diff --git a/src/hexen/g_game.c b/src/hexen/g_game.c
+index 6ed6c3f..e2e59e5 100644
+--- a/src/hexen/g_game.c
++++ b/src/hexen/g_game.c
+@@ -326,8 +326,13 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
+ 
+     // Allow joybspeed hack.
+ 
++#if defined(M17)
++    // M17 (spec 038, D-03; como no Heretic): sempre correndo; segurar o botao de correr (L2) anda devagar
++    speed = true;
++#else
+     speed = (key_speed >= NUMKEYS
+         || joybspeed >= MAX_JOY_BUTTONS);
++#endif
+     speed ^= speedkeydown();
+ 
+     // haleyjd: removed externdriver crap
+diff --git a/src/hexen/mn_menu.c b/src/hexen/mn_menu.c
+index 333d09b..35c2fa4 100644
+--- a/src/hexen/mn_menu.c
++++ b/src/hexen/mn_menu.c
+@@ -2048,6 +2048,11 @@ boolean MN_Responder(event_t * event)
+     // "close" button pressed on window?
+     if (event->type == ev_quit)
+     {
++#if defined(M17)
++        // M17 (spec 038, D-03; como no Heretic, spec 033): o SIGTERM do m17atalhos (SELECT+START) chega como um
++        // "fechar" so; sem isto ele abriria a pergunta "deseja sair?". Sai direto (grava a config).
++        I_Quit();
++#endif
+         // First click on close = bring up quit confirm message.
+         // Second click = confirm quit.
+ 
+@@ -2110,8 +2115,16 @@ boolean MN_Responder(event_t * event)
+ 
+ #define JOY_BUTTON_MAPPED(x) ((x) >= 0)
+ #define JOY_BUTTON_PRESSED(x) (JOY_BUTTON_MAPPED(x) && (event->data1 & (1 << (x))) != 0)
++#if defined(M17)
++// M17 (spec 038, D-03; como no Heretic, spec 033): no menu, A (6) escolhe e B (11) volta, como no tutu8bits
++#define JOYB_MENU_OK 6
++#define JOYB_MENU_VOLTAR 11
++#else
++#define JOYB_MENU_OK joybfire
++#define JOYB_MENU_VOLTAR joybuse
++#endif
+ 
+-            if (JOY_BUTTON_PRESSED(joybfire))
++            if (JOY_BUTTON_PRESSED(JOYB_MENU_OK))
+             {
+                 // Simulate pressing "Enter" when we are supplying a save slot name
+                 if (FileMenuKeySteal)
+@@ -2129,7 +2142,7 @@ boolean MN_Responder(event_t * event)
+                 }
+                 joywait = I_GetTime() + 5;
+             }
+-            if (JOY_BUTTON_PRESSED(joybuse))
++            if (JOY_BUTTON_PRESSED(JOYB_MENU_VOLTAR))
+             {
+                 // If user was entering a save name, back out
+                 if (FileMenuKeySteal)
+@@ -2145,13 +2158,13 @@ boolean MN_Responder(event_t * event)
+         }
+         else if (askforquit)
+         {
+-            if (JOY_BUTTON_PRESSED(joybfire))
++            if (JOY_BUTTON_PRESSED(JOYB_MENU_OK))
+             {
+                 // Simulate a 'Y' keypress
+                 key = key_menu_confirm;
+                 joywait = I_GetTime() + 5;
+             }
+-            if (JOY_BUTTON_PRESSED(joybuse))
++            if (JOY_BUTTON_PRESSED(JOYB_MENU_VOLTAR))
+             {
+                 // Simulate a 'N' keypress
+                 key = key_menu_abort;

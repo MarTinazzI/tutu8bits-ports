@@ -1,0 +1,66 @@
+Licença: GPL-2.0 (a do Crispy Doom, onde o patch entra) (spec 053)
+
+diff --git a/src/doom/m_menu.c b/src/doom/m_menu.c
+index 919258a..6d929b8 100644
+--- a/src/doom/m_menu.c
++++ b/src/doom/m_menu.c
+@@ -2343,6 +2343,11 @@ boolean M_Responder (event_t* ev)
+     // "close" button pressed on window?
+     if (ev->type == ev_quit)
+     {
++#if defined(M17)
++        // M17 (spec 031, D-04): o SIGTERM do m17atalhos (SELECT+START) chega como um "fechar" so; sem
++        // isto ele abriria a pergunta "deseja sair?" e o jogo nao fecharia. Sai direto (grava a config).
++        I_Quit();
++#endif
+         // First click on close button = bring up quit confirm message.
+         // Second click on close button = confirm quit
+ 
+diff --git a/src/heretic/mn_menu.c b/src/heretic/mn_menu.c
+index b4a2836..352980d 100644
+--- a/src/heretic/mn_menu.c
++++ b/src/heretic/mn_menu.c
+@@ -1969,6 +1969,11 @@ boolean MN_Responder(event_t * event)
+     // "close" button pressed on window?
+     if (event->type == ev_quit)
+     {
++#if defined(M17)
++        // M17 (spec 033, D-02; como no Doom, spec 031): o SIGTERM do m17atalhos (SELECT+START) chega como um
++        // "fechar" so; sem isto ele abriria a pergunta "deseja sair?". Sai direto (grava a config).
++        I_Quit();
++#endif
+         // First click on close = bring up quit confirm message.
+         // Second click = confirm quit.
+ 
+diff --git a/src/i_main.c b/src/i_main.c
+index c5967a6..288eda9 100644
+--- a/src/i_main.c
++++ b/src/i_main.c
+@@ -82,7 +82,11 @@ int main(int argc, char **argv)
+     M_FindResponseFile();
+     M_SetExeDir();
+ 
++#if !defined(M17)
+     SDL_SetHint(SDL_HINT_NO_SIGNAL_HANDLERS, "1");
++#endif
++    // M17 (spec 031, D-04): com os tratadores do SDL, o SIGTERM do m17atalhos vira SDL_QUIT -> ev_quit ->
++    // I_Quit (m_menu.c), que grava a configuracao e sai com 0; sem eles o sinal matava o jogo (rc 143)
+ 
+     // start doom
+ 
+diff --git a/src/strife/m_menu.c b/src/strife/m_menu.c
+index eca6c36..e530dc1 100644
+--- a/src/strife/m_menu.c
++++ b/src/strife/m_menu.c
+@@ -2319,6 +2319,11 @@ boolean M_Responder (event_t* ev)
+     // "close" button pressed on window?
+     if (ev->type == ev_quit)
+     {
++#if defined(M17)
++        // M17 (spec 033, D-02; como no Doom, spec 031): o SIGTERM do m17atalhos (SELECT+START) chega como um
++        // "fechar" so; sem isto ele abriria a pergunta "deseja sair?". Sai direto (grava a config).
++        I_Quit();
++#endif
+         // First click on close button = bring up quit confirm message.
+         // Second click on close button = confirm quit
+ 

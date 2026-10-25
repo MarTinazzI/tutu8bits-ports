@@ -1,0 +1,152 @@
+# Gerado por src/emu/build.sh — binarios em .cache/emu/out (fora do git).
+# arquivo|sha256|bytes|componente|ref|licenca|opcoes
+# CPU: -march=armv7-a -mtune=cortex-a9 -mfpu=neon -mfloat-abi=softfp
+system/PPSSPP/|28710ec72df453e824376c055b49d33197bb91bf4245c7c2fda6b59b287f4b30|178 arquivos|ppsspp|fa50bb1976065c4f8b1b47af227d367fe9771555|GPL-2.0+|arquivos de sistema
+system/PPSSPP1123/|cfcb1516d1f9953883e524b64f188fe9a3c892304bede90b7e331467c1d57ac0|111 arquivos|ppsspp1123|||arquivos de sistema
+system/PPSSPP1144/|18a77db266cdfc4b5573cd958ed8c5bccf1cdf4e63256c9587550e5a98b91197|124 arquivos|ppsspp1144|||arquivos de sistema
+system/PPSSPP117/|53df5b987bbcfef5fca3ddd3be5cdfe673e115ca16fca3d2b0acbe8a62c590db|143 arquivos|ppsspp117|||arquivos de sistema
+system/PPSSPPH/|f183f23a0e4bddcee44fa391f7d90e662a5d94b5e423cef5a06a278821846a3f|121 arquivos|ppsspph|||arquivos de sistema
+system/PPSSPPI/|f183f23a0e4bddcee44fa391f7d90e662a5d94b5e423cef5a06a278821846a3f|121 arquivos|ppssppi|||arquivos de sistema
+system/PPSSPPJ/|7ac9482bf39f7430829cb260128e45706c91e849c2e51c25260645350106714a|122 arquivos|ppssppj|||arquivos de sistema
+system/PPSSPPK/|2ac9a700137cdac1ee5f0ad8819ecddbf54804b252052cb53371dad169ab3c7c|125 arquivos|ppssppk|||arquivos de sistema
+system/PPSSPPL/|665f77674a54e8ab47688ee431cfae17b78e843e35be6c977395c182adee664a|125 arquivos|ppssppl|||arquivos de sistema
+system/PPSSPPM/|89f5ca0bcfb6af8bb3c4768566abac14583e9b338b3ee221982d51baf4fe4791|121 arquivos|ppssppm|||arquivos de sistema
+system/PPSSPPN/|7ac9482bf39f7430829cb260128e45706c91e849c2e51c25260645350106714a|122 arquivos|ppssppn|||arquivos de sistema
+system/PPSSPPO/|d14541ffdd721c63fdd3eae0078461eab48e010ced642c4476663fd57104f376|123 arquivos|ppssppo|||arquivos de sistema
+cores/a5200_libretro.so|b0045ac8f65ce7b65075dbbb1141441122fb7813d44f162d1fcc2d0c2847403a|225680|a5200|40c6f2f1ad4a3145b328d5baaf010fae6c7e752b|GPL-2.0|platform=unix
+cores/fake08_libretro.so|93bc3a4cf07c5ef211f81672c817747d259114faedaf7543b62d26488257a852|667620|fake08|e9fe530dfdb91d80921ac490d0dfa5d184111c69|MIT|platform=unix
+cores/fbneo_libretro.so|66ed4c4b99c0eae7e9bc124ec0e8867f2172ae9a5bea178034ede56c3737569e|58890844|fbneo|63c4190785cadd5ff84483399375871ed6e98754|FBNeo (nao comercial)|platform=armv-neon USE_CYCLONE=1 HAVE_NEON=1
+cores/fceumm_libretro.so|e755ce11d8ddc6fc34cb234c049bfa40fc625eed835a559149e1ca51266a8860|2655992|fceumm|7a542dab1e87679921962a9f056186eca425c0c2|GPL-2.0|platform=unix
+cores/gambatte_libretro.so|81e120b220975baec747cc91f495bab384b9459e796478b8793601968c1bcf33|2533932|gambatte|d9d6cd06382d1ced30de34d56d3609452323dab1|GPL-2.0|platform=unix
+cores/geargrafx_libretro.so|d10991507bf3b6aacf377a46cec1f51587948a2b5875c047013765f65b0d9b88|1975044|geargrafx|57c257dda25f441fff3c63a63bbc4ba7cbb713e3|GPL-3.0|platform=unix LTO=0
+cores/gpsp_libretro.so|6eba4200280bbf4441456e61e41f779e677419328b248bad57328ba8192dac69|728208|gpsp|5819380c2ffb0900219d700a382ee68c464ebb99|GPL-2.0|platform=unix UNAME=armv7l CPU_ARCH=arm HAVE_DYNAREC=1
+cores/handy_libretro.so|0d6c4e83d2e99ef04b37bd87fdaee8ed6f60a248e90b2b51c3c884ac1d2cc2b0|517560|handy|bc55d462f0b2d6b073ea93dc552ebd73cec60fd1|Zlib (Handy, K. Wilkins)|platform=unix
+cores/mame2003_plus_libretro.so|e1c85bf4d380620ff30a24378f6129b6cbb05f69bf45a692fb5e7efa6a5e0d68|28367580|mame2003_plus|f073a5af73503e782ae2e01dc84d7904028e5203|MAME (nao comercial)|platform=unix ARM=1
+cores/mednafen_ngp_libretro.so|8a42d5e9bfba5de336899685474ffa3de9e5d7be8e96da1c30d5dece4909bd5c|268028|mednafen_ngp|a50d5ac288a81f2104ddf43195a4efdd15c72227|GPL-2.0|platform=unix
+cores/mednafen_pce_fast_libretro.so|be44799ee2497511c3112c470e949cefbad7bb41e2e7d89f8f13c32deb84e4a1|2526624|mednafen_pce_fast|4eee99c451f85ebe66d1591de88b892015b23059|GPL-2.0|platform=unix
+cores/mgba_libretro.so|2fbcb89a904825df6aaf7026970786c67c4021442466c66f056747c5a44f7083|1947476|mgba|7a12d6d4b9acb14c0ae62c9166b6a2f3d08007f6|MPL-2.0|-DLIBMGBA_ONLY=ON -DBUILD_LIBRETRO=ON -DCMAKE_BUILD_TYPE=Release -DUSE_EPOXY=OFF -DUSE_FFMPEG=OFF -DUSE_PNG=OFF -DUSE_ZLIB=OFF -DUSE_LIBZIP=OFF -DUSE_MINIZIP=OFF -DUSE_SQLITE3=OFF -DUSE_ELF=OFF -DUSE_LZMA=OFF -DUSE_LUA=OFF -DUSE_JSON_C=OFF -DUSE_DISCORD_RPC=OFF -DUSE_EDITLINE=OFF -DBUILD_GL=OFF -DBUILD_GLES2=OFF -DBUILD_GLES3=OFF
+cores/mupen64plus_libretro.so|926cc001a3b057ba4c55f8f80617a9b17fd9b310811f1976eb0a3d305eedf8ac|1887700|mupen64plus|ab8134ac90a567581df6de4fc427dd67bfad1b17|GPL-2.0|platform=unix FORCE_GLES=1 WITH_DYNAREC=arm ARCH=arm HAVE_NEON=1 CPUFLAGS=-DARM_-marm
+cores/mupen64plus_next_libretro.so|c12ce0e09f86d24cd26ac1a065f002e5a71a3132f370c64b3d9ef3f9df8a6d4f|3673820|mupen64plus_next|12edd2c74a517ff86dfa8cfc71ad75e4c10486d5|GPL-2.0|platform=unix-armv-cortexa9-neon-softfloat FORCE_GLES=1 HAVE_PARALLEL_RSP=0 HAVE_PARALLEL_RDP=0 HAVE_THR_AL=0 LLE=0
+cores/parallel_n64_libretro.so|13eef110fafd76fe8c16743969c2ede19f80743f36a3280e694d91757933f68c|3447172|parallel_n64|890323d083c7f5719bd59ebd010d75b3b7f8d10f|GPL-2.0|platform=unix FORCE_GLES=1 GLES=1 GL_LIB=-lGLESv2 WITH_DYNAREC=arm HAVE_NEON=1 HAVE_PARALLEL=0 HAVE_PARALLEL_RSP=0 CPUFLAGS=-DARM_-D__arm__-D__NEON_OPT_-DNOSSE_-marm
+cores/pcsx_rearmed_libretro.so|2d08e60ba2a46890e914d072e42abe122c821f5d8b042c070d13521704b73908|1327404|pcsx_rearmed|c8816799b50388e61cfe237fe2cdbb7d8175f20a|GPL-2.0|platform=unix ARCH=arm DYNAREC=ari64 BUILTIN_GPU=neon HAVE_NEON_ASM=1 HAVE_CHD=1 HAVE_PHYSICAL_CDROM=0
+cores/picodrive_libretro.so|d5d270c30bc46a93ba4e42556ca70a5cdc7d0aafd52a9888e85a42fc1c5dcfb7|2336988|picodrive|1890c2932234c9d30f4cd3851d02228baae8f09e|PicoDrive (nao comercial)|platform=unix ARCH=arm
+cores/ppsspp_libretro.so|588eaf69729e9c447ffa199bedad4a95883f5330b96acf71712631ec127ad715|18131760|ppsspp|fa50bb1976065c4f8b1b47af227d367fe9771555|GPL-2.0+|-DLIBRETRO=ON -DARMV7=ON -DARM=ON -DARM_NO_VULKAN=ON -DUSING_GLES2=ON -DUSE_FFMPEG=ON -DUSE_SYSTEM_FFMPEG=OFF -DUSE_DISCORD=OFF -DUSE_MINIUPNPC=OFF -DUSE_SYSTEM_LIBPNG=OFF -DUSE_SYSTEM_ZSTD=OFF -DUSE_SYSTEM_LIBZIP=OFF -DUSE_SYSTEM_FREETYPE=OFF -DUSE_WAYLAND_WSI=OFF -DUSING_X11_VULKAN=OFF -DHEADLESS=OFF -DUNITTEST=OFF -DUSE_CCACHE=OFF -DCMAKE_BUILD_TYPE=Release
+cores/prosystem_libretro.so|274ad678496e7e02f8a468992d3a631d786fe7976330fcb7c4ac0eed455a2600|172796|prosystem|8a88014287c7a01cd568067e5a557d0a2b2a051f|GPL-2.0|platform=unix
+cores/race_libretro.so|60733fe9ef1ac7c8cf010628efc3ff127cd90f851106619a28ff2f2089ec0f55|259792|race|c7810dd7f172827bfa2004813bc000b13786636b|GPL-2.0|platform=unix
+cores/snes9x2005_plus_libretro.so|d41f55ef83b96adfe4596448c08dc3a3f9f88efbe4101de20fcc17ea536ca65c|538684|snes9x2005_plus|a79dfe9047e7fec58808aefe48ad2bf499c7af11|Snes9x (nao comercial)|platform=unix USE_BLARGG_APU=1
+cores/snes9x_libretro.so|a06d6c4e2933aeb1b4d7a1b1d1e7fd1c7c8ba558c95c62c89748b6ce299a6a7d|2433504|snes9x|fae2fea08f74180759ef540ee94259213f503480|Snes9x (nao comercial)|platform=unix
+cores/stella2014_libretro.so|ab61b6afc1731cc521955409b9ee96f46f3e0c4fa7fc928a3e0e8d14972e5970|1564992|stella2014|7d1361e407e63f29e52892655069e5fb4096e691|GPL-2.0|platform=unix
+crispy_doom/crispy-doom|a35291852445c96b0dd844806352240d1335d77e166c80eece8dc84073651e1b|1271264|crispy_doom|fdeabe4c23a833534b70aa84a22f1685aae7125d|GPL-2.0 (tag crispy-doom-7.2)|cmake -DENABLE_SDL2_NET=OFF -DENABLE_SDL2_MIXER=ON -DCMAKE_FIND_PACKAGE_PREFER_CONFIG=OFF -DCMAKE_DISABLE_FIND_PACKAGE_SampleRate=ON -DCMAKE_DISABLE_FIND_PACKAGE_PNG=ON -DCMAKE_DISABLE_FIND_PACKAGE_FluidSynth=ON -DCMAKE_BUILD_TYPE=Release; alvos crispy-doom crispy-heretic crispy-strife crispy-hexen; SDL_config.h do sdl2_projeto; CFLAGS -DM17; teclado virtual (teclado_m17)
+crispy_doom/crispy-heretic|05b7663caa143db1cefbdd073af03093fef5ab362af7c940f05e7c25a1700f13|998224|crispy_doom|fdeabe4c23a833534b70aa84a22f1685aae7125d|GPL-2.0 (tag crispy-doom-7.2)|cmake -DENABLE_SDL2_NET=OFF -DENABLE_SDL2_MIXER=ON -DCMAKE_FIND_PACKAGE_PREFER_CONFIG=OFF -DCMAKE_DISABLE_FIND_PACKAGE_SampleRate=ON -DCMAKE_DISABLE_FIND_PACKAGE_PNG=ON -DCMAKE_DISABLE_FIND_PACKAGE_FluidSynth=ON -DCMAKE_BUILD_TYPE=Release; alvos crispy-doom crispy-heretic crispy-strife crispy-hexen; SDL_config.h do sdl2_projeto; CFLAGS -DM17; teclado virtual (teclado_m17)
+crispy_doom/crispy-hexen|a387d65ffb677e04cdb77de80ee858943958e5838c7ec2b2fbfcd8421ab5871c|1164928|crispy_doom|fdeabe4c23a833534b70aa84a22f1685aae7125d|GPL-2.0 (tag crispy-doom-7.2)|cmake -DENABLE_SDL2_NET=OFF -DENABLE_SDL2_MIXER=ON -DCMAKE_FIND_PACKAGE_PREFER_CONFIG=OFF -DCMAKE_DISABLE_FIND_PACKAGE_SampleRate=ON -DCMAKE_DISABLE_FIND_PACKAGE_PNG=ON -DCMAKE_DISABLE_FIND_PACKAGE_FluidSynth=ON -DCMAKE_BUILD_TYPE=Release; alvos crispy-doom crispy-heretic crispy-strife crispy-hexen; SDL_config.h do sdl2_projeto; CFLAGS -DM17; teclado virtual (teclado_m17)
+crispy_doom/crispy-strife|13aca852669d9437d6a39b57eaf3332fb4acd58762be8ca2c0fdde9715e4fd62|1022672|crispy_doom|fdeabe4c23a833534b70aa84a22f1685aae7125d|GPL-2.0 (tag crispy-doom-7.2)|cmake -DENABLE_SDL2_NET=OFF -DENABLE_SDL2_MIXER=ON -DCMAKE_FIND_PACKAGE_PREFER_CONFIG=OFF -DCMAKE_DISABLE_FIND_PACKAGE_SampleRate=ON -DCMAKE_DISABLE_FIND_PACKAGE_PNG=ON -DCMAKE_DISABLE_FIND_PACKAGE_FluidSynth=ON -DCMAKE_BUILD_TYPE=Release; alvos crispy-doom crispy-heretic crispy-strife crispy-hexen; SDL_config.h do sdl2_projeto; CFLAGS -DM17; teclado virtual (teclado_m17)
+freedink/LiberationSans-Regular.ttf|490a62d414a590da4ec71c4d4e81166e86ca12c5aa62bf3d66cc93c74a178734|133828|freedink|5e0b35ac8f46d7bb87e656efd5f9c7c2ac1a6c519a908fc5b581e52657981002|GPL-3.0-or-later (GNU FreeDink 109.6; ref = sha256 do tarball de release; a LiberationSans 1.05 do share/ e GPL-2.0 com as excecoes da Red Hat, share/README.fonts)|configure --host=arm-buildroot-linux-gnueabi --disable-tests; CFLAGS/CXXFLAGS -D_FILE_OFFSET_BITS=64 -DM17; sem fontconfig
+freedink/freedink|bf214b7c1271d97a45b817f1836287606e4eb03bc8fdc63e92e4f9da84956e23|337012|freedink|5e0b35ac8f46d7bb87e656efd5f9c7c2ac1a6c519a908fc5b581e52657981002|GPL-3.0-or-later (GNU FreeDink 109.6; ref = sha256 do tarball de release; a LiberationSans 1.05 do share/ e GPL-2.0 com as excecoes da Red Hat, share/README.fonts)|configure --host=arm-buildroot-linux-gnueabi --disable-tests; CFLAGS/CXXFLAGS -D_FILE_OFFSET_BITS=64 -DM17; sem fontconfig
+gametank/GameTankEmulator|7d2925114edc35d22e51bd84474b2a743fc6d823c408f5b885af052f0661b7b0|3965404|gametank|9896544460d5bb7dd89c2d2bc0f5c97a6f31d2e0|MIT|OS=Linux bin (SDL2 2.28.5 de fabrica)
+jfduke3d/duke3d|070092c9358970321a4e60b7c2cbebbdad844f9a9bb4f6685fdcc7b0df74d0f3|926048|jfduke3d|55c5f9592d2a78e427a2bbdb13ce3c4c9ccf6f04|GPL-2.0 (jogo); licenca do Build do Ken Silverman (motor, gratuito, sem uso comercial); submodulos jfbuild 40a98be5, jfaudiolib 68be97f6, jfmact 731c0cc4|make USE_POLYMOST=0 USE_OPENGL=0 USE_ASM=0; sdl2-config do projeto (SDL_config.h); sem Vorbis/FluidSynth/GTK; CFLAGS -DM17
+nethack/license|93a3ae2cb8dee482daddfaebe53bcffe5b114b603def19b4dca21621cbc5a747|4875|nethack|ed600d9f0f3c37677418f0150f59363ca641f3dc|NGPL (NetHack General Public License; tag NetHack-3.6.7_Released)|hints m17 (sem tty/compress, DLB, SYSCF relativo); interface m17 sobre SDL2; ferramentas pelo qemu
+nethack/nethack|a6effe563634fcfc98235520b81b5ede3a01c5bb3e3ccb1aaeeb28e12340e172|2620932|nethack|ed600d9f0f3c37677418f0150f59363ca641f3dc|NGPL (NetHack General Public License; tag NetHack-3.6.7_Released)|hints m17 (sem tty/compress, DLB, SYSCF relativo); interface m17 sobre SDL2; ferramentas pelo qemu
+nethack/nhdat|bf9e992843a4786ba77ca58f00d9f4568ef4c60311a12e43760880e3e6635498|1259333|nethack|ed600d9f0f3c37677418f0150f59363ca641f3dc|NGPL (NetHack General Public License; tag NetHack-3.6.7_Released)|hints m17 (sem tty/compress, DLB, SYSCF relativo); interface m17 sobre SDL2; ferramentas pelo qemu
+nethack/recover|3dd43003323b216cb587557f84e44a823ccee9ef10e6436a8be6e051da8ac83f|9604|nethack|ed600d9f0f3c37677418f0150f59363ca641f3dc|NGPL (NetHack General Public License; tag NetHack-3.6.7_Released)|hints m17 (sem tty/compress, DLB, SYSCF relativo); interface m17 sobre SDL2; ferramentas pelo qemu
+nethack/symbols|aab9bd7d64fa4ad5bfd094fb3b2de7e2488f017f5eecb82ea197873be3cfa3a1|16756|nethack|ed600d9f0f3c37677418f0150f59363ca641f3dc|NGPL (NetHack General Public License; tag NetHack-3.6.7_Released)|hints m17 (sem tty/compress, DLB, SYSCF relativo); interface m17 sobre SDL2; ferramentas pelo qemu
+nxengine/data/Face.pbm|39e65aa651810326f444e46188eb7d2f267099011c5e95c7d130d68dc485f016|70206|nxengine/data|||
+nxengine/data/Face_0.pbm|a61c1dca7b41ea94766978bf163fbe8fa5175a0b9c7a057f4b0d41ff8712d8e0|70198|nxengine/data|||
+nxengine/data/Face_1.pbm|65c06f08e090c021f67a3958be2dc9256b6998bd573535bb7059784423ff8139|70198|nxengine/data|||
+nxengine/data/Face_2.pbm|f2b1d1a11409d7c0af4a15bd3b99a852b204e9bb42aba8c725cdea6e0484989f|70198|nxengine/data|||
+nxengine/data/StageMeta/Ballo2.json|647ff4cddd95037a43ddea00ce1f6b68fe6b78834b7970a90af2126d9ed4b005|31|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/CentW.json|1857d3aa962fabb1bd480ec56d8e13d6acc9177f029b79a777d8f30bdd2fadb4|30|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Chako.json|406970ecee3617a80dbee5bae8f360d6751a00794ed7f88f53eb3e0374ebaaca|29|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Clock.json|6379e72313d9738c6411ab7e3ca02b7636cddcf24f0145b1f3713c8f96cb5013|40|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Comu.json|0b6150182161bfbdd6fd1997af24d02fc909cc3a3a385c3728f511c32b71ffc5|30|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Cthu.json|1857d3aa962fabb1bd480ec56d8e13d6acc9177f029b79a777d8f30bdd2fadb4|30|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Cthu2.json|1857d3aa962fabb1bd480ec56d8e13d6acc9177f029b79a777d8f30bdd2fadb4|30|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Curly.json|6379e72313d9738c6411ab7e3ca02b7636cddcf24f0145b1f3713c8f96cb5013|40|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/CurlyS.json|0b6150182161bfbdd6fd1997af24d02fc909cc3a3a385c3728f511c32b71ffc5|30|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Dark.json|89f4e54f1b899a1f284b29b3d94ffe516faa67437ec1e2841e78ffc3146295b1|30|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Drain.json|f7946f48b8b5c42cce4d99121b655ed05f1c527c08516dc5391e1062a1ccd529|42|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/EgEnd1.json|1857d3aa962fabb1bd480ec56d8e13d6acc9177f029b79a777d8f30bdd2fadb4|30|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/EgEnd2.json|1857d3aa962fabb1bd480ec56d8e13d6acc9177f029b79a777d8f30bdd2fadb4|30|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/EggR.json|1857d3aa962fabb1bd480ec56d8e13d6acc9177f029b79a777d8f30bdd2fadb4|30|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/EggR2.json|1857d3aa962fabb1bd480ec56d8e13d6acc9177f029b79a777d8f30bdd2fadb4|30|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/EggX.json|d1e8763dca55198c2af79ede167927d1751abe2dea4a37f3d1eba5f938054673|30|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/EggX2.json|d1e8763dca55198c2af79ede167927d1751abe2dea4a37f3d1eba5f938054673|30|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Frog.json|b34e49e7c28c87d7936039b456eed9b8c26f63a788f2fb1b69410bad74629067|42|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Gard.json|6379e72313d9738c6411ab7e3ca02b7636cddcf24f0145b1f3713c8f96cb5013|40|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Hell1.json|5e973a469ffff00864e97d302a0c111da5a7f4af4c0529c34476964171be3dd6|42|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Hell4.json|31426d9f0003461f2fd4f7dfb7586623889ed10dbba74479892a9f7437c1081f|29|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Hell42.json|31426d9f0003461f2fd4f7dfb7586623889ed10dbba74479892a9f7437c1081f|29|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Itoh.json|1857d3aa962fabb1bd480ec56d8e13d6acc9177f029b79a777d8f30bdd2fadb4|30|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Jail1.json|4fbd49f7023aafa39519137402ccb6df8c19baf634bb28094b4e229a42078754|40|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Jail2.json|1857d3aa962fabb1bd480ec56d8e13d6acc9177f029b79a777d8f30bdd2fadb4|30|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Jenka1.json|406970ecee3617a80dbee5bae8f360d6751a00794ed7f88f53eb3e0374ebaaca|29|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Jenka2.json|406970ecee3617a80dbee5bae8f360d6751a00794ed7f88f53eb3e0374ebaaca|29|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Little.json|0b6150182161bfbdd6fd1997af24d02fc909cc3a3a385c3728f511c32b71ffc5|30|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Lounge.json|4fbd49f7023aafa39519137402ccb6df8c19baf634bb28094b4e229a42078754|40|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Malco.json|406970ecee3617a80dbee5bae8f360d6751a00794ed7f88f53eb3e0374ebaaca|29|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Mapi.json|f7946f48b8b5c42cce4d99121b655ed05f1c527c08516dc5391e1062a1ccd529|42|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/MazeA.json|1857d3aa962fabb1bd480ec56d8e13d6acc9177f029b79a777d8f30bdd2fadb4|30|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/MazeB.json|6379e72313d9738c6411ab7e3ca02b7636cddcf24f0145b1f3713c8f96cb5013|40|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/MazeD.json|4fbd49f7023aafa39519137402ccb6df8c19baf634bb28094b4e229a42078754|40|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/MazeH.json|d1e8763dca55198c2af79ede167927d1751abe2dea4a37f3d1eba5f938054673|30|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/MazeI.json|d1e8763dca55198c2af79ede167927d1751abe2dea4a37f3d1eba5f938054673|30|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/MazeO.json|d1e8763dca55198c2af79ede167927d1751abe2dea4a37f3d1eba5f938054673|30|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/MazeS.json|4fbd49f7023aafa39519137402ccb6df8c19baf634bb28094b4e229a42078754|40|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Momo.json|4fbd49f7023aafa39519137402ccb6df8c19baf634bb28094b4e229a42078754|40|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Pens1.json|0b6150182161bfbdd6fd1997af24d02fc909cc3a3a385c3728f511c32b71ffc5|30|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Pens2.json|0b6150182161bfbdd6fd1997af24d02fc909cc3a3a385c3728f511c32b71ffc5|30|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Pixel.json|0b6150182161bfbdd6fd1997af24d02fc909cc3a3a385c3728f511c32b71ffc5|30|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Plant.json|b34e49e7c28c87d7936039b456eed9b8c26f63a788f2fb1b69410bad74629067|42|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Pole.json|f7946f48b8b5c42cce4d99121b655ed05f1c527c08516dc5391e1062a1ccd529|42|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Prefa1.json|0b6150182161bfbdd6fd1997af24d02fc909cc3a3a385c3728f511c32b71ffc5|30|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Prefa2.json|0b6150182161bfbdd6fd1997af24d02fc909cc3a3a385c3728f511c32b71ffc5|30|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Shelt.json|1857d3aa962fabb1bd480ec56d8e13d6acc9177f029b79a777d8f30bdd2fadb4|30|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Start.json|f7946f48b8b5c42cce4d99121b655ed05f1c527c08516dc5391e1062a1ccd529|42|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/Statue.json|b62854d053378dfc14e4bbebccb2cd81852cd72ca97bffd99f62f495c65d10fb|42|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/WeedB.json|0b6150182161bfbdd6fd1997af24d02fc909cc3a3a385c3728f511c32b71ffc5|30|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/WeedD.json|1857d3aa962fabb1bd480ec56d8e13d6acc9177f029b79a777d8f30bdd2fadb4|30|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/WeedS.json|406970ecee3617a80dbee5bae8f360d6751a00794ed7f88f53eb3e0374ebaaca|29|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/e_Malc.json|406970ecee3617a80dbee5bae8f360d6751a00794ed7f88f53eb3e0374ebaaca|29|nxengine/data/StageMeta|||
+nxengine/data/StageMeta/e_Maze.json|630a8aa4f13e2a30f4c39bcec37829e3f0f62caec0ee7f6b962f19ebbea951f3|30|nxengine/data/StageMeta|||
+nxengine/data/bkFog480fix.pbm|2aa21856d6340da36b9f8fa507613fafc7ac91c8753d3c42f9ec217f5cad3ea8|391802|nxengine/data|||
+nxengine/data/bkHellish.pbm|5091603e4fd78a4e9c2965fb45a8434f4d0857b88cc6daa09f8296a7aea3706a|307338|nxengine/data|||
+nxengine/data/bkHellish480fix.pbm|465bfdc013f860cc5310a3bf800b18f523799806b3d9bbab2c06ab26edd7cc63|522378|nxengine/data|||
+nxengine/data/bkLight.pbm|eeccbac5fc742362cf76b9c2ebb471b917406af697bd459dd2961a7035ea1925|307338|nxengine/data|||
+nxengine/data/bkLight480fix.pbm|3a455e76a98f7555d36546d338109fa9f2ca26f33adc2ff1af68ff932ea25e9b|391802|nxengine/data|||
+nxengine/data/bkMoon480fix.pbm|6194f28896177b152b3771c293afda288dab7b5a3ba7a9a41181142c36505c20|391802|nxengine/data|||
+nxengine/data/bkSunset.pbm|12d4d35141ce055f3288e46758dbbf7ef317fc67bee66f3bc5f0c1a21dfd6987|307338|nxengine/data|||
+nxengine/data/bkSunset480fix.pbm|69caeb3a3b9082d154c42ef1fcc5509b67a722c0d327ee1e440047a29d399031|522378|nxengine/data|||
+nxengine/data/endpic/credit01m.bmp|b68afe315a2b8b8ddb533d8d34fc907e45841e865fb119146cbbb4379e2833fc|19386|nxengine/data/endpic|||
+nxengine/data/endpic/credit02m.bmp|9e1c0345627cfef0ae92dc58ce612e5e5cec9d2bb5d9bda5f386f20ceb0d90f9|19386|nxengine/data/endpic|||
+nxengine/data/endpic/credit03m.bmp|6d151fa86fb683b8d854ebfc7d32b145f921bc2ce0397867d7dc3031b9fc4e73|19386|nxengine/data/endpic|||
+nxengine/data/font_1.fnt|3affcfb1f34dcc22df1acde8a390bcdf519960416edd950c1e2f083706bcabdc|25386|nxengine/data|||
+nxengine/data/font_1_0.png|d8ea40fec2b137bbd26219b809294f421ff3a256819e0479e59dfd66a295c125|1063|nxengine/data|||
+nxengine/data/font_2.fnt|b1a520ac2e12f6ed676a20123095dad43677b850821499f846ee663c370ff6a5|25692|nxengine/data|||
+nxengine/data/font_2_0.png|38f23ad260edcc0d490a050e5d238ad4a35fe7d6174ea396ce082ee6e9ff9753|1387|nxengine/data|||
+nxengine/data/font_3.fnt|77b601c18ff09aebe7141f4cd3dc2400a62dadaba229c4c34c595dd52a6a953d|25728|nxengine/data|||
+nxengine/data/font_3_0.png|48a17c6911b84a87343311f563074ad5c48270761d0183b47faca5bdfbbd4366|1051|nxengine/data|||
+nxengine/data/font_3_1.png|cacd75b83aac7db6021400f1452ce7eb1ef33a0efdcaf9be005e6a7fb3796cd6|830|nxengine/data|||
+nxengine/data/font_4.fnt|c180eef59a8d6878398157d8ab3ff83decf35e61afbc8394e2389557537fde3c|25856|nxengine/data|||
+nxengine/data/font_4_0.png|8d2f2ee0d779cb042698fff8d5d0048fedca5c5064e401736b436eb5d3f8ddd5|2079|nxengine/data|||
+nxengine/data/font_5.fnt|c0a3e866d5d8f775ed4a664ba8c8ce3be29f7801e4d8fda9512615ed66c76d5f|25879|nxengine/data|||
+nxengine/data/font_5_0.png|57444b37b9d529c997c7aa642059b1cf2de72ecb3ed0b4257f82d163603e0148|3631|nxengine/data|||
+nxengine/data/music.json|126b56a968f9f177dad1a7167005c7b56903329f9d851ecb87494213bf21e9b4|1163|nxengine/data|||
+nxengine/data/music_dirs.json|226011ce89b56cae56f8645806eaeff1fea9ea94bdf4797a47d6f074827603c8|208|nxengine/data|||
+nxengine/data/spot.png|88c89e5a72c2361f6d6ca3a4f189b7bbf2696a810cc14fd640d421db0b628385|76577|nxengine/data|||
+nxengine/data/sprites.sif|d2db69691a56f3512268369a4746c3cf461e9144d5b581ad5633e26a9f4be475|59418|nxengine/data|||
+nxengine/data/system.json|cc7e2aa6ee95e712045823fc0559ee80285b3df15d6bf837e79a85f50ed9f821|28|nxengine/data|||
+nxengine/data/tilekey.dat|e84df7374f8eff014458c6d8611c44f03b39b8d1a7abf30a2347dbb085b55232|1028|nxengine/data|||
+nxengine/extract|038ee06074fbd4cdf3aa3d847933fc97203504edabe6de513690fdbb9a99cfc1|170156|nxengine|761d86db42439d0a37239858d2e024dbc80fe601|GPL-3.0 (tag v2.6.5-1)|cmake -DPLATFORM=pc -DPORTABLE=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5 (o CMakeLists pede 3.0); CXXFLAGS -DPORTABLE -DM17
+nxengine/nx|72f7ca08744814417ed94ac6a53393c689c2d9fcea9a9609a4f8c24de083458b|1050540|nxengine|761d86db42439d0a37239858d2e024dbc80fe601|GPL-3.0 (tag v2.6.5-1)|cmake -DPLATFORM=pc -DPORTABLE=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5 (o CMakeLists pede 3.0); CXXFLAGS -DPORTABLE -DM17
+opentyrian/opentyrian|e6947609af80e820581baad8cab790f6ff9d8fef09514f99b43addcfe1741792|527724|opentyrian|5a9d8daa2811347bec3a0c42f8da87682378f3cb|GPL-2.0 (tag v2.1.20260913)|make WITH_NETWORK=false; SDL_config.h do sdl2_projeto; CFLAGS -DM17; teclado virtual (teclado_m17)
+ppsspp_sdl/PPSSPPSDLTUTU|af7592775516f2a66977989b51820096f16d3b33ae4e2da879a9baa7d4c09bd7|22368344|ppsspp_sdl|fa50bb1976065c4f8b1b47af227d367fe9771555|GPL-2.0+|-DLIBRETRO=OFF -DARMV7=ON -DARM=ON -DARM_NO_VULKAN=ON -DUSING_GLES2=ON -DUSING_EGL=OFF -DUSE_FFMPEG=ON -DUSE_SYSTEM_FFMPEG=OFF -DUSE_DISCORD=OFF -DUSE_MINIUPNPC=OFF -DUSE_SYSTEM_LIBPNG=OFF -DUSE_SYSTEM_ZSTD=OFF -DUSE_SYSTEM_LIBZIP=OFF -DUSE_SYSTEM_FREETYPE=OFF -DUSE_SYSTEM_LIBSDL2=OFF -DUSE_WAYLAND_WSI=OFF -DUSING_X11_VULKAN=OFF -DHEADLESS=OFF -DUNITTEST=OFF -DUSE_CCACHE=OFF -DCMAKE_BUILD_TYPE=Release
+retroarch/retroarch|5529231f73f33780a6db8207cb97109c8e25d412b4d0a6e52af2daed625e6211|10212384|retroarch|69a4f0ea1e8aaf442ae4858f2e7f2b31a1776576|GPL-3.0|-DM17 --enable-opengles --enable-egl --enable-mali_fbdev --enable-udev --enable-alsa --enable-rgui --enable-neon --enable-floatsoftfp --enable-threads --enable-builtinzlib --enable-7zip --disable-x11 --disable-wayland --disable-kms --disable-vulkan --disable-sdl --enable-sdl2 --disable-ffmpeg --disable-networking --disable-ssl --disable-qt --disable-xmb --disable-ozone --disable-materialui --disable-freetype --disable-slang --disable-glslang --disable-spirv_cross --disable-cheevos --disable-discord --disable-v4l2 --disable-libusb --disable-oss --disable-pulse --disable-pipewire --disable-jack --disable-tinyalsa --disable-opengl1 --disable-opengl_core --disable-online_updater --disable-update_cores --disable-update_assets --disable-update_core_info --disable-systemd --disable-dbus --disable-microphone --disable-accessibility --disable-translate --disable-imageviewer
+rogue/rogue|2020a1636a87d12c610eae02230722afa433bad76899f29265524abcbf6fed92|183160|rogue|546829b745ab8b1bca39b14f8bac5defd6c13fac|BSD-3-Clause (Rogue 5.4.4, ramo modern-rogue de 2026-05-14)|cc *.c + rogue_m17/*.c; config.h proprio; SDL_config.h do sdl2_projeto; CFLAGS -DM17 -DHAVE_CONFIG_H
+sdl2_gfx/libSDL2_gfx-1.0.so.0|ffe4d0d8bcd6e1161a5f518b5f253b38c20650bb9232ee012b309c47733d4309|56584|sdl2_gfx|073ecac084b9f98cb9497aa20ae775200a2f950c|Zlib (SDL2_gfx 1.0.4, Andreas Schiffler; upstream guardado no git do Debian, tag upstream/1.0.4+dfsg; spec 047)|cc -shared SDL2_framerate.c SDL2_gfxPrimitives.c SDL2_imageFilter.c SDL2_rotozoom.c (sem MMX)
+sdl2_image/libSDL2_image-2.0.so.0|75bf8a97b41ef7bc9af0856a12541480d0e2fdc035c5215eb54353168273d743|136476|sdl2_image|c1bf2245b0ba63a25afe2f8574d305feca25af77|Zlib (release-2.8.8; PNG pelo stb_image embutido, dominio publico/MIT; BMP e XPM proprios, spec 047)|cmake -DSDL2IMAGE_VENDORED=OFF -DSDL2IMAGE_SAMPLES=OFF -DSDL2IMAGE_TESTS=OFF -DSDL2IMAGE_INSTALL=OFF -DSDL2IMAGE_DEPS_SHARED=OFF -DSDL2IMAGE_STRICT=ON -DSDL2IMAGE_BACKEND_STB=ON -DSDL2IMAGE_PNG=ON -DSDL2IMAGE_PNG_SAVE=OFF -DSDL2IMAGE_AVIF=OFF -DSDL2IMAGE_BMP=ON -DSDL2IMAGE_GIF=OFF -DSDL2IMAGE_JPG=OFF -DSDL2IMAGE_JXL=OFF -DSDL2IMAGE_LBM=OFF -DSDL2IMAGE_PCX=OFF -DSDL2IMAGE_PNM=OFF -DSDL2IMAGE_QOI=OFF -DSDL2IMAGE_SVG=OFF -DSDL2IMAGE_TGA=OFF -DSDL2IMAGE_TIF=OFF -DSDL2IMAGE_WEBP=OFF -DSDL2IMAGE_XCF=OFF -DSDL2IMAGE_XPM=ON -DSDL2IMAGE_XV=OFF
+sdl2_mixer/libSDL2_mixer-2.0.so.0|5305a2068f6b286d59647be0221c32239b363a96e644bd65d420b2cd5861664a|214728|sdl2_mixer|b208916aed9250fe434360e6c6a95f0697bb7b01|Zlib (release-2.8.2; WAV, OGG pelo stb_vorbis embutido, dominio publico/MIT, e MIDI pelo Timidity embutido, Perl Artistic License, spec 047)|cmake -DSDL2MIXER_VENDORED=OFF -DSDL2MIXER_SAMPLES=OFF -DSDL2MIXER_INSTALL=OFF -DSDL2MIXER_DEPS_SHARED=OFF -DSDL2MIXER_CMD=OFF -DSDL2MIXER_FLAC=OFF -DSDL2MIXER_GME=OFF -DSDL2MIXER_MOD=OFF -DSDL2MIXER_MP3=OFF -DSDL2MIXER_MIDI=ON -DSDL2MIXER_MIDI_TIMIDITY=ON -DSDL2MIXER_MIDI_FLUIDSYNTH=OFF -DSDL2MIXER_MIDI_NATIVE=OFF -DSDL2MIXER_OPUS=OFF -DSDL2MIXER_VORBIS=STB -DSDL2MIXER_WAVE=ON -DSDL2MIXER_WAVPACK=OFF
+sdl2_projeto/libSDL2-2.0.so.0|3d72c93e41f0051d927b6241b0846340a6308cf6b6b37a6d85c0e93427c6b167|1431624|sdl2_projeto|15ead9a40d09a1eb9972215cceac2bf29c9b77f6|Zlib (backend mali-fbdev: patch da comunidade, Zlib)|cmake -DSDL_SHARED=ON -DSDL_STATIC=OFF -DSDL_TEST=OFF -DSDL_MALI=ON -DSDL_OFFSCREEN=ON -DSDL_DUMMYVIDEO=ON -DSDL_OPENGLES=ON -DSDL_OPENGL=OFF -DSDL_X11=OFF -DSDL_WAYLAND=OFF -DSDL_KMSDRM=OFF -DSDL_VULKAN=OFF -DSDL_RPI=OFF -DSDL_VIVANTE=OFF -DSDL_DIRECTFB=OFF -DSDL_ALSA=ON -DSDL_ALSA_SHARED=ON -DSDL_PULSEAUDIO=OFF -DSDL_PIPEWIRE=OFF -DSDL_JACK=OFF -DSDL_SNDIO=OFF -DSDL_ESD=OFF -DSDL_ARTS=OFF -DSDL_NAS=OFF -DSDL_OSS=OFF -DSDL_LIBSAMPLERATE=OFF -DSDL_DBUS=OFF -DSDL_IBUS=OFF -DSDL_FCITX=OFF -DSDL_HIDAPI=OFF -DSDL_LIBUDEV=ON -DSDL_RPATH=OFF
+sdl2_ttf/libSDL2_ttf-2.0.so.0|bf734a6e34d657a4b932fad307229b2320f7f40ceef0c1dbc62efa6da7e471b2|783696|sdl2_ttf|89d1692fd8fe91a679bb943d377bfbd709b52c23|Zlib (release-2.20.2; freetype embutido, FreeType License/GPL-2.0, sem harfbuzz; spec 047)|cmake -DSDL2TTF_VENDORED=ON -DSDL2TTF_HARFBUZZ=OFF -DSDL2TTF_SAMPLES=OFF -DSDL2TTF_INSTALL=OFF -DBUILD_SHARED_LIBS=ON -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+tyrquake_sdl/tyr-quake|6978d99a973e103e45fbc5fc0c40ecb202cc526c4c16871e499427b70eb1bebf|769496|tyrquake_sdl|653157915975b196e36980a1ef7146485509b69a|GPL-2.0 (TyrQuake original, depois da tag v0.71; espelho github.com/mikrosk/tyrquake)|make bin/tyr-quake LOCALBASE= USE_SDL=Y USE_X86_ASM=N CD_TARGET=null; sdl2-config do projeto (SDL_config.h); CFLAGS -DM17
+wolf4sdl/spear|9cabfbbe59845632da84cb69cdc6c37de92434f195b4f78cfa6969b350afed38|279032|wolf4sdl|dc8b250af35fb0ace68db5eb879490b50068c20e|GPL-2.0 ou licenca da id (codigo do Wolf3D, a escolha); OPL do MAME (nao comercial)|make (OPL do MAME); 3 binarios: wolf3d (CARMACIZED GOODTIMES), wolf3d-sw (CARMACIZED UPLOAD), spear (CARMACIZED SPEAR GOODTIMES); SDL_config.h do sdl2_projeto; CFLAGS -DM17
+wolf4sdl/wolf3d|51105132444bf5f6258ecbe51169fb782f9a2f24bf8204c52bbcd8f4de1055ab|289140|wolf4sdl|dc8b250af35fb0ace68db5eb879490b50068c20e|GPL-2.0 ou licenca da id (codigo do Wolf3D, a escolha); OPL do MAME (nao comercial)|make (OPL do MAME); 3 binarios: wolf3d (CARMACIZED GOODTIMES), wolf3d-sw (CARMACIZED UPLOAD), spear (CARMACIZED SPEAR GOODTIMES); SDL_config.h do sdl2_projeto; CFLAGS -DM17
+wolf4sdl/wolf3d-sw|3f753c2c0cde51cb9995e5ae3713c18839c71cf3a4c8d64d99edbdc943a356b2|288868|wolf4sdl|dc8b250af35fb0ace68db5eb879490b50068c20e|GPL-2.0 ou licenca da id (codigo do Wolf3D, a escolha); OPL do MAME (nao comercial)|make (OPL do MAME); 3 binarios: wolf3d (CARMACIZED GOODTIMES), wolf3d-sw (CARMACIZED UPLOAD), spear (CARMACIZED SPEAR GOODTIMES); SDL_config.h do sdl2_projeto; CFLAGS -DM17

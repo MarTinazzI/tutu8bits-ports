@@ -1,0 +1,60 @@
+Licença: GPL-2.0-or-later (a do PPSSPP, onde o patch entra) (spec 053)
+
+diff --git a/Core/HW/MediaEngine.cpp b/Core/HW/MediaEngine.cpp
+index f5bf6a0..142e238 100644
+--- a/Core/HW/MediaEngine.cpp
++++ b/Core/HW/MediaEngine.cpp
+@@ -15,6 +15,10 @@
+ // Official git repository and contact information can be found at
+ // https://github.com/hrydgard/ppsspp and http://www.ppsspp.org/.
+ 
++#include <cstdlib>
++#include <cstdarg>
++#include <cstdio>
++#include <unistd.h>
+ #include "Common/Serialize/SerializeFuncs.h"
+ #include "Common/Math/SIMDHeaders.h"
+ #include "Common/StringUtils.h"
+@@ -49,6 +53,22 @@ extern "C" {
+ 
+ #include "Core/FFMPEGCompat.h"
+ 
++// M17 (spec 023): linha "[M17] ..." no stderr. write(2) direto: no libretro o file_stream_transforms.h
++// troca fprintf/fflush pelas do VFS, e o INFO_LOG nao sai no stderr (sessao 12: nao deu para provar).
++static void m17Linha(const char *fmt, ...) {
++	char linha[200];
++	va_list ap;
++	va_start(ap, fmt);
++	int n = vsnprintf(linha, sizeof(linha) - 1, fmt, ap);
++	va_end(ap);
++	if (n < 0)
++		return;
++	if (n > (int)sizeof(linha) - 2)
++		n = (int)sizeof(linha) - 2;
++	linha[n++] = '\n';
++	(void)!write(2, linha, n);
++}
++
+ static AVPixelFormat getSwsFormat(int pspFormat)
+ {
+ 	switch (pspFormat)
+@@ -553,6 +573,19 @@ bool MediaEngine::setVideoStream(int streamNum, bool force) {
+ 		m_pCodecCtx->flags |= AV_CODEC_FLAG_OUTPUT_CORRUPT | AV_CODEC_FLAG_LOW_DELAY;
+ 
+ 		AVDictionary *opt = nullptr;
++		// M17 (spec 023, sessoes 7-11): o video de intro do PSP2 enche a memoria da GPU e o jogo e morto.
++		// Video mais leve: 1 thread (com threads de quadro cada uma guarda os seus
++		// quadros), descarta os quadros sem referencia (o video muda menos vezes -> o cache de pixels
++		// reaproveita a textura e nada vai a GPU) e pula o filtro de bloco (menos CPU; imagem mais
++		// quadriculada). Sem a variavel, o comportamento original.
++		// Padrao do produto (spec 023): o video leve. M17_VIDEO_COMPLETO=1 volta ao comportamento original.
++		static const bool m17VideoLeve = !(getenv("M17_VIDEO_COMPLETO") && getenv("M17_VIDEO_COMPLETO")[0] == '1');
++		if (m17VideoLeve) {
++			av_dict_set(&opt, "threads", "1", 0);
++			m_pCodecCtx->skip_frame = AVDISCARD_NONREF;
++			m_pCodecCtx->skip_loop_filter = AVDISCARD_ALL;
++			m17Linha("[M17] video leve: threads=1 skip_frame=nonref skip_loop_filter=all");
++		} else
+ 		// Allow ffmpeg to use any number of threads it wants.  Without this, it doesn't use threads.
+ 		av_dict_set(&opt, "threads", "0", 0);
+ 		int openResult = avcodec_open2(m_pCodecCtx, pCodec, &opt);

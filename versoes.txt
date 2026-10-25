@@ -1,0 +1,44 @@
+# tutu8bits-ports: emuladores, ports e as bibliotecas deles (spec 053, emenda 1). Mesmo formato de
+# src/emu/versoes.txt do tutu8bits: nome|tipo|origem|ref (tag ou commit fixado)|licenca. O src/emu/build.sh do tutu8bits
+# procura cada componente no versoes.txt do tutu8bits e depois aqui; receitas e patches ficam ao lado do catalogo.
+retroarch|frontend|https://github.com/libretro/RetroArch|69a4f0ea1e8aaf442ae4858f2e7f2b31a1776576|GPL-3.0
+pcsx_rearmed|nucleo|https://github.com/libretro/pcsx_rearmed|c8816799b50388e61cfe237fe2cdbb7d8175f20a|GPL-2.0
+gpsp|nucleo|https://github.com/libretro/gpsp|5819380c2ffb0900219d700a382ee68c464ebb99|GPL-2.0
+mgba|nucleo|https://github.com/libretro/mgba|7a12d6d4b9acb14c0ae62c9166b6a2f3d08007f6|MPL-2.0
+snes9x2005_plus|nucleo|https://github.com/libretro/snes9x2005|a79dfe9047e7fec58808aefe48ad2bf499c7af11|Snes9x (nao comercial)
+snes9x|nucleo|https://github.com/libretro/snes9x|fae2fea08f74180759ef540ee94259213f503480|Snes9x (nao comercial)
+picodrive|nucleo|https://github.com/libretro/picodrive|1890c2932234c9d30f4cd3851d02228baae8f09e|PicoDrive (nao comercial)
+fceumm|nucleo|https://github.com/libretro/libretro-fceumm|7a542dab1e87679921962a9f056186eca425c0c2|GPL-2.0
+gambatte|nucleo|https://github.com/libretro/gambatte-libretro|d9d6cd06382d1ced30de34d56d3609452323dab1|GPL-2.0
+ppsspp|nucleo|https://github.com/hrydgard/ppsspp|fa50bb1976065c4f8b1b47af227d367fe9771555|GPL-2.0+
+ppsspp_sdl|programa|https://github.com/hrydgard/ppsspp|fa50bb1976065c4f8b1b47af227d367fe9771555|GPL-2.0+
+mupen64plus_next|nucleo|https://github.com/libretro/mupen64plus-libretro-nx|12edd2c74a517ff86dfa8cfc71ad75e4c10486d5|GPL-2.0
+parallel_n64|nucleo|https://github.com/libretro/parallel-n64|890323d083c7f5719bd59ebd010d75b3b7f8d10f|GPL-2.0
+fbneo|nucleo|https://github.com/libretro/FBNeo|63c4190785cadd5ff84483399375871ed6e98754|FBNeo (nao comercial)
+mame2003_plus|nucleo|https://github.com/libretro/mame2003-plus-libretro|f073a5af73503e782ae2e01dc84d7904028e5203|MAME (nao comercial)
+fake08|nucleo|https://github.com/jtothebell/fake-08|e9fe530dfdb91d80921ac490d0dfa5d184111c69|MIT
+gametank|programa|https://github.com/clydeshaffer/gametankemulator|9896544460d5bb7dd89c2d2bc0f5c97a6f31d2e0|MIT
+mupen64plus|nucleo|https://github.com/libretro/mupen64plus-libretro|ab8134ac90a567581df6de4fc427dd67bfad1b17|GPL-2.0
+sdl2_mixer|biblioteca|https://github.com/libsdl-org/SDL_mixer|b208916aed9250fe434360e6c6a95f0697bb7b01|Zlib (release-2.8.2; WAV, OGG pelo stb_vorbis embutido, dominio publico/MIT, e MIDI pelo Timidity embutido, Perl Artistic License, spec 047)
+sdl2_image|biblioteca|https://github.com/libsdl-org/SDL_image|c1bf2245b0ba63a25afe2f8574d305feca25af77|Zlib (release-2.8.8; PNG pelo stb_image embutido, dominio publico/MIT; BMP e XPM proprios, spec 047)
+sdl2_ttf|biblioteca|https://github.com/libsdl-org/SDL_ttf|89d1692fd8fe91a679bb943d377bfbd709b52c23|Zlib (release-2.20.2; freetype embutido, FreeType License/GPL-2.0, sem harfbuzz; spec 047)
+sdl2_gfx|biblioteca|https://salsa.debian.org/sdl-team/libsdl2-gfx.git|073ecac084b9f98cb9497aa20ae775200a2f950c|Zlib (SDL2_gfx 1.0.4, Andreas Schiffler; upstream guardado no git do Debian, tag upstream/1.0.4+dfsg; spec 047)
+nxengine|programa|https://github.com/nxengine/nxengine-evo|761d86db42439d0a37239858d2e024dbc80fe601|GPL-3.0 (tag v2.6.5-1)
+crispy_doom|programa|https://github.com/fabiangreffrath/crispy-doom|fdeabe4c23a833534b70aa84a22f1685aae7125d|GPL-2.0 (tag crispy-doom-7.2)
+opentyrian|programa|https://github.com/opentyrian/opentyrian|5a9d8daa2811347bec3a0c42f8da87682378f3cb|GPL-2.0 (tag v2.1.20260913)
+rogue|programa|https://github.com/Davidslv/rogue|546829b745ab8b1bca39b14f8bac5defd6c13fac|BSD-3-Clause (Rogue 5.4.4, ramo modern-rogue de 2026-05-14)
+nethack|programa|https://github.com/NetHack/NetHack|ed600d9f0f3c37677418f0150f59363ca641f3dc|NGPL (NetHack General Public License; tag NetHack-3.6.7_Released)
+freedink|programa|https://ftp.gnu.org/gnu/freedink/freedink-109.6.tar.gz|5e0b35ac8f46d7bb87e656efd5f9c7c2ac1a6c519a908fc5b581e52657981002|GPL-3.0-or-later (GNU FreeDink 109.6; ref = sha256 do tarball de release; a LiberationSans 1.05 do share/ e GPL-2.0 com as excecoes da Red Hat, share/README.fonts)
+wolf4sdl|programa|https://github.com/KS-Presto/Wolf4SDL|dc8b250af35fb0ace68db5eb879490b50068c20e|GPL-2.0 ou licenca da id (codigo do Wolf3D, a escolha); OPL do MAME (nao comercial)
+jfduke3d|programa|https://github.com/jonof/jfduke3d|55c5f9592d2a78e427a2bbdb13ce3c4c9ccf6f04|GPL-2.0 (jogo); licenca do Build do Ken Silverman (motor, gratuito, sem uso comercial); submodulos jfbuild 40a98be5, jfaudiolib 68be97f6, jfmact 731c0cc4
+tyrquake_sdl|programa|git://disenchant.net/tyrquake|653157915975b196e36980a1ef7146485509b69a|GPL-2.0 (TyrQuake original, depois da tag v0.71; espelho github.com/mikrosk/tyrquake)
+stella2014|nucleo|https://github.com/libretro/stella2014-libretro|7d1361e407e63f29e52892655069e5fb4096e691|GPL-2.0
+a5200|nucleo|https://github.com/libretro/a5200|40c6f2f1ad4a3145b328d5baaf010fae6c7e752b|GPL-2.0
+prosystem|nucleo|https://github.com/libretro/prosystem-libretro|8a88014287c7a01cd568067e5a557d0a2b2a051f|GPL-2.0
+handy|nucleo|https://github.com/libretro/libretro-handy|bc55d462f0b2d6b073ea93dc552ebd73cec60fd1|Zlib (Handy, K. Wilkins)
+mednafen_pce_fast|nucleo|https://github.com/libretro/beetle-pce-fast-libretro|4eee99c451f85ebe66d1591de88b892015b23059|GPL-2.0
+geargrafx|nucleo|https://github.com/drhelius/Geargrafx|57c257dda25f441fff3c63a63bbc4ba7cbb713e3|GPL-3.0
+race|nucleo|https://github.com/libretro/RACE|c7810dd7f172827bfa2004813bc000b13786636b|GPL-2.0
+mednafen_ngp|nucleo|https://github.com/libretro/beetle-ngp-libretro|a50d5ac288a81f2104ddf43195a4efdd15c72227|GPL-2.0
+fonte-misc-fixed-6x10|fonte|https://gitlab.freedesktop.org/xorg/font/misc-misc (6x10.bdf; baixada por ports/baixar_conteudo.sh fonte6x10)|c4e2af05583764fae3d0b2aa20d5c93b031cbcbf|dominio publico
+librequake_qc|dados|https://github.com/lavenderdotpet/LibreQuake|d1515ca9bc01e590f2d54dc496f55c9a4ed72369|GPL-2.0 (o QuakeC do progs.dat do LibreQuake lite, qcsrc/; tag v0.09-beta, a do lite.zip; spec 053, D-12)

@@ -1,0 +1,274 @@
+Licença: GPL-2.0 (a do Crispy Doom, onde o patch entra) (spec 053)
+
+diff --git a/src/doom/g_game.c b/src/doom/g_game.c
+index da414c8..3651f4c 100644
+--- a/src/doom/g_game.c
++++ b/src/doom/g_game.c
+@@ -466,14 +466,27 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
+     // [crispy] when "always run" is active,
+     // pressing the "run" key will result in walking
+ #if defined(M17)
+-    // M17 (spec 031, T12): sempre correndo; segurar o botao de correr (L2) anda devagar. Pela config so
+-    // da um ou outro (joyb_speed >= MAX_JOY_BUTTONS liga o "sempre correr" e desliga o botao)
+-    speed = true;
++    // M17 (spec 043, D-02): o botao de correr (joyb_speed, o L3) liga e desliga o andar devagar, em vez de
++    // segurar (specs 031/033/038); comeca correndo. Mensagem do "always run" do Crispy
++    {
++        static boolean m17_devagar, m17_antes;
++        const boolean m17_agora = joybspeed < MAX_JOY_BUTTONS && joybuttons[joybspeed];
++
++        if (m17_agora && !m17_antes)
++        {
++            m17_devagar = !m17_devagar;
++            M_snprintf(playermessage, sizeof(playermessage), "ALWAYS RUN %s", m17_devagar ? "OFF" : "ON");
++            player->message = playermessage;
++        }
++        m17_antes = m17_agora;
++        speed = !m17_devagar;
++        speed ^= key_speed < NUMKEYS && gamekeydown[key_speed];
++    }
+ #else
+     speed = (key_speed >= NUMKEYS
+          || joybspeed >= MAX_JOY_BUTTONS);
+-#endif
+     speed ^= speedkeydown();
++#endif
+  
+     forward = side = look = 0;
+     
+diff --git a/src/doom/m_menu.c b/src/doom/m_menu.c
+index 94cdd4f..568e98f 100644
+--- a/src/doom/m_menu.c
++++ b/src/doom/m_menu.c
+@@ -2445,6 +2445,11 @@ boolean M_Responder (event_t* ev)
+ #define JOY_BUTTON_MAPPED(x) ((x) >= 0)
+ #define JOY_BUTTON_PRESSED(x) (JOY_BUTTON_MAPPED(x) && (ev->data1 & (1 << (x))) != 0)
+ #if defined(M17)
++// M17 (spec 043, D-12): so o aperto novo, e o botao fica escondido do jogo ate ser solto (i_joystick.c)
++#undef JOY_BUTTON_PRESSED
++#define JOY_BUTTON_PRESSED(x) M17_JoyMenu((x), menuactive || messageToPrint)
++#endif
++#if defined(M17)
+ // M17 (spec 031, T12): no menu, A (6) escolhe e B (11) volta, como no tutu8bits (KB 11k); sem isto o menu
+ // seguiria o tiro (R2) e o usar (A)
+ #define JOYB_MENU_OK 6
+diff --git a/src/heretic/g_game.c b/src/heretic/g_game.c
+index 084f309..379f3ab 100644
+--- a/src/heretic/g_game.c
++++ b/src/heretic/g_game.c
+@@ -426,13 +426,26 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
+     // [crispy] when "always run" is active,
+     // pressing the "run" key will result in walking
+ #if defined(M17)
+-    // M17 (spec 033, D-03; como no Doom): sempre correndo; segurar o botao de correr (L2) anda devagar
+-    speed = true;
++    // M17 (spec 043, D-02): o botao de correr (joyb_speed, o L3) liga e desliga o andar devagar, em vez de
++    // segurar (specs 031/033/038); comeca correndo. Mensagem do "always run" do Crispy
++    {
++        static boolean m17_devagar, m17_antes;
++        const boolean m17_agora = joybspeed < MAX_JOY_BUTTONS && joybuttons[joybspeed];
++
++        if (m17_agora && !m17_antes)
++        {
++            m17_devagar = !m17_devagar;
++            P_SetMessage(&players[consoleplayer], m17_devagar ? "ALWAYS RUN OFF" : "ALWAYS RUN ON", false);
++        }
++        m17_antes = m17_agora;
++        speed = !m17_devagar;
++        speed ^= key_speed < NUMKEYS && gamekeydown[key_speed];
++    }
+ #else
+     speed = (key_speed >= NUMKEYS
+          || joybspeed >= MAX_JOY_BUTTONS);
+-#endif
+     speed ^= speedkeydown();
++#endif
+ 
+     // haleyjd: removed externdriver crap
+     
+diff --git a/src/heretic/mn_menu.c b/src/heretic/mn_menu.c
+index 7c9cbf0..d9ab343 100644
+--- a/src/heretic/mn_menu.c
++++ b/src/heretic/mn_menu.c
+@@ -2090,6 +2090,11 @@ boolean MN_Responder(event_t * event)
+ #define JOY_BUTTON_MAPPED(x) ((x) >= 0)
+ #define JOY_BUTTON_PRESSED(x) (JOY_BUTTON_MAPPED(x) && (event->data1 & (1 << (x))) != 0)
+ #if defined(M17)
++// M17 (spec 043, D-12): so o aperto novo, e o botao fica escondido do jogo ate ser solto (i_joystick.c)
++#undef JOY_BUTTON_PRESSED
++#define JOY_BUTTON_PRESSED(x) M17_JoyMenu((x), MenuActive || askforquit)
++#endif
++#if defined(M17)
+ // M17 (spec 033, D-03; como no Doom, spec 031): no menu, A (6) escolhe e B (11) volta, como no tutu8bits
+ #define JOYB_MENU_OK 6
+ #define JOYB_MENU_VOLTAR 11
+diff --git a/src/hexen/g_game.c b/src/hexen/g_game.c
+index e2e59e5..1f97677 100644
+--- a/src/hexen/g_game.c
++++ b/src/hexen/g_game.c
+@@ -327,13 +327,26 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
+     // Allow joybspeed hack.
+ 
+ #if defined(M17)
+-    // M17 (spec 038, D-03; como no Heretic): sempre correndo; segurar o botao de correr (L2) anda devagar
+-    speed = true;
++    // M17 (spec 043, D-02): o botao de correr (joyb_speed, o L3) liga e desliga o andar devagar, em vez de
++    // segurar (specs 031/033/038); comeca correndo. Mensagem do "always run" do Crispy
++    {
++        static boolean m17_devagar, m17_antes;
++        const boolean m17_agora = joybspeed < MAX_JOY_BUTTONS && joybuttons[joybspeed];
++
++        if (m17_agora && !m17_antes)
++        {
++            m17_devagar = !m17_devagar;
++            P_SetMessage(&players[consoleplayer], m17_devagar ? "ALWAYS RUN OFF" : "ALWAYS RUN ON", false);
++        }
++        m17_antes = m17_agora;
++        speed = !m17_devagar;
++        speed ^= key_speed < NUMKEYS && gamekeydown[key_speed];
++    }
+ #else
+     speed = (key_speed >= NUMKEYS
+         || joybspeed >= MAX_JOY_BUTTONS);
+-#endif
+     speed ^= speedkeydown();
++#endif
+ 
+     // haleyjd: removed externdriver crap
+     
+diff --git a/src/hexen/mn_menu.c b/src/hexen/mn_menu.c
+index 6d873df..a6d45c8 100644
+--- a/src/hexen/mn_menu.c
++++ b/src/hexen/mn_menu.c
+@@ -2170,6 +2170,11 @@ boolean MN_Responder(event_t * event)
+ #define JOY_BUTTON_MAPPED(x) ((x) >= 0)
+ #define JOY_BUTTON_PRESSED(x) (JOY_BUTTON_MAPPED(x) && (event->data1 & (1 << (x))) != 0)
+ #if defined(M17)
++// M17 (spec 043, D-12): so o aperto novo, e o botao fica escondido do jogo ate ser solto (i_joystick.c)
++#undef JOY_BUTTON_PRESSED
++#define JOY_BUTTON_PRESSED(x) M17_JoyMenu((x), MenuActive || askforquit)
++#endif
++#if defined(M17)
+ // M17 (spec 038, D-03; como no Heretic, spec 033): no menu, A (6) escolhe e B (11) volta, como no tutu8bits
+ #define JOYB_MENU_OK 6
+ #define JOYB_MENU_VOLTAR 11
+diff --git a/src/i_joystick.c b/src/i_joystick.c
+index 258395f..4abe8ee 100644
+--- a/src/i_joystick.c
++++ b/src/i_joystick.c
+@@ -645,6 +645,36 @@ static int ReadButtonState(int vbutton)
+ 
+ // Get a bitmask of all currently-pressed buttons
+ 
++#if defined(M17)
++// M17 (spec 043, D-12): o Crispy posta o estado dos botoes a cada leitura e o menu aceitava um botao segurado de
++// novo a cada 5 tics (o "turbo"; T01). Aqui: os botoes que desceram nesta leitura (m17_novos) e os que o menu usou
++// (m17_preso), tirados do evento ate serem soltos
++static int m17_antes, m17_novos, m17_preso;
++
++int M17_JoyMenu(int botao, int aberto)
++{
++    if (botao < 0 || botao >= 32 || !(m17_novos & (1 << botao)))
++    {
++        return 0;
++    }
++    if (!aberto)
++    {
++        return 1;
++    }
++    m17_novos &= ~(1 << botao);
++    m17_preso |= 1 << botao;
++    return 1;
++}
++
++static int M17_FiltrarBotoes(int estado)
++{
++    m17_novos = estado & ~m17_antes;
++    m17_antes = estado;
++    m17_preso &= estado;
++    return estado & ~m17_preso;
++}
++#endif
++
+ static int GetButtonsState(void)
+ {
+     int i;
+@@ -818,6 +848,9 @@ void I_UpdateJoystick(void)
+ 
+         ev.type = ev_joystick;
+         ev.data1 = GetButtonsState();
++#if defined(M17)
++        ev.data1 = M17_FiltrarBotoes(ev.data1);   // spec 043 (D-12)
++#endif
+         ev.data2 = GetAxisState(joystick_x_axis, joystick_x_invert,
+                                 joystick_x_dead_zone);
+         ev.data3 = GetAxisState(joystick_y_axis, joystick_y_invert,
+diff --git a/src/i_joystick.h b/src/i_joystick.h
+index 15c8daa..11fd32e 100644
+--- a/src/i_joystick.h
++++ b/src/i_joystick.h
+@@ -111,5 +111,13 @@ void I_UpdateJoystick(void);
+ 
+ void I_BindJoystickVariables(void);
+ 
++#if defined(M17)
++// M17 (spec 043, D-12): o menu so aceita o aperto novo de um botao, e o botao que ele usou fica escondido do jogo
++// ate ser solto (sem isso o A que escolhe no dialogo do Strife chegava ao jogo como "usar" e reabria a conversa).
++// aberto = o menu (ou uma pergunta, ou o dialogo) esta na tela: so entao o botao e consumido e preso; fechado, so
++// conta a borda e o evento segue para o jogo
++int M17_JoyMenu(int botao, int aberto);
++#endif
++
+ #endif /* #ifndef __I_JOYSTICK__ */
+ 
+diff --git a/src/strife/g_game.c b/src/strife/g_game.c
+index fa4ca00..0997ca9 100644
+--- a/src/strife/g_game.c
++++ b/src/strife/g_game.c
+@@ -528,13 +528,27 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
+     // [crispy] when "always run" is active,
+     // pressing the "run" key will result in walking
+ #if defined(M17)
+-    // M17 (spec 033, D-03; como no Doom): sempre correndo; segurar o botao de correr (L2) anda devagar
+-    speed = true;
++    // M17 (spec 043, D-02): o botao de correr (joyb_speed, o L3) liga e desliga o andar devagar, em vez de
++    // segurar (specs 031/033/038); comeca correndo. Mensagem do "always run" do Crispy
++    {
++        static boolean m17_devagar, m17_antes;
++        const boolean m17_agora = joybspeed < MAX_JOY_BUTTONS && joybuttons[joybspeed];
++
++        if (m17_agora && !m17_antes)
++        {
++            m17_devagar = !m17_devagar;
++            M_snprintf(playermessage, sizeof(playermessage), "Always Run %s", m17_devagar ? "Off" : "On");
++            player->message = playermessage;
++        }
++        m17_antes = m17_agora;
++        speed = !m17_devagar;
++        speed ^= key_speed < NUMKEYS && gamekeydown[key_speed];
++    }
+ #else
+     speed = (key_speed >= NUMKEYS
+          || joybspeed >= MAX_JOY_BUTTONS);
+-#endif
+     speed ^= speedkeydown();
++#endif
+  
+     forward = side = 0;
+ 
+diff --git a/src/strife/m_menu.c b/src/strife/m_menu.c
+index f311fa5..ce53646 100644
+--- a/src/strife/m_menu.c
++++ b/src/strife/m_menu.c
+@@ -2425,6 +2425,11 @@ boolean M_Responder (event_t* ev)
+ #define JOY_BUTTON_MAPPED(x) ((x) >= 0)
+ #define JOY_BUTTON_PRESSED(x) (JOY_BUTTON_MAPPED(x) && (ev->data1 & (1 << (x))) != 0)
+ #if defined(M17)
++// M17 (spec 043, D-12): so o aperto novo, e o botao fica escondido do jogo ate ser solto (i_joystick.c)
++#undef JOY_BUTTON_PRESSED
++#define JOY_BUTTON_PRESSED(x) M17_JoyMenu((x), menuactive || messageToPrint)
++#endif
++#if defined(M17)
+ // M17 (spec 033, D-03; como no Doom, spec 031): no menu, A (6) escolhe e B (11) volta, como no tutu8bits
+ #define JOYB_MENU_OK 6
+ #define JOYB_MENU_VOLTAR 11

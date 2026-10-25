@@ -1,0 +1,169 @@
+Licença: GPL-2.0 (a do TyrQuake, onde o patch entra) (spec 053)
+
+diff --git a/Makefile b/Makefile
+index 3a8b039..4ecced7 100644
+--- a/Makefile
++++ b/Makefile
+@@ -951,7 +951,7 @@ GL_LIBS += comctl32
+ endif
+ ifeq ($(VID_TARGET),sdl)
+ SW_OBJS += vid_sdl.o sdl_common.o
+-SW_OBJS += m17_testes.o
++SW_OBJS += m17_testes.o m17_saida.o
+ GL_OBJS += vid_sgl.o sdl_common.o
+ CL_CPPFLAGS += $(SDL_CFLAGS)
+ CL_LFLAGS += $(SDL_LFLAGS)
+diff --git a/NQ/host_cmd.c b/NQ/host_cmd.c
+index 02fe651..c04798d 100644
+--- a/NQ/host_cmd.c
++++ b/NQ/host_cmd.c
+@@ -373,7 +373,11 @@ Host_Loadgame_f
+ static void
+ Host_Loadgame_f(void)
+ {
++#ifdef M17
++    char name[MAX_OSPATH];   /* spec 050: o caminho inteiro do save (pasta do usuario + nome), como no save */
++#else
+     char name[MAX_QPATH];
++#endif
+     FILE *f;
+     float time, tfloat;
+     const char *start;
+@@ -426,7 +430,14 @@ Host_Loadgame_f(void)
+ 		   SAVEGAME_VERSION);
+ 	return;
+     }
++#ifdef M17
++    /* spec 050 (CA-05): o comentario e a linha inteira. O nucleo libretro (tyrquake) grava com espacos ("Tainted Tech
++     * Threshold kills: ..."); o "%s" parava no 1o espaco e desalinhava o resto ("Couldn't load map") */
++    if (!fgets(string_buffer, sizeof(string_buffer), f))
++        string_buffer[0] = 0;
++#else
+     FREAD_STRING_LINE(f);
++#endif
+     for (i = 0; i < NUM_SPAWN_PARMS; i++)
+ 	fscanf(f, "%f\n", &spawn_parms[i]);
+ 
+diff --git a/common/m17_saida.c b/common/m17_saida.c
+new file mode 100644
+index 0000000..58c443c
+--- /dev/null
++++ b/common/m17_saida.c
+@@ -0,0 +1,43 @@
++/*
++ * m17_saida.c — quadros e saida no log do jogo (spec 050, plano D-08).
++ *
++ * Ao sair pelo Sys_Quit (SDL_QUIT, que e o SIGTERM do VOL+), antes de gravar a configuracao: a linha de quadros no
++ * formato do patch do RetroArch (o diagnostico do lancar.sh a le: "[M17] quadros=N desenhados=N segundos=S
++ * fps_medio=F fps_desenhado=F"); depois de gravar, "[M17] saida" (o fim normal do lancar.sh).
++ */
++#include <stdio.h>
++
++#include "host.h"
++#include "quakedef.h"
++#include "sys.h"
++
++#include "m17.h"
++
++static unsigned long long desenhados;
++static double inicio = -1;
++
++void
++M17_QuadroDesenhado(void)
++{
++    if (inicio < 0)
++        inicio = Sys_DoubleTime();
++    desenhados++;
++}
++
++void
++M17_Quadros(void)
++{
++    double s = inicio < 0 ? 0 : Sys_DoubleTime() - inicio;
++
++    fprintf(stderr, "[M17] quadros=%llu desenhados=%llu segundos=%.1f fps_medio=%.2f fps_desenhado=%.2f\n",
++            (unsigned long long)host_framecount, desenhados, s, s > 0 ? host_framecount / s : 0.0,
++            s > 0 ? desenhados / s : 0.0);
++    fflush(stderr);
++}
++
++void
++M17_Saida(void)
++{
++    fprintf(stderr, "[M17] saida\n");
++    fflush(stderr);
++}
+diff --git a/common/sys_unix.c b/common/sys_unix.c
+index 35cd9dc..021e4ea 100644
+--- a/common/sys_unix.c
++++ b/common/sys_unix.c
+@@ -39,6 +39,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ #include "buildinfo.h"
+ #include "common.h"
+ #include "sys.h"
++#ifdef M17
++#include "m17.h"
++#endif
+ #include "zone.h"
+ 
+ #ifdef SERVERONLY
+@@ -72,6 +75,15 @@ Sys_UserDataDirectory()
+ {
+     static char unix_userdir[MAX_OSPATH];
+     const char *home = getenv("HOME");
++#ifdef M17
++    /* spec 050 (plano D-05): a pasta do usuario e a do lancador (saves/jogos/quake/<jogo>), sem o .tyrquake: o motor
++     * grava saves e config em <pasta>/<pasta do jogo>/, onde o nucleo libretro gravava */
++    const char *m17 = getenv("M17_USERDIR");
++    if (m17 && *m17) {
++        qsnprintf(unix_userdir, sizeof(unix_userdir), "%s", m17);
++        return unix_userdir;
++    }
++#endif
+     if (home) {
+         qsnprintf(unix_userdir, sizeof(unix_userdir), "%s/.tyrquake", home);
+         return unix_userdir;
+@@ -123,7 +135,13 @@ void
+ Sys_Quit(void)
+ {
+ #ifndef SERVERONLY
++#ifdef M17
++    M17_Quadros();
++#endif
+     Host_Shutdown();
++#ifdef M17
++    M17_Saida();
++#endif
+     fcntl(STDIN_FILENO, F_SETFL,
+ 	  fcntl(STDIN_FILENO, F_GETFL, 0) & ~O_NONBLOCK);
+     fflush(stdout);
+diff --git a/common/vid_sdl.c b/common/vid_sdl.c
+index 9b4e4a1..b3fb31e 100644
+--- a/common/vid_sdl.c
++++ b/common/vid_sdl.c
+@@ -433,6 +433,9 @@ VID_SDL_BlitRect(int x, int y, int width, int height)
+ void
+ VID_Update(vrect_t *rects)
+ {
++#ifdef M17
++    M17_QuadroDesenhado();
++#endif
+     int i;
+     vrect_t *prect;
+     vrect_t rect;
+diff --git a/include/m17.h b/include/m17.h
+index da36feb..061790b 100644
+--- a/include/m17.h
++++ b/include/m17.h
+@@ -14,6 +14,11 @@ void M17_ControleEvento(const union SDL_Event *e);
+ #include "client.h"
+ void M17_ControleMove(usercmd_t *cmd);
+ #endif
++/* quadros e saida no log (plano D-08): m17_saida.c */
++void M17_QuadroDesenhado(void);
++void M17_Quadros(void);
++void M17_Saida(void);
++
+ /* o menu "Customize controls" esperando uma tecla (menu.c): o botao vai cru, para virar o novo bind */
+ int M17_MenuEsperaTecla(void);
+ 

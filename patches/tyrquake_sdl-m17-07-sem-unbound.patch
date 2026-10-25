@@ -1,0 +1,20 @@
+Licença: GPL-2.0 (a do TyrQuake, onde o patch entra) (spec 053)
+
+diff --git a/common/keys.c b/common/keys.c
+index ee9b616..b520dc3 100644
+--- a/common/keys.c
++++ b/common/keys.c
+@@ -901,7 +901,12 @@ Key_Event(knum_t key, qboolean down)
+ 	    && key != K_PGUP && key != K_PGDN && key_repeats[key] > 1)
+ 	    return;		// ignore most autorepeats
+ 
+-	if (key >= K_MOUSE1 && !keybindings[key])
++	if (key >= K_MOUSE1 && !keybindings[key]
++#ifdef M17
++	    /* M17 (spec 050, D-15): os botoes sem acao no Quake (PAD_X, PAD_Y, PAD_L2, PAD_R3) nao enchem a tela */
++	    && !(key >= K_AUX1 && key <= K_AUX17)
++#endif
++	    )
+ 	    Con_Printf("%s is unbound, hit F4 to set.\n",
+ 		       Key_KeynumToString(key));
+     }

@@ -1,0 +1,17 @@
+Licença: GPL-2.0-or-later (a do PPSSPP, onde o patch entra) (spec 053)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 910f322..cb57d76 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -85,7 +85,9 @@ if(MINGW AND NOT USE_SYSTEM_FFMPEG)
+ endif()
+ 
+ if(NOT ANDROID AND NOT IOS)
+-	if(ARM_DEVICE OR SIMULATOR)
++	# M17 (spec 023, D-03): -DUSING_EGL=OFF tem de valer. Com EGL, o SDLGLGraphicsContext chama
++	# XOpenDisplay (X11); sem ele, o contexto e so o do SDL (SDL_GL_CreateContext/SwapWindow).
++	if((ARM_DEVICE OR SIMULATOR) AND NOT DEFINED USING_EGL)
+ 		set(USING_EGL ON)
+ 	endif()
+ endif()

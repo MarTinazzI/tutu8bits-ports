@@ -1,0 +1,293 @@
+Licença: GPL-3.0 (a do RetroArch, onde o patch entra) (spec 053)
+
+diff --git a/menu/cbs/menu_cbs_ok.c b/menu/cbs/menu_cbs_ok.c
+--- a/menu/cbs/menu_cbs_ok.c
++++ b/menu/cbs/menu_cbs_ok.c
+@@ -10046,6 +10046,71 @@
+    return 0;
+ }
+ 
++#ifdef M17
++void m17_menu_mudar(bool avancado);
++extern bool m17_controles_abertos;
++
++/* M17 (spec 025, D-06): remap por jogo sem passo extra. Ao descarregar o jogo, se a tela
++ * Controls foi aberta, se nao ha remap ativo (com remap de jogo, o remap_save_on_exit ja o
++ * regrava; com o de nucleo ou de pasta, fica o comportamento do RetroArch) e se os
++ * mapeamentos de botoes, analogicos ou portas diferem do padrao, grava o remap do jogo:
++ * a mesma operacao do "Save Game Remap File" (<remaps>/<nucleo>/<rom>.rmp). */
++void m17_remap_ao_sair(void)
++{
++   unsigned i, j;
++   bool difere          = false;
++   settings_t *settings = config_get_ptr();
++   uint32_t flags       = runloop_get_flags();
++
++   if (!m17_controles_abertos)
++      return;
++   m17_controles_abertos = false;
++
++   if (flags & (RUNLOOP_FLAG_REMAPS_CORE_ACTIVE
++              | RUNLOOP_FLAG_REMAPS_CONTENT_DIR_ACTIVE
++              | RUNLOOP_FLAG_REMAPS_GAME_ACTIVE))
++   {
++      RARCH_LOG("[M17] remap: nada a gravar (ja ha remap ativo)\n");
++      return;
++   }
++
++   for (i = 0; i < MAX_USERS && !difere; i++)
++   {
++      for (j = 0; j < RARCH_FIRST_CUSTOM_BIND; j++)
++         if (     settings->uints.input_remap_ids[i][j]     != input_config_binds[i][j].id
++               || settings->uints.input_keymapper_ids[i][j] != RETROK_UNKNOWN)
++            difere = true;
++      for (j = RARCH_FIRST_CUSTOM_BIND; j < RARCH_FIRST_CUSTOM_BIND + 8; j++)
++         if (settings->uints.input_remap_ids[i][j] != j)
++            difere = true;
++      if (settings->uints.input_remap_ports[i] != i)
++         difere = true;
++   }
++
++   if (!difere)
++   {
++      RARCH_LOG("[M17] remap: nada a gravar (igual ao padrao)\n");
++      return;
++   }
++
++   /* a operacao devolve 0 mesmo se a gravacao falhar; so liga o "remap de jogo ativo" se gravou */
++   generic_action_ok_remap_file_operation(NULL, NULL, 0, 0, 0,
++         ACTION_OK_REMAP_FILE_SAVE_GAME);
++   if (runloop_get_flags() & RUNLOOP_FLAG_REMAPS_GAME_ACTIVE)
++      RARCH_LOG("[M17] remap: gravado o do jogo (%s)\n", path_get(RARCH_PATH_BASENAME));
++   else
++      RARCH_ERR("[M17] remap: falhou ao gravar o do jogo\n");
++}
++
++/* M17 (spec 025, D-04): "Advanced Menu" troca a raiz pelo menu principal completo */
++static int action_ok_m17_menu_avancado(const char *path,
++      const char *label, unsigned type, size_t idx, size_t entry_idx)
++{
++   m17_menu_mudar(true);
++   return 0;
++}
++#endif
++
+ int menu_cbs_init_bind_ok(menu_file_list_cbs_t *cbs,
+       const char *path,
+       const char *label, size_t lbl_len,
+@@ -10057,6 +10122,14 @@
+ 
+    BIND_ACTION_OK(cbs, action_ok_lookup_setting);
+ 
++#ifdef M17
++   if (string_is_equal(label, "m17_advanced_menu"))
++   {
++      BIND_ACTION_OK(cbs, action_ok_m17_menu_avancado);
++      return 0;
++   }
++#endif
++
+    if (menu_cbs_init_bind_ok_compare_label(cbs, label) == 0)
+       return 0;
+ 
+diff --git a/menu/drivers/rgui.c b/menu/drivers/rgui.c
+--- a/menu/drivers/rgui.c
++++ b/menu/drivers/rgui.c
+@@ -8046,6 +8046,11 @@
+    }
+ }
+ 
++#ifdef M17
++extern bool m17_menu_avancado;
++void m17_menu_mudar(bool avancado);
++#endif
++
+ static enum menu_action rgui_parse_menu_entry_action(
+       rgui_t *rgui,
+       menu_entry_t *entry,
+@@ -8138,6 +8143,17 @@
+             break;
+          }
+ 
++#ifdef M17
++         /* M17 (spec 025, D-04): B na raiz do modo avancado volta a lista basica (o RGUI
++          * trata o B no menu principal aqui, antes do action_cancel da entrada) */
++         if (     m17_menu_avancado
++               && string_is_equal(rgui->menu_title, msg_hash_to_str(MENU_ENUM_LABEL_VALUE_MAIN_MENU)))
++         {
++            m17_menu_mudar(false);
++            new_action = MENU_ACTION_NOOP;
++            break;
++         }
++#endif
+          if (string_is_equal(rgui->menu_title, msg_hash_to_str(MENU_ENUM_LABEL_VALUE_MAIN_MENU)))
+          {
+             /* Jump to first item on Main Menu */
+diff --git a/menu/menu_displaylist.c b/menu/menu_displaylist.c
+--- a/menu/menu_displaylist.c
++++ b/menu/menu_displaylist.c
+@@ -3644,6 +3644,70 @@
+    return 0;
+ }
+ 
++#ifdef M17
++extern bool m17_menu_avancado;
++extern bool m17_controles_abertos;
++
++/* M17 (spec 025, D-02/D-03): lista basica do menu no jogo, com as entradas do proprio
++ * RetroArch (mesmas acoes do Quick Menu) e, por ultimo, "Advanced Menu" (D-04), que troca
++ * a raiz pelo menu principal completo. Sair = QUIT_RETROARCH: o tutu8bits so volta quando
++ * o RetroArch termina (spec 009). */
++static unsigned m17_menu_basico(file_list_t *list, settings_t *settings)
++{
++   unsigned count = 0;
++
++   if (menu_entries_append(list,
++         msg_hash_to_str(MENU_ENUM_LABEL_VALUE_RESUME_CONTENT),
++         msg_hash_to_str(MENU_ENUM_LABEL_RESUME_CONTENT),
++         MENU_ENUM_LABEL_RESUME_CONTENT,
++         MENU_SETTING_ACTION_RUN, 0, 0, NULL))
++      count++;
++
++   if (core_info_current_supports_savestate())
++   {
++      if (menu_entries_append(list,
++            msg_hash_to_str(MENU_ENUM_LABEL_VALUE_SAVE_STATE),
++            msg_hash_to_str(MENU_ENUM_LABEL_SAVE_STATE),
++            MENU_ENUM_LABEL_SAVE_STATE,
++            MENU_SETTING_ACTION_SAVESTATE, 0, 0, NULL))
++         count++;
++      if (menu_entries_append(list,
++            msg_hash_to_str(MENU_ENUM_LABEL_VALUE_LOAD_STATE),
++            msg_hash_to_str(MENU_ENUM_LABEL_LOAD_STATE),
++            MENU_ENUM_LABEL_LOAD_STATE,
++            MENU_SETTING_ACTION_LOADSTATE, 0, 0, NULL))
++         count++;
++      if (MENU_DISPLAYLIST_PARSE_SETTINGS_ENUM(list,
++            MENU_ENUM_LABEL_STATE_SLOT, PARSE_ONLY_INT, true) == 0)
++         count++;
++   }
++
++   if (menu_entries_append(list,
++         msg_hash_to_str(MENU_ENUM_LABEL_VALUE_CORE_INPUT_REMAPPING_OPTIONS),
++         msg_hash_to_str(MENU_ENUM_LABEL_CORE_INPUT_REMAPPING_OPTIONS),
++         MENU_ENUM_LABEL_CORE_INPUT_REMAPPING_OPTIONS,
++         MENU_SETTING_ACTION, 0, 0, NULL))
++      count++;
++
++   if (menu_entries_append(list,
++         msg_hash_to_str(MENU_ENUM_LABEL_VALUE_RESTART_CONTENT),
++         msg_hash_to_str(MENU_ENUM_LABEL_RESTART_CONTENT),
++         MENU_ENUM_LABEL_RESTART_CONTENT,
++         MENU_SETTING_ACTION_RUN, 0, 0, NULL))
++      count++;
++
++   if (MENU_DISPLAYLIST_PARSE_SETTINGS_ENUM(list,
++         MENU_ENUM_LABEL_QUIT_RETROARCH, PARSE_ACTION, false) == 0)
++      count++;
++
++   if (menu_entries_append(list, "Advanced Menu", "m17_advanced_menu",
++         MSG_UNKNOWN, MENU_SETTING_ACTION, 0, 0, NULL))
++      count++;
++
++   return count;
++}
++#endif
++
+ static int menu_displaylist_parse_load_content_settings(
+       file_list_t *list, settings_t *settings,
+       bool horizontal)
+@@ -8144,6 +8208,9 @@
+          }
+          break;
+       case DISPLAYLIST_OPTIONS_REMAPPINGS:
++#ifdef M17
++         m17_controles_abertos = true;   /* spec 025, D-06 */
++#endif
+          {
+             unsigned p;
+             unsigned max_users = settings->uints.input_max_users;
+@@ -15095,6 +15162,20 @@
+             break;
+          case DISPLAYLIST_MAIN_MENU:
+             menu_entries_clear(info->list);
++#ifdef M17
++            if (     (runloop_get_flags() & RUNLOOP_FLAG_CORE_RUNNING)
++                  && !retroarch_ctl(RARCH_CTL_IS_DUMMY_CORE, NULL))
++            {
++               if (!m17_menu_avancado)
++               {
++                  count = m17_menu_basico(info->list, settings);
++                  RARCH_LOG("[M17] menu: basico (%u entradas)\n", count);
++                  info->flags |= MD_FLAG_NEED_PUSH;
++                  break;
++               }
++               RARCH_LOG("[M17] menu: avancado\n");
++            }
++#endif
+             {
+                rarch_system_info_t *sys_info = &runloop_state_get_ptr()->system;
+                const char *menu_ident        = menu_driver_ident();
+diff --git a/menu/menu_driver.c b/menu/menu_driver.c
+--- a/menu/menu_driver.c
++++ b/menu/menu_driver.c
+@@ -6603,6 +6603,25 @@
+       video_state_get_ptr()->frame_delay_pause = true;
+ }
+ 
++#ifdef M17
++/* M17 (spec 025, D-04/D-05): modo do menu no jogo. Basico = a raiz e a lista basica
++ * (menu_displaylist.c); avancado = a raiz e o menu principal completo de hoje. */
++bool m17_menu_avancado = false;
++/* M17 (spec 025, D-06): a tela Controls foi aberta nesta partida (o remap so e gravado se sim) */
++bool m17_controles_abertos = false;
++
++void m17_menu_mudar(bool avancado)
++{
++   struct menu_state *menu_st = &menu_driver_state;
++   m17_menu_avancado          = avancado;
++   menu_st->selection_ptr     = 0;
++   if (menu_st->driver_ctx && menu_st->driver_ctx->navigation_set)
++      menu_st->driver_ctx->navigation_set(menu_st->userdata, false);
++   menu_st->flags            |=  MENU_ST_FLAG_ENTRIES_NEED_REFRESH;
++   menu_st->flags            &= ~MENU_ST_FLAG_PREVENT_POPULATE;
++}
++#endif
++
+ void retroarch_menu_running(void)
+ {
+    runloop_state_t *runloop_st     = runloop_state_get_ptr();
+@@ -6620,6 +6639,16 @@
+    menu_handle_t *menu             = menu_st->driver_data;
+    menu_input_t *menu_input        = &menu_st->input_state;
+ 
++#ifdef M17
++   /* M17 (spec 025, D-05): toda abertura comeca na lista basica, na raiz. Sem descartar o
++    * "Quick Menu pendente" que o lancamento pela linha de comando marca (task_content.c),
++    * a 1a abertura cairia direto no Quick Menu completo. */
++   menu_entries_flush_stack(NULL, MENU_SETTINGS);
++   menu_driver_state.flags &= ~(MENU_ST_FLAG_PENDING_QUICK_MENU
++                              | MENU_ST_FLAG_PENDING_STARTUP_PAGE);
++   m17_menu_mudar(false);
++#endif
++
+    if (menu)
+    {
+       if (menu->driver_ctx && menu->driver_ctx->toggle)
+diff --git a/runloop.c b/runloop.c
+--- a/runloop.c
++++ b/runloop.c
+@@ -4078,6 +4078,13 @@
+ 
+ #ifdef M17
+    m17_fps_registrar();
++#ifdef HAVE_MENU
++   {
++      /* spec 025, D-06: antes de descarregar o jogo (nucleo e conteudo ainda valem) */
++      void m17_remap_ao_sair(void);
++      m17_remap_ao_sair();
++   }
++#endif
+ #endif
+    core_unload_game();
+ 

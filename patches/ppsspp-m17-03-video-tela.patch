@@ -1,0 +1,24 @@
+Licença: GPL-2.0-or-later (a do PPSSPP, onde o patch entra) (spec 053)
+
+diff --git a/GPU/Common/FramebufferManagerCommon.cpp b/GPU/Common/FramebufferManagerCommon.cpp
+index 18bc85c..0f5a5c9 100644
+--- a/GPU/Common/FramebufferManagerCommon.cpp
++++ b/GPU/Common/FramebufferManagerCommon.cpp
+@@ -1623,10 +1623,13 @@ void FramebufferManagerCommon::PrepareCopyDisplayToOutput(const DisplayLayoutCon
+ 			const u32 v_addr = v->fb_address;
+ 			const u32 v_size = v->BufferByteSize(RASTER_COLOR);
+ 
+-			if (v->fb_format != displayFormat_ || v->fb_stride != displayStride_) {
+-				// Displaying a buffer of the wrong format or stride is nonsense, ignore it.
+-				continue;
+-			}
++			// M17 (spec 023): o PPSSPP original ignora aqui um framebuffer de formato/largura diferente da tela (desde o
++			// ab08db6fca, 2022-10-01). No PSP2 o video (8888) e mostrado num endereco onde esta o framebuffer 565 do jogo:
++			// ignorado, a exibicao cai no "direto da RAM" e a textura de cada quadro vai direto para a superficie da
++			// tela -- nesse uso o driver da PowerVR (SGX540) nunca desfaz as areas das texturas apagadas (540 KB cada,
++			// acumulam ate o lowmemorykiller matar o jogo). Sem o descarte, o quadro e desenhado no framebuffer do jogo
++			// e o driver libera tudo (sessao 30: o trailer inteiro a ~59,5 quadros/s, GPU estavel em 20-28 MB).
++
+ 
+ 			if (addr >= v_addr && addr < v_addr + v_size) {
+ 				const u32 dstBpp = BufferFormatBytesPerPixel(v->fb_format);

@@ -1,0 +1,36 @@
+Licença: GPL-2.0-or-later (a do PPSSPP, onde o patch entra) (spec 053)
+
+diff --git a/SDL/SDLGLGraphicsContext.cpp b/SDL/SDLGLGraphicsContext.cpp
+index bfa33bd..15e42bc 100644
+--- a/SDL/SDLGLGraphicsContext.cpp
++++ b/SDL/SDLGLGraphicsContext.cpp
+@@ -326,6 +326,19 @@ int SDLGLGraphicsContext::Init(SDL_Window *&window, int x, int y, int w, int h,
+ 	mode |= SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN;
+ 
+ 	SDL_GLContext glContext = nullptr;
++	// M17 (spec 023): o EGL da PowerVR SGX540 so tem configs 565 para o framebuffer RGB565 do aparelho
++	// (KB §11g); a cor 8/8/8 com profundidade 24 que o SDLMain pede da "Can't create EGL window surface"
++	// em toda versao de GLES. Tenta a pedida e depois as 565, da mais completa para a minima.
++	struct CorM17 { int r, g, b, d, s; };
++	static const CorM17 coresM17[] = { {5, 6, 5, 16, 8}, {8, 8, 8, 24, 8}, {5, 6, 5, 24, 8}, {5, 6, 5, 16, 0} };   // 1o = o da fabrica (main, sessao 22)
++	for (size_t c = 0; c < ARRAY_SIZE(coresM17) && glContext == nullptr; ++c) {
++	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, coresM17[c].r);
++	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, coresM17[c].g);
++	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, coresM17[c].b);
++	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, coresM17[c].d);
++	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, coresM17[c].s);
++	fprintf(stderr, "[M17] GL: tentando cor %d/%d/%d, profundidade %d, stencil %d\n",
++		coresM17[c].r, coresM17[c].g, coresM17[c].b, coresM17[c].d, coresM17[c].s);
+ 	for (size_t i = 0; i < ARRAY_SIZE(attemptVersions); ++i) {
+ 		const auto &ver = attemptVersions[i];
+ 		// If we force a specific OpenGL version, skip the ones
+@@ -364,6 +377,9 @@ int SDLGLGraphicsContext::Init(SDL_Window *&window, int x, int y, int w, int h,
+ 		// in practice, it doesn't seem to matter, but maybe it differs by platform.
+ 		SDL_DestroyWindow(window);
+ 	}
++	}  // M17: configs de cor
++	if (glContext != nullptr)
++		fprintf(stderr, "[M17] GL: contexto criado\n");
+ 
+ 	if (glContext == nullptr) {
+ 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, 0);

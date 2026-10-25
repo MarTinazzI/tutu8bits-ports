@@ -1,0 +1,14 @@
+# sysconf do NetHack no M17 (spec 036, plano D-16): a configuracao do sistema do jogo, na pasta do jogo
+# (saves/jogos/nethack/, NETHACKDIR). Copiado pelo lancador so quando falta.
+# Ninguem e "wizard" (modo de depuracao); o modo explorar fica para todos (opcao do jogo).
+WIZARDS=
+EXPLORERS=*
+# nomes que nao contam como nome de personagem (o lancador sempre passa um nome)
+GENERICUSERS=play player game games nethack nethacker
+# um jogador por vez (o aparelho e de uma pessoa)
+MAXPLAYERS=1
+# o cartao e exFAT (KB §3): sem dono nos arquivos; nao conferir o dono do save
+CHECK_SAVE_UID=0
+# sem gdb/grep no aparelho
+PANICTRACE_GDB=0
+PANICTRACE_LIBC=0

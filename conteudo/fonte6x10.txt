@@ -1,0 +1,5 @@
+# Fonte misc-fixed 6x10 (spec 035, plano D-03): a fonte do terminal do Rogue (80x24 em 480x272, celula 6x11).
+# Dominio publico ("Public domain terminal emulator font. Share and enjoy.", propriedade COPYRIGHT do BDF).
+# A receita do rogue converte o BDF num .h (ports/rogue_m17/bdf_para_h.py). O BDF nao vai para o git.
+# Campos: arquivo|url|autor|licenca|sha256
+6x10.bdf|https://gitlab.freedesktop.org/xorg/font/misc-misc/-/raw/c4e2af05583764fae3d0b2aa20d5c93b031cbcbf/6x10.bdf|Markus Kuhn e X Consortium (misc-fixed)|dominio publico|99abf27fa2ca5a5171cad3df13aed2d4c55e73698cb141981b3e2268c733f64c

@@ -1,0 +1,72 @@
+Licença: GPL-2.0 nos trechos do jogo (src/); licenca do Build de Ken Silverman (nao comercial) nos trechos de jfbuild/ (spec 053)
+
+diff --git a/Makefile b/Makefile
+--- a/Makefile
++++ b/Makefile
+@@ -92,6 +92,11 @@
+ 	$(SRC)/grpscan.$o \
+ 	$(SRC)/sounds.$o
+ 
++# M17 (spec 040, D-07): o teclado virtual da spec 036 (a receita copia teclado*.c e o m17_fonte.h para src/)
++ifneq ($(M17),)
++GAMEOBJS+= $(SRC)/teclado.$o $(SRC)/teclado_sdl.$o
++endif
++
+ GAMEOBJS+= \
+ 	$(MACTROOT)/util_lib.$o \
+ 	$(MACTROOT)/file_lib.$o \
+diff --git a/src/game.c b/src/game.c
+--- a/src/game.c
++++ b/src/game.c
+@@ -2121,10 +2121,38 @@
+ 
+ 
+ short inputloc = 0;
++#ifdef M17
++#include "teclado.h"
++extern SDL_Renderer *m17_renderer(void);
++#endif
+ short strget(short x,short y,char *t,short dalen,short c)
+ {
+     short ch, sh, didinput = 0;
+ 
++#ifdef M17
++    // M17 (spec 040, D-07): o nome do save (o unico texto sem eco: STRGET_NOECHO) pelo teclado virtual da spec 036; a
++    // vaga vazia ja vem com o episodio e o nivel. Abre uma vez: OK grava (1), cancelar volta (-1)
++    if ((c & STRGET_NOECHO) && !(c & STRGET_NUMERIC) && m17_renderer())
++    {
++        char b[64];
++        int ok;
++        if (!t[0] || !strncmp(t, "GAME ", 5))   // vaga vazia (o jogo poe "GAME n")
++            Bsnprintf(b, sizeof(b), "E%d L%d", ud.volume_number + 1, ud.level_number + 1);
++        else
++            Bsnprintf(b, sizeof(b), "%s", t);
++        ok = m17_teclado(m17_renderer(), "Nome do save", b, dalen);
++        KB_FlushKeyboardQueue();
++        KB_ClearKeysDown();
++        if (!ok)
++            return (-1);
++        for (ch = 0; b[ch] && ch < dalen; ch++)
++            t[ch] = Btoupper(b[ch]);
++        t[ch] = 0;
++        inputloc = ch;
++        return (1);
++    }
++#endif
++
+     while((ch = KB_Getch()) != 0)
+     {
+         if(ch == asc_BackSpace)
+diff --git a/jfbuild/src/sdlayer2.c b/jfbuild/src/sdlayer2.c
+--- a/jfbuild/src/sdlayer2.c
++++ b/jfbuild/src/sdlayer2.c
+@@ -41,6 +41,9 @@
+ // video
+ static SDL_Window *sdl_window;
+ static SDL_Renderer *sdl_renderer;	// For non-GL 8-bit mode output.
++#ifdef M17
++SDL_Renderer *m17_renderer(void) { return sdl_renderer; }   // spec 040 (D-07): o teclado virtual desenha nele
++#endif
+ static SDL_Texture *sdl_texture;	// For non-GL 8-bit mode output.
+ static SDL_Surface *sdl_surface;	// For non-GL 8-bit mode output.
+ static SDL_Surface *sdl_appicon;

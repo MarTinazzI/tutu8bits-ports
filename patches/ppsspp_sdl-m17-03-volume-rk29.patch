@@ -1,0 +1,93 @@
+Licença: GPL-2.0-or-later (a do PPSSPP, onde o patch entra) (spec 053)
+
+diff --git a/SDL/SDLMain.cpp b/SDL/SDLMain.cpp
+index 6853525..003e6ed 100644
+--- a/SDL/SDLMain.cpp
++++ b/SDL/SDLMain.cpp
+@@ -1,5 +1,12 @@
+ #include <cstdlib>
+ #include <unistd.h>
++#if defined(__linux__)
++#include <cstdio>
++#include <cstring>
++#include <fcntl.h>
++#include <sys/ioctl.h>
++#include <linux/input.h>
++#endif
+ #include <pwd.h>
+ 
+ #include "ppsspp_config.h"
+@@ -929,6 +936,57 @@ void UpdateCursor() {
+ 	SDL_SetCursor(g_builtinCursors[(int)curCursor]);
+ }
+ 
++// M17 (spec 023): VOL- e VOL+ do M17 vem do rk29-keypad (KB §7), mas o SDL do PPSSPP nao os entrega
++// (sessao 33: nenhuma tecla de teclado chegou, so os botoes do i2c-keys como controle). Sao o ALT e o
++// MENU do produto (salvar estado = VOL- + X, pausa = VOL+, controls.ini), entao o PPSSPP le o
++// dispositivo por conta propria, como o m17atalhos, e entrega as duas teclas como se fossem do teclado.
++static int m17VolumeFd = -2;
++
++static void M17LerVolume() {
++#if defined(__linux__)
++	if (m17VolumeFd == -2) {
++		m17VolumeFd = -1;
++		for (int i = 0; i < 16 && m17VolumeFd < 0; i++) {
++			char arq[32], nome[64] = "";
++			snprintf(arq, sizeof(arq), "/dev/input/event%d", i);
++			int fd = open(arq, O_RDONLY | O_NONBLOCK | O_CLOEXEC);
++			if (fd < 0)
++				continue;
++			if (ioctl(fd, EVIOCGNAME(sizeof(nome) - 1), nome) >= 0 && strcmp(nome, "rk29-keypad") == 0) {
++				m17VolumeFd = fd;
++				fprintf(stderr, "[M17] volume: %s (rk29-keypad)\n", arq);
++			} else {
++				close(fd);
++			}
++		}
++		if (m17VolumeFd < 0)
++			fprintf(stderr, "[M17] volume: rk29-keypad nao achado\n");
++	}
++	if (m17VolumeFd < 0)
++		return;
++	struct input_event ev[16];
++	ssize_t n;
++	while ((n = read(m17VolumeFd, ev, sizeof(ev))) > 0) {
++		for (int i = 0; i < (int)(n / sizeof(ev[0])); i++) {
++			if (ev[i].type != EV_KEY || ev[i].value == 2)
++				continue;
++			InputKeyCode code;
++			if (ev[i].code == KEY_VOLUMEUP)
++				code = NKCODE_VOLUME_UP;
++			else if (ev[i].code == KEY_VOLUMEDOWN)
++				code = NKCODE_VOLUME_DOWN;
++			else
++				continue;
++			KeyInput key;
++			key.flags = ev[i].value ? KeyInputFlags::DOWN : KeyInputFlags::UP;
++			key.keyCode = code;
++			key.deviceId = DEVICE_ID_KEYBOARD;
++			NativeKey(key);
++		}
++	}
++#endif
++}
++
+ static void ProcessSDLEvent(SDL_Window *window, const SDL_Event &event, InputStateTracker *inputTracker) {
+ 	// We have to juggle around 3 kinds of "DPI spaces" if a logical DPI is
+ 	// provided (through --dpi, it is equal to system DPI if unspecified):
+@@ -1820,6 +1878,7 @@ int main(int argc, char *argv[]) {
+ 						break;
+ 				} while (SDL_PollEvent(&event));
+ 			}
++			M17LerVolume();
+ 
+ 			if (g_QuitRequested || g_RestartRequested)
+ 				break;
+@@ -1842,6 +1901,7 @@ int main(int argc, char *argv[]) {
+ 			while (SDL_PollEvent(&event)) {
+ 				ProcessSDLEvent(window, event, &inputTracker);
+ 			}
++			M17LerVolume();
+ 		}
+ 		if (g_QuitRequested || g_RestartRequested)
+ 			break;

@@ -1,0 +1,6 @@
+# D-Mods de teste (spec 047, plano D-12): so para os testes do qemu (o salto do cursor nos titulos, a tela de escolha
+# do Pilgrim's Quest, a roda com as teclas do D-Mod). Cada D-Mod tem a licenca do seu autor: NUNCA vao para o cartao,
+# para o pacote ou para o git (RNF-02). O .dmod e um tar.bz2 com uma pasta. Fonte: The Dink Network.
+# Campos: arquivo|url|autor|licenca|sha256
+lyna.dmod|https://www.dinknetwork.com/download/dmods/lyna.dmod|Paul Pliska (Lyna's Story v1.1)|do autor (so teste)|1faba86eeae9806c085161d9caf69f4f9ca6259ee143ded110bb677360a85cb4
+pilgrims_quest-2_06.dmod|https://www.dinknetwork.com/download/pilgrims_quest-2_06.dmod|Pilgrim's Quest - Redux 2.06|do autor (so teste)|dcfb1c636e1897eb443c665c9af57fab9158723f25c1837092b9035cea986756

@@ -1,0 +1,43 @@
+Licença: GPL-2.0 (a do OpenTyrian, onde o patch entra) (spec 053)
+
+diff --git a/src/keyboard.c b/src/keyboard.c
+index 17bf955..0e9289f 100644
+--- a/src/keyboard.c
++++ b/src/keyboard.c
+@@ -24,6 +24,9 @@
+ #include "nortsong.h"
+ #include "opentyr.h"
+ #include "video.h"
++#ifdef M17
++#include "varz.h"
++#endif
+ 
+ #include "SDL.h"
+ 
+@@ -361,6 +364,11 @@ void handleSdlEvents(void)
+ 				break;
+ 
+ 			case SDL_QUIT:
++#ifdef M17
++				// M17 (spec 034): o SIGTERM do SELECT+START vira SDL_QUIT; sair pela rotina normal do jogo, que
++				// grava a configuracao e os saves (o exit(0) direto nao gravava nada)
++				JE_tyrianHalt(0);
++#endif
+ 				exit(0);
+ 				break;
+ 		}
+diff --git a/src/varz.c b/src/varz.c
+index 0ba5073..09a59e1 100644
+--- a/src/varz.c
++++ b/src/varz.c
+@@ -452,6 +452,10 @@ void JE_tyrianHalt(JE_byte code)
+ 	if (code == 5)
+ 		code = 0;
+ 
++#ifdef M17
++	logInfo("[M17] saida");  // fim normal para o lancar.sh (configuracao e saves ja gravados)
++#endif
++
+ 	if (trentWin)
+ 	{
+ 		// TODO: Show on screen rather than logging.

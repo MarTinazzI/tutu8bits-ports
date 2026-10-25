@@ -1,0 +1,3 @@
+# Demo do Hexen (4 fases) so para os testes do PC (spec 038, D-06): o README.TXT diz "Hexen is NOT a shareware product" e nao da direito de redistribuir; nunca vai no pacote nem no git.
+# Campos: arquivo|url|autor|licenca|sha256
+hexndemo.zip|https://youfailit.net/pub/idgames/idstuff/hexen/hexndemo.zip|Raven Software / id Software|demo comercial (so testes locais)|469ee3a254959d2fca624aec7391292fbd1ac3ebd9074b65f05cbc74de3c4572

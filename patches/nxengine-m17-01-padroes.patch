@@ -1,0 +1,107 @@
+Licença: GPL-3.0 (a do NXEngine-evo, onde o patch entra) (spec 053)
+
+diff --git a/src/graphics/Renderer.cpp b/src/graphics/Renderer.cpp
+index 38c26ab..515eb08 100644
+--- a/src/graphics/Renderer.cpp
++++ b/src/graphics/Renderer.cpp
+@@ -212,7 +212,10 @@ const Graphics::gres_t *Renderer::getResolutions(bool full_list)
+       = {//      description, screen_w, screen_h, render_w, render_h, scale_factor, widescreen, enabled
+          // 4:3
+          {(char *)"---", 0, 0, 0, 0, 1, false, true},
+-#if defined(__VITA__)
++#if defined(M17)
++         // M17 (spec 030, plano D-04): so a tela do aparelho (480x272, escala 1), como no Vita
++         {(char *)"480x272", 480, 272, 480, 272, 1, true, true},
++#elif defined(__VITA__)
+          {(char *)"960x544", 960, 544, 480, 272, 2, true, true},
+ #elif defined(__SWITCH__)
+          {(char *)"1920x1080", 1920, 1080, 480, 270, 4, true, true},
+diff --git a/src/input.cpp b/src/input.cpp
+index 4b8b116..c0a59b1 100644
+--- a/src/input.cpp
++++ b/src/input.cpp
+@@ -82,6 +82,26 @@ bool input_init(void)
+   mappings[ESCKEY].jbut       = 11; // -
+ #endif
+ 
++#if defined(M17)
++  // M17 (spec 030, plano D-04): o i2c-keys chega ao SDL2 como joystick; indices medidos (KB §11k).
++  // Faces pelo rotulo impresso, como no port do Switch: pular embaixo, atirar a direita.
++  // SELECT (12) fica de fora: SELECT+START e a saida do m17atalhos.
++  mappings[UPKEY].jbut        = 13;
++  mappings[DOWNKEY].jbut      = 16;
++  mappings[LEFTKEY].jbut      = 14;
++  mappings[RIGHTKEY].jbut     = 15;
++  mappings[JUMPKEY].jbut      = 6;  // A
++  mappings[FIREKEY].jbut      = 11; // B
++  mappings[INVENTORYKEY].jbut = 9;  // X
++  mappings[ESCKEY].jbut       = 5;  // START: pausa
++  // Y, L1 e R1 nao foram medidos (KB §11k): inferidos da ordem dos keycodes no SDL (L3/R3 = 0/1,
++  // depois os keycodes crescentes: R1 19, Y 21, START 28 = 5...). Cada botao vai para o log (abaixo)
++  // e a sessao no aparelho confere (spec 030, T14).
++  mappings[MAPSYSTEMKEY].jbut = 4;  // Y
++  mappings[PREVWPNKEY].jbut   = 7;  // L1
++  mappings[NEXTWPNKEY].jbut   = 3;  // R1
++#endif
++
+   mappings[F1KEY].key  = SDLK_F1;
+   mappings[F2KEY].key  = SDLK_F2;
+   mappings[F3KEY].key  = SDLK_F3;
+@@ -340,6 +360,9 @@ void input_poll(void)
+       case SDL_JOYBUTTONDOWN:
+       {
+         Uint8 but            = evt.jbutton.button;
++#if defined(M17)
++        LOG_INFO("[M17] botao {}", (int)but); // a sessao confere os indices (spec 030)
++#endif
+         last_sdl_action.jbut = but;
+         ino                  = input_get_action_but(but); // mappings[key];
+         if (ino != -1)
+diff --git a/src/main.cpp b/src/main.cpp
+index f5f4f0d..4685a52 100644
+--- a/src/main.cpp
++++ b/src/main.cpp
+@@ -239,7 +239,10 @@ void gameloop(void)
+ 
+       nexttick = curtime + GAME_WAIT;
+ 
+-#if !defined(DEBUG)
++#if !defined(DEBUG) && !defined(M17)
++      // M17 (spec 030): fora. O aparelho tem uma janela so, em tela cheia; sem foco de teclado
++      // (video dummy, e talvez o mali) o jogo ficava preso no AppMinimized, que nem olha o SDL_QUIT:
++      // o SIGTERM do m17atalhos (SELECT+START) nao o fechava
+       // pause game if window minimized
+       if (!Renderer::getInstance()->isWindowVisible())
+       {
+diff --git a/src/settings.cpp b/src/settings.cpp
+index 40213f8..4398301 100644
+--- a/src/settings.cpp
++++ b/src/settings.cpp
+@@ -60,7 +60,7 @@ static bool tryload(Settings *setfile)
+     strncpy(setfile->language, "english", 255);
+   }
+ 
+-#if defined(__VITA__) || defined(__SWITCH__)
++#if defined(__VITA__) || defined(__SWITCH__) || defined(M17)
+     setfile->resolution     = 1;
+ #endif
+ 
+@@ -77,13 +77,17 @@ bool settings_load(Settings *setfile)
+     LOG_INFO("No saved settings; using defaults.");
+ 
+     memset(setfile, 0, sizeof(Settings));
+-#if defined(__VITA__) || defined(__SWITCH__)
++#if defined(__VITA__) || defined(__SWITCH__) || defined(M17)
+     setfile->resolution     = 1;
+ #else
+     setfile->resolution     = 2; // 640x480 Windowed, should be safe value
+ #endif
+     setfile->last_save_slot = 0;
++#if defined(M17)
++    setfile->fullscreen     = true;
++#else
+     setfile->fullscreen     = false;
++#endif
+ 
+     setfile->sound_enabled = true;
+     setfile->music_enabled = 1; // both Boss and Regular music

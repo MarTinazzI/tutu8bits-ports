@@ -1,0 +1,306 @@
+Licença: GPL-2.0 (a do OpenTyrian, onde o patch entra) (spec 053)
+
+diff --git a/src/m17_nomes.c b/src/m17_nomes.c
+new file mode 100644
+index 0000000..be8a134
+--- /dev/null
++++ b/src/m17_nomes.c
+@@ -0,0 +1,105 @@
++// M17 (spec 034, B-48 a): nomes prontos nos campos de texto. A lista vem do lancar.sh (M17_NOMES, ja validada a
++// partir de home/config/nomes.txt ou da do sistema); aqui ela e lida de novo, por seguranca, com as mesmas regras.
++#include "m17_nomes.h"
++
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <time.h>
++
++int m17_nomes_ler(const char *arq, char nomes[][M17_NOME_TAM], int max)
++{
++	if (arq == NULL || *arq == '\0')
++		return 0;
++	FILE *f = fopen(arq, "r");
++	if (f == NULL)
++		return 0;
++	char linha[256];
++	int n = 0;
++	while (n < max && fgets(linha, sizeof(linha), f) != NULL)
++	{
++		size_t t = strlen(linha);
++		while (t > 0 && (linha[t - 1] == '\n' || linha[t - 1] == '\r' || linha[t - 1] == ' ' || linha[t - 1] == '\t'))
++			linha[--t] = '\0';
++		char *ini = linha;
++		while (*ini == ' ' || *ini == '\t')
++			++ini;
++		if (*ini == '\0')
++			continue;
++		int ok = 1;
++		for (const char *c = ini; *c != '\0'; ++c)
++			if ((unsigned char)*c < 32 || (unsigned char)*c > 126)
++				ok = 0;
++		if (!ok)
++			continue;
++		size_t tam = strlen(ini);
++		if (tam > M17_NOME_TAM - 1)
++			tam = M17_NOME_TAM - 1;  // nome longo: cortado (o campo do jogo corta de novo no limite dele)
++		memcpy(nomes[n], ini, tam);
++		nomes[n][tam] = '\0';
++		++n;
++	}
++	fclose(f);
++	return n;
++}
++
++size_t m17_nome_escolher(char nomes[][M17_NOME_TAM], int n, const char *atual, char *dst, size_t max,
++                         int (*desenhavel)(unsigned char))
++{
++	static int semeado = 0;
++	if (!semeado)
++	{
++		srand((unsigned)time(NULL) ^ (unsigned)clock());
++		semeado = 1;
++	}
++	const char *nome = "Tutu";
++	if (n > 0)
++	{
++		int i = rand() % n;
++		if (n > 1 && atual != NULL && strcmp(nomes[i], atual) == 0)
++			i = (i + 1 + rand() % (n - 1)) % n;
++		nome = nomes[i];
++	}
++	size_t t = 0;
++	for (; t < max && nome[t] != '\0'; ++t)
++	{
++		unsigned char c = (unsigned char)nome[t];
++		dst[t] = (desenhavel == NULL || desenhavel(c)) ? (char)c : ' ';
++	}
++	return t;
++}
++
++#ifndef M17_NOMES_TESTE
++
++#include "fonthand.h"
++
++#include "SDL.h"
++
++
++static int m17_desenhavel(unsigned char c)
++{
++	return c == ' ' || fontMap[c] != -1;
++}
++
++int m17_nome_preencher(char *campo, int atual_tam, int max)
++{
++	static char nomes[M17_NOMES_MAX][M17_NOME_TAM];
++	static int n = -1;
++	if (n < 0)
++	{
++		n = m17_nomes_ler(getenv("M17_NOMES"), nomes, M17_NOMES_MAX);
++		SDL_Log("[M17] nomes: %d da lista%s", n, n == 0 ? " (usando Tutu)" : "");
++	}
++	char atual[M17_NOME_TAM] = "";
++	if (atual_tam > 0)
++	{
++		int t = atual_tam < M17_NOME_TAM - 1 ? atual_tam : M17_NOME_TAM - 1;
++		memcpy(atual, campo, (size_t)t);
++		atual[t] = '\0';
++	}
++	for (int i = 0; i < max; ++i)
++		campo[i] = ' ';
++	return (int)m17_nome_escolher(nomes, n, atual, campo, (size_t)max, m17_desenhavel);
++}
++
++#endif
+diff --git a/src/m17_nomes.h b/src/m17_nomes.h
+new file mode 100644
+index 0000000..6e2a14b
+--- /dev/null
++++ b/src/m17_nomes.h
+@@ -0,0 +1,27 @@
++// M17 (spec 034, B-48 a): nomes prontos nos campos de texto (save e placar); spec 042: o campo abre no teclado
++// virtual ja com o nome (o ALT+X, que trocava o nome, saiu).
++#ifndef M17_NOMES_H
++#define M17_NOMES_H
++
++#include <stddef.h>
++
++#define M17_NOMES_MAX 64   // nomes lidos da lista
++#define M17_NOME_TAM  32   // tamanho maximo de um nome (com o \0)
++
++// le a lista (um nome por linha); tira \r, espacos das pontas, linhas vazias e linhas com caractere fora do ASCII
++// imprimivel. Devolve quantos nomes ficaram (0 = arquivo ausente ou sem nome valido).
++int m17_nomes_ler(const char *arq, char nomes[][M17_NOME_TAM], int max);
++
++// sorteia um nome de nomes[0..n) diferente de "atual" quando ha 2+ (atual pode ser NULL); n = 0 -> "Tutu".
++// Copia para dst cortado em max caracteres; desenhavel(c) == 0 troca o caractere por espaco (NULL = todos valem).
++// Devolve o tamanho copiado.
++size_t m17_nome_escolher(char nomes[][M17_NOME_TAM], int n, const char *atual, char *dst, size_t max,
++                         int (*desenhavel)(unsigned char));
++
++#ifndef M17_NOMES_TESTE
++// preenche o campo do jogo (cheio de espacos, sem \0 no meio) com um nome da lista de $M17_NOMES, diferente do que
++// esta nele (atual_tam caracteres); devolve o tamanho novo. A lista e lida uma vez.
++int m17_nome_preencher(char *campo, int atual_tam, int max);
++#endif
++
++#endif
+diff --git a/src/mainint.c b/src/mainint.c
+index ab8a94b..04ea086 100644
+--- a/src/mainint.c
++++ b/src/mainint.c
+@@ -17,6 +17,63 @@
+  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+  */
+ #include "mainint.h"
++#ifdef M17
++#include "fonthand.h"
++#include "joystick.h"
++#include "keyboard.h"
++#include "m17_nomes.h"
++#include "teclado.h"
++SDL_Renderer *m17_renderer(void);
++
++// M17 (spec 042, D-12): o nome (save ou placar) pelo teclado virtual da spec 036, ja preenchido. campo = max
++// caracteres sem \0 no meio (o jogo completa com espacos); tam = os que ja valem. Devolve o tamanho novo (OK: campo
++// novo; caractere que a fonte do Tyrian nao desenha vira espaco) ou -1 = cancelado (nada muda).
++static int m17_nome_teclado(const char *titulo, char *campo, int tam, int max)
++{
++	char b[64];
++	int n = tam < max ? tam : max, ok;
++	memcpy(b, campo, (size_t)n);
++	b[n] = '\0';
++	ok = m17_teclado(m17_renderer(), titulo, b, max);
++	// espera soltar os botoes e descarta o que sobrou: o START/SELECT do teclado nao chega ao menu do jogo
++	for (int k = 0; k < 300; ++k)
++	{
++		bool algum = false;
++		SDL_JoystickUpdate();
++		for (int j = 0; j < joysticks; ++j)
++			for (int i = 0; joystick[j].handle != NULL && i < SDL_JoystickNumButtons(joystick[j].handle); ++i)
++				algum = algum || SDL_JoystickGetButton(joystick[j].handle, i);
++		if (!algum)
++			break;
++		SDL_Delay(10);
++	}
++	poll_joysticks();
++	keyboardClearInput();
++	mouseClearInput();
++	if (!ok)
++		return -1;
++	for (int i = 0; i < max; ++i)
++		campo[i] = ' ';
++	for (n = 0; b[n] != '\0' && n < max; ++n)
++		campo[n] = (b[n] == ' ' || fontMap[(Uint8)b[n]] != -1) ? b[n] : ' ';
++	return n;
++}
++
++// M17 (spec 042, testes): o campo de nome sem passar pelos menus (opentyr.c, M17_TESTE_NOME): "save" = vaga vazia,
++// 14 caracteres; "placar" = 28. Escreve "[M17] teste nome: ok [<nome>]" ou "cancelado".
++int m17_teste_nome(const char *qual)
++{
++	char campo[30];
++	int max = strcmp(qual, "placar") == 0 ? 28 : 14, tam;
++	tam = m17_nome_preencher(campo, 0, max);
++	tam = m17_nome_teclado(max == 28 ? "Seu nome no placar" : "Nome do save", campo, tam, max);
++	if (tam >= 0)
++		SDL_Log("[M17] teste nome: ok [%.*s]", tam, campo);
++	else
++		SDL_Log("[M17] teste nome: cancelado");
++	return 0;
++}
++#endif
+ 
+ #include "backgrnd.h"
+ #include "config.h"
+@@ -1984,6 +2041,17 @@ void JE_highScoreCheck(void)
+ 
+ 				JE_barShade(VGAScreen, 65, 55, 255, 155);
+ 
++#ifdef M17
++				// M17 (spec 034, B-48 a; spec 042, D-12): o nome vem da lista do jogador e abre no teclado virtual
++				temp = m17_nome_preencher(stemp, 0, 28);
++				{
++					int n = m17_nome_teclado("Seu nome no placar", stemp, temp, 28);
++					cancel = n < 0;
++					if (!cancel)
++						temp = (JE_byte)n;
++				}
++				quit = true;
++#else
+ 				SDL_StartTextInput();
+ 
+ 				do
+@@ -2101,6 +2169,7 @@ void JE_highScoreCheck(void)
+ 				} while (!quit);
+ 
+ 				SDL_StopTextInput();
++#endif
+ 
+ 				if (!cancel)
+ 				{
+@@ -2731,6 +2800,21 @@ void JE_operation(JE_byte slot)
+ 		temp = strlen(stemp);
+ 		while (stemp[temp-1] == ' ' && --temp);
+ 
++#ifdef M17
++		// M17 (spec 034, B-48 a; spec 042, D-12): slot sem nome ja vem com um da lista; o nome abre no teclado virtual
++		(void)flash;
++		if (temp == 0)
++			temp = m17_nome_preencher(stemp, 0, 14);
++		int m17_n = m17_nome_teclado("Nome do save", stemp, temp, 14);
++		if (m17_n >= 0)
++		{
++			temp = (JE_byte)m17_n;
++			JE_saveGame(slot, stemp);
++			JE_playSampleNum(S_SELECT);
++		}
++		else
++			JE_playSampleNum(S_SPRING);
++#else
+ 		flash = 8 * 16 + 10;
+ 
+ 		JE_barShade(VGAScreen, 65, 55, 255, 155);
+@@ -2841,6 +2925,7 @@ void JE_operation(JE_byte slot)
+ 		}
+ 
+ 		SDL_StopTextInput();
++#endif
+ 	}
+ }
+ 
+diff --git a/src/opentyr.c b/src/opentyr.c
+index 59b481d..01fb03d 100644
+--- a/src/opentyr.c
++++ b/src/opentyr.c
+@@ -846,6 +846,16 @@ int main(int argc, char *argv[])
+ 		logInfo("Audio is disabled.");
+ 	}
+ 
++#ifdef M17
++	{
++		// M17 (spec 042, testes): M17_TESTE_NOME=save|placar abre o campo de nome pelo teclado virtual e sai
++		extern int m17_teste_nome(const char *qual);
++		const char *q = getenv("M17_TESTE_NOME");
++		if (q != NULL && *q)
++			return m17_teste_nome(q);
++	}
++#endif
++
+ 	if (recordDemo)
+ 		logInfo("Game will be recorded.");
+ 
+diff --git a/src/video.c b/src/video.c
+index c95e269..6998ddb 100644
+--- a/src/video.c
++++ b/src/video.c
+@@ -44,6 +44,10 @@ SDL_Surface *game_screen;
+ 
+ SDL_Window *main_window = NULL;
+ static SDL_Renderer *main_window_renderer = NULL;
++#ifdef M17
++// M17 (spec 042, D-12): o teclado virtual desenha por cima do renderer do jogo
++SDL_Renderer *m17_renderer(void) { return main_window_renderer; }
++#endif
+ SDL_PixelFormat *main_window_tex_format = NULL;
+ static SDL_Texture *main_window_texture = NULL;
+ 

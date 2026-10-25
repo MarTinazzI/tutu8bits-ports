@@ -1,0 +1,5 @@
+# Quake shareware 1.06 (spec 039, plano D-04/D-08): SO para os testes do PC. A licenca (SLICNSE.TXT, dentro do
+# resource.1) so deixa o usuario final redistribuir "the Software as a whole", com o contrato junto: NAO vai no pacote
+# (o jogo pronto do Quake e o LibreQuake). O resource.1 do zip e um LHA (abre com o bsdtar do PC). Nada disso vai para o git.
+# Campos: arquivo|url|autor|licenca|sha256
+quake106.zip|https://youfailit.net/pub/idgames/idstuff/quake/quake106.zip|id Software|shareware (so testes locais)|ec6c9d34b1ae0252ac0066045b6611a7919c2a0d78a3a66d9387a8f597553239

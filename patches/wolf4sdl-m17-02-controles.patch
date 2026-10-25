@@ -1,0 +1,269 @@
+Licença: GPL-2.0 ou a licenca da id (as do Wolf4SDL, onde o patch entra) (spec 053)
+
+diff --git a/id_in.c b/id_in.c
+index 522f1ee..8e46a57 100644
+--- a/id_in.c
++++ b/id_in.c
+@@ -30,6 +30,9 @@ boolean	    Paused;
+ ScanCode	LastScan;
+ 
+ static SDL_Joystick *Joystick;
++#ifdef M17
++SDL_Joystick *M17_Joystick (void) { return Joystick; }   // spec 037: o wl_play.c le os eixos e o D-pad direto
++#endif
+ int JoyNumButtons;
+ static int JoyNumHats;
+ 
+@@ -117,6 +120,15 @@ void IN_GetJoyDelta (int *dx, int *dy)
+         y = MAX(-128,MIN(y,127));
+     }
+ 
++#ifdef M17
++    // M17 (spec 037, D-04): o D-pad do aparelho sao botoes (13 cima, 14 esquerda, 15 direita, 16 baixo; KB 11k):
++    // valem como o analogico esquerdo (menus e o jogo)
++    if (SDL_JoystickGetButton(Joystick, 13)) y = -127;
++    if (SDL_JoystickGetButton(Joystick, 16)) y = 127;
++    if (SDL_JoystickGetButton(Joystick, 14)) x = -127;
++    if (SDL_JoystickGetButton(Joystick, 15)) x = 127;
++#endif
++
+     *dx = x;
+     *dy = y;
+ }
+@@ -168,6 +180,19 @@ int IN_JoyButtons (void)
+ 
+     int res = 0;
+ 
++#ifdef M17
++    // M17 (spec 037, D-04): os botoes do aparelho (KB 11k) em botoes logicos do jogo: 0 A (escolher/usar), 1 B
++    // (voltar), 2 X, 3 Y, 4 R2 (atirar), 5 L2 (andar devagar), 6 L1 (arma anterior), 7 R1 (proxima), 8 START (menu).
++    // Os menus usam os 4 primeiros (button0 = escolher, button1 = voltar); o jogo, a tabela buttonjoy (wl_play.c)
++    {
++        static const int fisico[] = { 6, 11, 9, 4, 10, 8, 7, 3, 5 };
++        for (i = 0; i < (int) (sizeof(fisico) / sizeof(fisico[0])); i++)
++            if (fisico[i] < JoyNumButtons)
++                res |= SDL_JoystickGetButton(Joystick, fisico[i]) << i;
++        (void) i;
++        return res;
++    }
++#endif
+     for (i = 0; i < JoyNumButtons && i < 32; i++)
+         res |= SDL_JoystickGetButton(Joystick,i) << i;
+ 
+@@ -339,10 +364,109 @@ static void IN_HandleEvent (SDL_Event *event)
+ }
+ 
+ 
++#ifdef M17
++// M17 (spec 037, D-10): roteiro dos testes (M17_ROTEIRO=<arq>): teclas injetadas como eventos do SDL, uma a cada
++// ~120 ms (aperta e solta). Texto: letras e algarismos; {ESC} {ENTER} {UP} {DOWN} {LEFT} {RIGHT} {SPACE} {CTRL};
++// | = pausa de 1 s. No fim escreve "[M17] roteiro: fim". Sem a variavel, nada muda.
++static char *m17_rot;
++static size_t m17_rot_i;
++static int m17_rot_lido, m17_rot_solta;
++static Uint32 m17_rot_prox;
++
++static void M17_Tecla (int scancode, int desce)
++{
++    SDL_Event e;
++    memset (&e, 0, sizeof(e));
++    e.type = desce ? SDL_KEYDOWN : SDL_KEYUP;
++    e.key.keysym.scancode = (SDL_Scancode) scancode;
++    e.key.keysym.sym = SDL_GetKeyFromScancode ((SDL_Scancode) scancode);
++    SDL_PushEvent (&e);
++}
++
++static void M17_Roteiro (void)
++{
++    if (!m17_rot_lido)
++    {
++        const char *arq = getenv ("M17_ROTEIRO");
++        FILE *f = (arq && *arq) ? fopen (arq, "r") : NULL;
++        m17_rot_lido = 1;
++        if (f)
++        {
++            fseek (f, 0, SEEK_END);
++            long t = ftell (f);
++            fseek (f, 0, SEEK_SET);
++            m17_rot = (char *) calloc ((size_t) t + 1, 1);
++            if (fread (m17_rot, 1, (size_t) t, f) != (size_t) t)
++                m17_rot[0] = 0;
++            fclose (f);
++            m17_rot_prox = SDL_GetTicks () + 1500;
++        }
++    }
++    if (!m17_rot || SDL_GetTicks () < m17_rot_prox)
++        return;
++    if (m17_rot_solta)
++    {
++        M17_Tecla (m17_rot_solta, 0);
++        m17_rot_solta = 0;
++        m17_rot_prox = SDL_GetTicks () + 120;
++        return;
++    }
++    char c = m17_rot[m17_rot_i];
++    while (c == '\n' || c == '\r')
++        c = m17_rot[++m17_rot_i];
++    if (!c)
++    {
++        free (m17_rot);
++        m17_rot = NULL;
++        fprintf (stderr, "[M17] roteiro: fim\n");
++        return;
++    }
++    m17_rot_i++;
++    int sc = 0;
++    if (c == '|')
++    {
++        m17_rot_prox = SDL_GetTicks () + 1000;
++        return;
++    }
++    if (c == '{')
++    {
++        static const struct { const char *n; int sc; } T[] = {
++            { "ESC", SDL_SCANCODE_ESCAPE }, { "ENTER", SDL_SCANCODE_RETURN }, { "UP", SDL_SCANCODE_UP },
++            { "DOWN", SDL_SCANCODE_DOWN }, { "LEFT", SDL_SCANCODE_LEFT }, { "RIGHT", SDL_SCANCODE_RIGHT },
++            { "SPACE", SDL_SCANCODE_SPACE }, { "CTRL", SDL_SCANCODE_LCTRL },
++        };
++        char *f = strchr (m17_rot + m17_rot_i, '}');
++        if (f)
++        {
++            size_t t = (size_t) (f - (m17_rot + m17_rot_i));
++            for (size_t k = 0; k < sizeof(T) / sizeof(T[0]); k++)
++                if (strlen (T[k].n) == t && !strncmp (T[k].n, m17_rot + m17_rot_i, t))
++                    sc = T[k].sc;
++            m17_rot_i += t + 1;
++        }
++    }
++    else if (c >= 'a' && c <= 'z')
++        sc = SDL_SCANCODE_A + (c - 'a');
++    else if (c >= '1' && c <= '9')
++        sc = SDL_SCANCODE_1 + (c - '1');
++    else if (c == '0')
++        sc = SDL_SCANCODE_0;
++    if (sc)
++    {
++        M17_Tecla (sc, 1);
++        m17_rot_solta = sc;
++    }
++    m17_rot_prox = SDL_GetTicks () + 120;
++}
++#endif
++
+ void IN_ProcessEvents (void)
+ {
+     SDL_Event event;
+ 
++#ifdef M17
++    M17_Roteiro ();
++#endif
+     while (SDL_PollEvent(&event))
+         IN_HandleEvent (&event);
+ }
+@@ -350,6 +474,15 @@ void IN_ProcessEvents (void)
+ 
+ void IN_WaitEvent (void)
+ {
++#ifdef M17
++    // com o roteiro dos testes, a espera acorda sozinha para a proxima tecla
++    if (m17_rot || !m17_rot_lido)
++    {
++        M17_Roteiro ();
++        SDL_WaitEventTimeout (NULL, 50);
++        return;
++    }
++#endif
+     if (!SDL_WaitEvent(NULL))
+         Quit ("Error waiting for event: %s\n",SDL_GetError());
+ }
+diff --git a/id_vh.c b/id_vh.c
+index 2f85e15..4a1e0a4 100644
+--- a/id_vh.c
++++ b/id_vh.c
+@@ -74,6 +74,14 @@ void VW_MeasurePropString (const char *string, word *width, word *height)
+ void VH_UpdateScreen (SDL_Surface *surface)
+ {
+ 	SDL_BlitSurface (surface,NULL,screen,NULL);
++#ifdef M17
++	{
++		// M17 (spec 037, D-10): testes - M17_TELA=<arq.bmp> grava a ultima tela apresentada
++		const char *arq = getenv ("M17_TELA");
++		if (arq && *arq)
++			SDL_SaveBMP (screen, arq);
++	}
++#endif
+ 
+     SDL_UpdateTexture(texture, NULL, screen->pixels, screenPitch);
+     SDL_RenderCopy(renderer, texture, NULL, NULL);
+diff --git a/wl_play.c b/wl_play.c
+index 4bc2a13..2327195 100644
+--- a/wl_play.c
++++ b/wl_play.c
+@@ -57,7 +57,12 @@ int dirscan[4] = { sc_UpArrow, sc_RightArrow, sc_DownArrow, sc_LeftArrow };
+ int buttonscan[NUMBUTTONS] = { sc_Control, sc_Alt, sc_LShift, sc_Space, sc_1, sc_2, sc_3, sc_4 };
+ int buttonmouse[4] = { bt_attack, bt_strafe, bt_use, bt_nobutton };
+ int buttonjoy[32] = {
+-#ifdef _arch_dreamcast
++#if defined(M17)
++    // M17 (spec 037, D-04): os botoes logicos do IN_JoyButtons (id_in.c): A usa, B e X/Y nada, R2 atira, L2 anda
++    // devagar (bt_run invertido em PollControls: sempre correndo), L1/R1 armas, START menu
++    bt_use, bt_nobutton, bt_nobutton, bt_nobutton, bt_attack, bt_run, bt_prevweapon, bt_nextweapon,
++    bt_esc, bt_nobutton, bt_nobutton, bt_nobutton, bt_nobutton, bt_nobutton, bt_nobutton, bt_nobutton,
++#elif defined(_arch_dreamcast)
+     bt_attack, bt_strafe, bt_use, bt_run, bt_esc, bt_prevweapon, bt_nobutton, bt_nextweapon,
+     bt_pause, bt_strafeleft, bt_straferight, bt_nobutton, bt_nobutton, bt_nobutton, bt_nobutton, bt_nobutton,
+ #else
+@@ -352,6 +357,33 @@ void PollMouseMove (void)
+ 
+ void PollJoystickMove (void)
+ {
++#ifdef M17
++    // M17 (spec 037, D-04; como o Doom, spec 031): analogico esquerdo anda (eixo 1) e vai de lado (eixo 0), direito
++    // gira (eixo 2; key_mode 6, KB 11z); o D-pad anda (cima/baixo) e gira (esquerda/direita). Proporcional.
++    extern SDL_Joystick *M17_Joystick (void);
++    SDL_Joystick *j = M17_Joystick ();
++    if (!j)
++        return;
++    SDL_JoystickUpdate ();
++    int lx = SDL_JoystickNumAxes (j) > 0 ? SDL_JoystickGetAxis (j, 0) / 256 : 0;
++    int ly = SDL_JoystickNumAxes (j) > 1 ? SDL_JoystickGetAxis (j, 1) / 256 : 0;
++    int rx = SDL_JoystickNumAxes (j) > 2 ? SDL_JoystickGetAxis (j, 2) / 256 : 0;
++    int delta = buttonstate[bt_run] ? RUNMOVE * tics : BASEMOVE * tics;
++    const int zona = 24;   // de 127
++
++    if (SDL_JoystickGetButton (j, 13)) ly = -127;
++    if (SDL_JoystickGetButton (j, 16)) ly = 127;
++    if (SDL_JoystickGetButton (j, 14)) rx = -127;
++    if (SDL_JoystickGetButton (j, 15)) rx = 127;
++    if (ly > zona || ly < -zona)
++        controly += ly * delta / 127;
++    if (rx > zona || rx < -zona)
++        controlx += rx * delta / 127;
++    if (lx > 64)
++        buttonstate[bt_straferight] = true;
++    else if (lx < -64)
++        buttonstate[bt_strafeleft] = true;
++#else
+     int joyx, joyy;
+ 
+     IN_GetJoyDelta (&joyx, &joyy);
+@@ -366,6 +398,7 @@ void PollJoystickMove (void)
+         controly += delta;
+     else if (joyy < -64 || buttonstate[bt_moveforward])
+         controly -= delta;
++#endif
+ }
+ 
+ /*
+@@ -451,6 +484,11 @@ void PollControls (void)
+     if (joystickenabled)
+         PollJoystickButtons ();
+ 
++#ifdef M17
++    // M17 (spec 037, D-04): sempre correndo; segurar o botao de correr (L2 ou o Shift) anda devagar
++    buttonstate[bt_run] = !buttonstate[bt_run];
++#endif
++
+ //
+ // get movements
+ //

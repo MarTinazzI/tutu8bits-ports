@@ -1,0 +1,155 @@
+Licença: GPL-3.0 (a do RetroArch, onde o patch entra) (spec 053)
+
+diff --git a/gfx/drivers_context/mali_fbdev_ctx.c b/gfx/drivers_context/mali_fbdev_ctx.c
+index 9522007..cfefd7b 100644
+--- a/gfx/drivers_context/mali_fbdev_ctx.c
++++ b/gfx/drivers_context/mali_fbdev_ctx.c
+@@ -237,10 +237,19 @@ static void *gfx_ctx_mali_fbdev_init(void *video_driver)
+    EGLint attribs_init[] = {
+       EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+       EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
++#ifdef M17
++      /* M17 (spec 009): o framebuffer do aparelho e RGB565 de 16 bits e o EGL do
++       * PowerVR SGX540 so oferece configs 565 para ele; RGBA8888 da "No EGL configs" */
++      EGL_BLUE_SIZE, 5,
++      EGL_GREEN_SIZE, 6,
++      EGL_RED_SIZE, 5,
++      EGL_ALPHA_SIZE, 0,
++#else
+       EGL_BLUE_SIZE, 8,
+       EGL_GREEN_SIZE, 8,
+       EGL_RED_SIZE, 8,
+       EGL_ALPHA_SIZE, 8,
++#endif
+       EGL_NONE
+    };
+    EGLint attribs_create[] = {
+diff --git a/gfx/video_driver.c b/gfx/video_driver.c
+index 7917922..37f14ee 100644
+--- a/gfx/video_driver.c
++++ b/gfx/video_driver.c
+@@ -3731,6 +3731,28 @@ bool video_driver_init_internal(bool *video_is_threaded, bool verbosity_enabled)
+    return true;
+ }
+ 
++#ifdef M17
++/* M17 (spec 009, plano D-11): media de FPS do jogo (sem os quadros do menu), gravada no
++ * log ao descarregar o nucleo para o relatorio do spike. "desenhados" conta so os quadros
++ * em que o nucleo entregou imagem: com frameskip (ex.: snes9x) o nucleo repete o anterior
++ * (data NULL) e o FPS do RetroArch continua perto de 60 com o jogo travando na tela. */
++static retro_time_t m17_fps_t0, m17_fps_ult;
++static uint64_t m17_fps_quadros, m17_fps_desenhados;
++
++void m17_fps_registrar(void)
++{
++   if (m17_fps_quadros > 1 && m17_fps_ult > m17_fps_t0)
++   {
++      double seg = (double)(m17_fps_ult - m17_fps_t0) / 1000000.0;
++      RARCH_LOG("[M17] quadros=%llu desenhados=%llu segundos=%.1f fps_medio=%.2f fps_desenhado=%.2f\n",
++            (unsigned long long)m17_fps_quadros, (unsigned long long)m17_fps_desenhados, seg,
++            (double)(m17_fps_quadros - 1) / seg, (double)m17_fps_desenhados / seg);
++   }
++   m17_fps_t0 = m17_fps_ult = 0;
++   m17_fps_quadros = m17_fps_desenhados = 0;
++}
++#endif
++
+ void video_driver_frame(const void *data, unsigned width,
+       unsigned height, size_t pitch)
+ {
+@@ -4344,6 +4366,17 @@ void video_driver_frame(const void *data, unsigned width,
+    }
+ 
+    video_st->frame_count++;
++#ifdef M17
++   if (!menu_is_alive)
++   {
++      m17_fps_ult = cpu_features_get_time_usec();
++      if (!m17_fps_quadros)
++         m17_fps_t0 = m17_fps_ult;
++      m17_fps_quadros++;
++      if (data)
++         m17_fps_desenhados++;
++   }
++#endif
+ 
+    /* Display the status text, with a higher priority. */
+    if (  (   video_info.fps_show
+diff --git a/input/input_driver.c b/input/input_driver.c
+index beba85e..b70bb1e 100644
+--- a/input/input_driver.c
++++ b/input/input_driver.c
+@@ -5937,6 +5937,20 @@ static void input_keys_pressed(
+       block_hotkey[RARCH_GAME_FOCUS_TOGGLE] = false;
+    }
+ 
++#ifdef M17
++   /* M17 (spec 009, plano D-10): o menu abre SEM o 'enable_hotkey' (ALT = VOL-) e fica
++    * bloqueado enquanto o ALT estiver segurado, porque ALT + menu (VOL+) e o sleep do
++    * console, tratado fora do RetroArch (m17atalhos). Um aperto de menu ja pendente e
++    * cancelado se o ALT entrar no meio. */
++   if (binds[port][RARCH_MENU_TOGGLE].valid)
++   {
++      bool alt_segurado = !(input_st->flags & INP_FLAG_BLOCK_HOTKEY);
++      block_hotkey[RARCH_MENU_TOGGLE] = alt_segurado;
++      if (alt_segurado && (input_st->flags & INP_FLAG_MENU_PRESS_PENDING))
++         input_st->flags |= INP_FLAG_MENU_PRESS_CANCEL;
++   }
++#endif
++
+    for (i = RARCH_FIRST_META_KEY; i < RARCH_BIND_LIST_END; i++)
+    {
+       bool other_pressed = input_keys_pressed_other_sources(input_st, i, p_new_state);
+diff --git a/retroarch.c b/retroarch.c
+index b167283..862584a 100644
+--- a/retroarch.c
++++ b/retroarch.c
+@@ -7793,6 +7793,11 @@ bool retroarch_main_init(int argc, char *argv[])
+ #ifdef HAVE_MENU
+    struct menu_state *menu_st    = menu_state_get_ptr();
+ #endif
++#ifdef M17
++   /* M17 (spec 009): SIGTERM/SIGINT viram "sair" limpo (salva SRAM, descarrega o nucleo,
++    * grava o FPS) com qualquer contexto de video - so o fbdev_mali instalava o tratador */
++   frontend_driver_install_signal_handler();
++#endif
+ 
+    input_st->osk_idx             = OSK_LOWERCASE_LATIN;
+    video_st->flags              |= VIDEO_FLAG_ACTIVE;
+diff --git a/runloop.c b/runloop.c
+index 679517b..4ce77fa 100644
+--- a/runloop.c
++++ b/runloop.c
+@@ -4065,6 +4065,10 @@ static void runloop_apply_fastmotion_override(runloop_state_t *runloop_st,
+             fastforward_ratio_current);
+ }
+ 
++#ifdef M17
++void m17_fps_registrar(void);
++#endif
++
+ void runloop_event_deinit_core(void)
+ {
+    video_driver_state_t
+@@ -4072,6 +4076,9 @@ void runloop_event_deinit_core(void)
+    runloop_state_t *runloop_st = &runloop_state;
+    settings_t        *settings = config_get_ptr();
+ 
++#ifdef M17
++   m17_fps_registrar();
++#endif
+    core_unload_game();
+ 
+    video_st->frame_cache_data  = NULL;
+@@ -5894,6 +5901,11 @@ static enum runloop_state_enum runloop_check_state(
+              &current_bits)))
+         trig_quit_key = true;
+       old_quit_key             = quit_key;
++#ifdef M17
++      /* M17 (spec 009): o sinal (m17atalhos, SELECT + START) sai como a tecla de sair */
++      if (frontend_driver_get_signal_handler_state())
++         trig_quit_key = true;
++#endif
+       quit_press_twice         = settings->bools.quit_press_twice;
+ 
+       /* Check double press if enabled */

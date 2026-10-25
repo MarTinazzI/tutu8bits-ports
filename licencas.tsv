@@ -1,0 +1,54 @@
+# Licenca de cada arquivo do pacote (spec 053, D-06). Lida pelo ports/conferir_licencas.sh (montar.sh, test_licencas.sh)
+# e pelo ports/fontes.sh (coluna fonte).
+# Campos: caminho|componente|licencas|fonte
+#   caminho     padrao do case do shell, relativo a tutu8bits/ (o * casa tambem a barra); vale a 1a linha que casar
+#   componente  o nome como aparece em LICENCAS/LEIA-ME.md (o verificador confere)
+#   licencas    arquivos em LICENCAS/, separados por virgula; "../x" = caminho relativo a tutu8bits/
+#   fonte       componentes de src/emu/versoes.txt cujo fonte vai no arquivo de fontes da versao (virgula), ou -
+# Pastas conferidas: cores/ bin/ lib/ jogos/ gametank/ ppsspp/ retroarch/ midi/ (todo arquivo delas precisa casar).
+bin/*|tutu8bits|tutu8bits-MIT.txt,Lua-MIT.txt,stb-MIT-ou-dominio-publico.txt|lua,stb
+lib/libSDL2-2.0.so.0|SDL2|SDL2-Zlib.txt|sdl2_projeto
+lib/libSDL2_gfx-1.0.so.0|SDL2_gfx|SDL2_gfx-Zlib.txt|sdl2_gfx
+lib/libSDL2_image-2.0.so.0|SDL2_image|SDL2_image-Zlib.txt,stb-MIT-ou-dominio-publico.txt|sdl2_image
+lib/libSDL2_mixer-2.0.so.0|SDL2_mixer|SDL2_mixer-Zlib.txt,Timidity-Artistic.txt|sdl2_mixer
+lib/libSDL2_ttf-2.0.so.0|SDL2_ttf|SDL2_ttf-Zlib.txt,FreeType-FTL.txt|sdl2_ttf
+retroarch/*|RetroArch|RetroArch-GPL-3.0.txt|retroarch
+gametank/*|GameTank Emulator|gametank-MIT.txt,gametank-imgui-MIT.txt,gametank-implot-MIT.txt,gametank-mos6502-MIT.txt,gametank-tomlplusplus-MIT.txt,gametank-tinyfiledialogs-Zlib.txt,gametank-whereami-MIT.txt|gametank
+ppsspp/*|PPSSPP|ppsspp-GPL-2.0.txt,ffmpeg-LGPL-2.1.txt|ppsspp
+midi/freepats/*|FreePats|FreePats-GPL-2.0.txt,FreePats-GPL-2.0-README.txt|-
+cores/a5200_libretro.so|a5200|a5200-GPL-2.0.txt|a5200
+cores/fake08_libretro.so|FAKE-08|fake08-MIT.md|fake08
+cores/fbneo_libretro.so|fbneo|fbneo-nao-comercial.txt|fbneo
+cores/fceumm_libretro.so|fceumm|fceumm-GPL-2.0.txt|fceumm
+cores/gambatte_libretro.so|gambatte|gambatte-GPL-2.0.txt|gambatte
+cores/gpsp_libretro.so|gpsp|gpsp-GPL-2.0.txt|gpsp
+cores/handy_libretro.so|Handy|handy-Zlib.txt|handy
+cores/mame2003_plus_libretro.so|mame2003_plus|mame2003_plus-nao-comercial.md|mame2003_plus
+cores/mednafen_ngp_libretro.so|Beetle NeoPop|mednafen_ngp-GPL-2.0.txt|mednafen_ngp
+cores/mednafen_pce_fast_libretro.so|Beetle PCE Fast|mednafen_pce_fast-GPL-2.0.txt|mednafen_pce_fast
+cores/mgba_libretro.so|mGBA|mgba-MPL-2.0.txt|mgba
+cores/parallel_n64_libretro.so|parallel-n64|parallel_n64-GPL-2.0.txt,parallel_n64-mupen64plus-core-LICENSES.txt,parallel_n64-rsp-hle-LICENSES.txt,parallel_n64-rsp-cxd4-CC0.txt,parallel_n64-gles2n64-COPYING.txt,parallel_n64-angrylion-MAME-nao-comercial.txt,parallel_n64-angrylion-cen64-BSD-3.txt|parallel_n64
+cores/pcsx_rearmed_libretro.so|pcsx_rearmed|pcsx_rearmed-GPL-2.0.txt|pcsx_rearmed
+cores/picodrive_libretro.so|picodrive|picodrive-nao-comercial.txt|picodrive
+cores/ppsspp_libretro.so|PPSSPP|ppsspp-GPL-2.0.txt,ffmpeg-LGPL-2.1.txt|ppsspp
+cores/prosystem_libretro.so|prosystem|prosystem-GPL-2.0.txt|prosystem
+cores/race_libretro.so|RACE|race-GPL-2.0.txt|race
+cores/snes9x2005_plus_libretro.so|snes9x2005_plus|snes9x2005_plus-nao-comercial.txt|snes9x2005_plus
+cores/snes9x_libretro.so|snes9x|snes9x-nao-comercial.txt|snes9x
+cores/stella2014_libretro.so|stella2014|stella2014-GPL-2.0.txt|stella2014
+jogos/blasphemer/*|Blasphemer|Blasphemer-BSD.md|-
+jogos/crispy/*|Crispy Doom|Crispy-Doom-GPL-2.0.md|crispy_doom
+jogos/dink/freedink|GNU FreeDink|FreeDink-GPL-3.0.txt|freedink
+jogos/dink/LiberationSans-Regular.ttf|Liberation Sans|LiberationSans-1.05-GPL-2.0-excecoes.txt|freedink
+jogos/dink/dink/*|freedink-data|freedink-data-COPYING,freedink-data-README.txt,freedink-data-README-REPLACEMENTS.txt|-
+jogos/duke3d/*|Duke Nukem 3D shareware|../jogos/duke3d/LICENSE.TXT|-
+jogos/freedoom/*|Freedoom|Freedoom-BSD.txt|-
+jogos/jfduke3d/*|JFDuke3D|JFDuke3D-GPL-2.0.txt,Build-licenca-Ken-Silverman.txt|jfduke3d
+jogos/librequake/*|LibreQuake|LibreQuake-BSD-3.txt|librequake_qc
+jogos/nethack/*|NetHack|NetHack-NGPL.txt|nethack
+jogos/nxengine/*|NXEngine-evo|NXEngine-evo-GPL-3.0.txt,NXEngine-nlohmann-json-MIT.txt,NXEngine-spdlog-MIT.txt,NXEngine-fmt-BSD-2.rst,NXEngine-utfcpp-Boost-1.0.txt|nxengine
+jogos/opentyrian/*|OpenTyrian|OpenTyrian-GPL-2.0.txt|opentyrian
+jogos/rogue/*|Rogue|Rogue-BSD.txt,misc-fixed-6x10-dominio-publico.txt|rogue
+jogos/tyrquake/*|TyrQuake|TyrQuake-GPL-2.0.txt|tyrquake_sdl
+jogos/wolf3d/*|Wolfenstein 3D shareware|../jogos/wolf3d/VENDOR.DOC|-
+jogos/wolf4sdl/*|Wolf4SDL|Wolf4SDL-GPL-2.0.txt,Wolf4SDL-licenca-id.txt,Wolf4SDL-OPL-MAME-nao-comercial.txt|wolf4sdl

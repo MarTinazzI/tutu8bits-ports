@@ -1,0 +1,375 @@
+Licença: BSD-3-Clause (a do Rogue, onde o patch entra) (spec 053)
+
+diff --git a/command.c b/command.c
+index 186572b..ec8df83 100644
+--- a/command.c
++++ b/command.c
+@@ -177,7 +177,11 @@ over:
+                         endmsg();
+ 		    }
+ 		}
++#ifdef M17
++		when '!': after = FALSE; msg("no shell on this console");   /* M17 (spec 035): sem shell no aparelho */
++#else
+ 		when '!': shell();
++#endif
+ 		when 'h': do_move(0, -1);
+ 		when 'j': do_move(1, 0);
+ 		when 'k': do_move(-1, 0);
+diff --git a/io.c b/io.c
+index 208b69f..6286110 100644
+--- a/io.c
++++ b/io.c
+@@ -80,15 +80,24 @@ endmsg()
+ 	    wait_for(' ');
+ 	else
+ 	{
++#ifdef M17
++	    m17_contexto_mais(' ');   /* M17 (spec 035): A ou B avancam (Esc so pelo teclado) */
++#endif
+ 	    while ((ch = readchar()) != ' ')
+ 		if (ch == ESCAPE)
+ 		{
++#ifdef M17
++		    m17_contexto(M17_NADA);
++#endif
+ 		    msgbuf[0] = '\0';
+ 		    mpos = 0;
+ 		    newpos = 0;
+ 		    msgbuf[0] = '\0';
+ 		    return ESCAPE;
+ 		}
++#ifdef M17
++	    m17_contexto(M17_NADA);
++#endif
+ 	}
+     }
+     /*
+@@ -248,12 +257,18 @@ wait_for(int ch)
+ {
+     register char c;
+ 
++#ifdef M17
++    m17_contexto_mais(ch);   /* M17 (spec 035): A ou B avancam */
++#endif
+     if (ch == '\n')
+         while ((c = readchar()) != '\n' && c != '\r')
+ 	    continue;
+     else
+         while (readchar() != ch)
+ 	    continue;
++#ifdef M17
++    m17_contexto(M17_NADA);
++#endif
+ }
+ 
+ /*
+diff --git a/mach_dep.c b/mach_dep.c
+index a15f113..0b12c1f 100644
+--- a/mach_dep.c
++++ b/mach_dep.c
+@@ -140,7 +140,8 @@ setup()
+     int  checkout();
+ #endif
+ 
+-#ifdef DUMP
++#if defined(DUMP) || defined(M17)
++    /* M17 (spec 035): o SIGTERM do SELECT+START salva a partida (auto_save) e sai com 0 */
+     md_onsignal_autosave();
+ #else
+     md_onsignal_default();
+diff --git a/main.c b/main.c
+index 8e89c38..88f11d9 100644
+--- a/main.c
++++ b/main.c
+@@ -299,7 +299,14 @@ quit(int sig)
+ 	mpos = 0;
+     getyx(curscr, oy, ox);
+     msg("really quit?");
++#ifdef M17
++    m17_contexto(M17_SIMNAO);   /* M17 (spec 035): A = sim, B = nao */
++    int m17_r = readchar();
++    m17_contexto(M17_NADA);
++    if (m17_r == 'y')
++#else
+     if (readchar() == 'y')
++#endif
+     {
+ 	signal(SIGINT, leave);
+ 	clear();
+@@ -389,6 +396,9 @@ shell()
+ void
+ my_exit(int st)
+ {
++#ifdef M17
++    fprintf(stderr, "[M17] fim\n");   /* fim normal para o lancar.sh (spec 035) */
++#endif
+     resetltchars();
+     exit(st);
+ }
+diff --git a/mdport.c b/mdport.c
+index 72fdbb7..d3900d0 100644
+--- a/mdport.c
++++ b/mdport.c
+@@ -434,7 +434,11 @@ md_getusername()
+ 
+     pw = getpwuid(getuid());
+ 
++#ifdef M17
++    l = pw ? pw->pw_name : NULL;   /* M17 (spec 035): sem o usuario no passwd (qemu) o original caia */
++#else
+     l = pw->pw_name;
++#endif
+ #endif
+ 
+     if ((l == NULL) || (*l == '\0'))
+@@ -465,9 +469,17 @@ md_gethomedir()
+     struct passwd *pw;
+     pw = getpwuid(getuid());
+ 
++#ifdef M17
++    h = pw ? pw->pw_dir : NULL;   /* M17 (spec 035): sem o usuario no passwd (qemu) o original caia */
++#else
+     h = pw->pw_dir;
++#endif
+ 
++#ifdef M17
++    if (h != NULL && strcmp(h,"/") == 0)
++#else
+     if (strcmp(h,"/") == 0)
++#endif
+         h = NULL;
+ #endif
+     homedir[0] = 0;
+@@ -529,7 +541,11 @@ md_getshell()
+     char *def = "/bin/sh";
+     struct passwd *pw;
+     pw = getpwuid(getuid());
++#ifdef M17
++    s = pw ? pw->pw_shell : NULL;   /* M17 (spec 035): sem o usuario no passwd (qemu) o original caia */
++#else
+     s = pw->pw_shell;
++#endif
+ #endif
+     if ((s == NULL) || (*s == '\0'))
+         if ( (s = getenv("COMSPEC")) == NULL)
+@@ -1083,6 +1099,10 @@ md_readchar()
+     int lastch = 0;
+     int mode = M_NORMAL;
+     int mode2 = M_NORMAL;
++#ifdef M17
++    /* M17 (spec 035): a tecla vem da camada do aparelho (controle, teclado do SDL, roteiro de teste) */
++    return m17_tecla();
++#endif
+ 
+     for(;;)
+     {
+diff --git a/misc.c b/misc.c
+index afd2acb..947a08a 100644
+--- a/misc.c
++++ b/misc.c
+@@ -478,6 +478,9 @@ get_dir()
+ 	    msg(prompt = "which direction? ");
+ 	else
+ 	    prompt = "direction: ";
++#ifdef M17
++	m17_contexto(M17_DIRECAO);   /* M17 (spec 035): so direcoes; B = Esc */
++#endif
+ 	do
+ 	{
+ 	    gotit = TRUE;
+@@ -491,13 +494,20 @@ get_dir()
+ 		when 'u': case'U': delta.y = -1; delta.x =  1;
+ 		when 'b': case'B': delta.y =  1; delta.x = -1;
+ 		when 'n': case'N': delta.y =  1; delta.x =  1;
+-		when ESCAPE: last_dir = '\0'; reset_last(); return FALSE;
++		when ESCAPE: last_dir = '\0'; reset_last();
++#ifdef M17
++		    m17_contexto(M17_NADA);
++#endif
++		    return FALSE;
+ 		otherwise:
+ 		    mpos = 0;
+ 		    msg(prompt);
+ 		    gotit = FALSE;
+ 	    }
+ 	} until (gotit);
++#ifdef M17
++	m17_contexto(M17_NADA);
++#endif
+ 	if (isupper(dir_ch))
+ 	    dir_ch = (char) tolower(dir_ch);
+ 	last_dir = dir_ch;
+diff --git a/options.c b/options.c
+index 4645586..8780aab 100644
+--- a/options.c
++++ b/options.c
+@@ -173,6 +173,9 @@ get_bool(void *vp, WINDOW *win)
+     bool *bp = (bool *) vp;
+     int oy, ox;
+     bool op_bad;
++#ifdef M17
++    int m17_r;
++#endif
+ 
+     op_bad = TRUE;
+     getyx(win, oy, ox);
+@@ -181,7 +184,14 @@ get_bool(void *vp, WINDOW *win)
+     {
+ 	wmove(win, oy, ox);
+ 	wrefresh(win);
++#ifdef M17
++	m17_contexto(M17_OPCOES);   /* M17 (spec 035): A = manter, direita/esquerda = sim/nao, cima = voltar */
++	m17_r = readchar();
++	m17_contexto(M17_NADA);
++	switch (m17_r)
++#else
+ 	switch (readchar())
++#endif
+ 	{
+ 	    case 't':
+ 	    case 'T':
+@@ -261,6 +271,9 @@ get_str(void *vopt, WINDOW *win)
+     /*
+      * loop reading in the string, and put it in a temporary buffer
+      */
++#ifdef M17
++    m17_contexto(M17_TEXTO);   /* M17 (spec 035): A = Enter (mantem), B = Esc; sem teclado nao se digita */
++#endif
+     for (sp = buf; (c = readchar()) != '\n' && c != '\r' && c != ESCAPE;
+ 	wclrtoeol(win), wrefresh(win))
+     {
+@@ -302,6 +315,9 @@ get_str(void *vopt, WINDOW *win)
+ 	    waddstr(win, unctrl(c));
+ 	}
+     }
++#ifdef M17
++    m17_contexto(M17_NADA);
++#endif
+     *sp = '\0';
+     if (sp > buf)	/* only change option if something has been typed */
+ 	strucpy(opt, buf, (int) strlen(buf));
+@@ -327,6 +343,9 @@ get_inv_t(void *vp, WINDOW *win)
+     int *ip = (int *) vp;
+     int oy, ox;
+     bool op_bad;
++#ifdef M17
++    int m17_r;
++#endif
+ 
+     op_bad = TRUE;
+     getyx(win, oy, ox);
+@@ -335,7 +354,14 @@ get_inv_t(void *vp, WINDOW *win)
+     {
+ 	wmove(win, oy, ox);
+ 	wrefresh(win);
++#ifdef M17
++	m17_contexto(M17_OPCOES);   /* M17 (spec 035): A = manter, direita/esquerda = sim/nao, cima = voltar */
++	m17_r = readchar();
++	m17_contexto(M17_NADA);
++	switch (m17_r)
++#else
+ 	switch (readchar())
++#endif
+ 	{
+ 	    case 'o':
+ 	    case 'O':
+diff --git a/pack.c b/pack.c
+index 002a40f..a533e6d 100644
+--- a/pack.c
++++ b/pack.c
+@@ -404,7 +404,13 @@ get_item(char *purpose, int type)
+ 	    if (terse)
+ 		addmsg(" what");
+ 	    msg("? (* for list): ");
++#ifdef M17
++	    m17_contexto_item(type);   /* M17 (spec 035): o seletor de objeto */
+ 	    ch = readchar();
++	    m17_contexto(M17_NADA);
++#else
++	    ch = readchar();
++#endif
+ 	    mpos = 0;
+ 	    /*
+ 	     * Give the poor player a chance to abort the command
+diff --git a/rip.c b/rip.c
+index d2714f0..44b1eab 100644
+--- a/rip.c
++++ b/rip.c
+@@ -64,6 +64,10 @@ score(int amount, int flags, char monst)
+ 	"killed with Amulet"
+     };
+ 
++#ifdef M17
++    m17_partida_encerrada = 1;   /* M17 (spec 035): morreu, desistiu ou venceu: o SIGTERM daqui em diante nao salva */
++#endif
++
+     start_score();
+ 
+  if (flags >= 0
+diff --git a/save.c b/save.c
+index 76735b4..8d5b39e 100644
+--- a/save.c
++++ b/save.c
+@@ -48,7 +48,13 @@ over:
+ 	for (;;)
+ 	{
+ 	    msg("save file (%s)? ", file_name);
++#ifdef M17
++	    m17_contexto(M17_SIMNAO);   /* M17 (spec 035): A = sim, B = nao */
+ 	    c = readchar();
++	    m17_contexto(M17_NADA);
++#else
++	    c = readchar();
++#endif
+ 	    mpos = 0;
+ 	    if (c == ESCAPE)
+ 	    {
+@@ -91,7 +97,14 @@ gotfile:
+ 	    {
+ 		msg("File exists.  Do you wish to overwrite it?");
+ 		mpos = 0;
++#ifdef M17
++		m17_contexto(M17_SIMNAO);
++		c = readchar();
++		m17_contexto(M17_NADA);
++		if (c == ESCAPE)
++#else
+ 		if ((c = readchar()) == ESCAPE)
++#endif
+ 		    goto quit_it;
+ 		if (c == 'y' || c == 'Y')
+ 		    break;
+@@ -125,9 +138,22 @@ auto_save(int sig)
+     NOOP(sig);
+ 
+     md_ignoreallsignals();
++#ifdef M17
++    if (m17_partida_encerrada)
++    {
++	fprintf(stderr, "[M17] fim\n");   /* a partida ja acabou (placar): nada a salvar */
++	exit(0);
++    }
++#endif
+     if (file_name[0] != '\0' && ((savef = fopen(file_name, "w")) != NULL ||
+ 	(md_unlink_open_file(file_name, savef) >= 0 && (savef = fopen(file_name, "w")) != NULL)))
++#ifdef M17
++	save_file(savef);   /* grava e sai (escreve "[M17] salvo") */
++    else
++	fprintf(stderr, "[M17] save falhou: '%s'\n", file_name);
++#else
+ 	    save_file(savef);
++#endif
+     exit(0);
+ }
+ 
+@@ -151,6 +177,9 @@ save_file(FILE *savef)
+     rs_save_file(savef);
+     fflush(savef);
+     fclose(savef);
++#ifdef M17
++    fprintf(stderr, "[M17] salvo\n");   /* fim normal para o lancar.sh (spec 035) */
++#endif
+     exit(0);
+ }
+ 

@@ -1,0 +1,6 @@
+# FreePats 20060219 (spec 047, plano D-10): os instrumentos GUS (.pat) do Timidity embutido na SDL2_mixer, para a
+# musica MIDI do Dink e dos D-Mods; configuracao crude.cfg (troca o instrumento que falta por um parecido; escolha do
+# mantenedor). O tarball do Debian traz o upstream (freepats-20060219.tar.bz2) dentro. Vai no pacote
+# (tutu8bits/midi/freepats/) pelo completar_cartao.sh. Nao vai para o git.
+# Campos: arquivo|url|autor|licenca|sha256
+freepats_20060219.orig.tar.gz|https://mirrors.mit.edu/debian/pool/main/f/freepats/freepats_20060219.orig.tar.gz|FreePats project (Free Software Foundation, Eric A. Welsh, Walt Gregg)|GPL-2.0-or-later com excecao para composicoes (README)|70bf8ca084df3903d6c9de43fe20539fc0a553d95cfba4d525da3fe66fda5f10

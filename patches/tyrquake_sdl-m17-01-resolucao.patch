@@ -1,0 +1,19 @@
+Licença: GPL-2.0 (a do TyrQuake, onde o patch entra) (spec 053)
+
+diff --git a/common/vid_mode.c b/common/vid_mode.c
+index cfcc2ba..faa90de 100644
+--- a/common/vid_mode.c
++++ b/common/vid_mode.c
+@@ -1090,6 +1090,12 @@ VID_GetModeFromCvars()
+         mode->width = width;
+         mode->height = height;
+         mode->bpp = bpp;
++#ifdef M17
++        /* M17 (spec 050, D-07): a janela ocupa a tela do aparelho (backend mali, KB §11i); a resolucao interna
++         * personalizada (escala 0, ex.: 320x240) tambem vale na janela, ampliada pelo renderer */
++        mode->resolution.width = vid_render_resolution_width.value;
++        mode->resolution.height = vid_render_resolution_height.value;
++#endif
+     }
+ 
+     if (scale) {

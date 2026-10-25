@@ -1,0 +1,36 @@
+NetHack 3.6.7 (DevTeam, 1987-2023; NetHack General Public License), com a tela, o controle e o teclado do tutu8bits.
+O jogo vem pronto: abra "NetHack" no menu "Jogos". No inicio, escolha "Aleatorio" ou monte o personagem.
+
+Andar (8 direcoes):
+  D-pad ou analogico esquerdo. Diagonal: aperte duas setas quase juntas, ou use o analogico, ou segure R1
+  (gira o D-pad: cima = cima-direita, direita = baixo-direita...). Segurar repete o passo.
+  B segurado + direcao: correr.
+Botoes no mapa:
+  A  pegar (em cima de uma escada: subir ou descer)
+  B  voltar / cancelar (Esc)
+  X  inventario      Y  procurar      L1  descansar um turno
+  L2 mensagens anteriores             R2  repetir o ultimo comando
+  SELECT  menu com todos os comandos, por grupo (itens, magia, movimento, combate, acoes, informacao)
+  START   menu do jogo (ajuda, opcoes, salvar e sair, desistir)
+  R3      roda de opcoes: os comandos mais usados num circulo. O analogico direito aponta, A confirma, B fecha,
+          L1/R1 trocam a pagina. Para mudar a roda: tutu8bits/docs/rodas.md
+Listas (inventario, "qual objeto?", magias, opcoes, comandos #): D-pad escolhe, esquerda/direita trocam a pagina,
+  A escolhe (nas listas de varios: A marca, X marca todos, START confirma), B volta.
+Perguntas sim/nao: A = sim, B = nao/cancelar, X = q (sair), quando houver.
+"Em que direcao?": as 8 direcoes; A = em voce mesmo; L1/L2 = para cima/para baixo.
+Escolher um lugar no mapa (viajar com _, olhar com ;): as direcoes movem o cursor (B segurado: de 8 em 8),
+  A escolhe, L1/L2 vao as escadas, X/Y aos monstros, R2 volta para voce.
+
+Texto (desejos, "Elbereth", nomes): abre um teclado na tela.
+  D-pad escolhe a tecla, A digita, B apaga, Y espaco, X maiusculas/minusculas, L1/R1 movem o cursor,
+  L2/R2 trocam a pagina (letras / numeros e simbolos), START confirma, SELECT cancela.
+
+O nome do personagem vem da sua lista de nomes (home/config/nomes.txt; sem ela, a do sistema). Com uma partida
+salva, o jogo abre nela (com o nome dela).
+As opcoes do jogo ficam em tutu8bits/jogos/nethack/nethackrc; para mudar, copie para home/config/nethackrc e edite.
+Os tempos do controle (diagonal, repeticao, zona morta) ficam em tutu8bits/dados/nethack.cfg; para mudar, copie
+para home/config/nethack.cfg e edite.
+
+Para sair: segure VOL+ por 2 s; a partida e salva e o jogo fecha; ao abrir de novo, ela continua. Se o aparelho desligar no meio,
+a partida e recuperada na proxima vez. Morrer ou desistir encerra a partida, como no original.
+Save, placar e fantasmas em saves/jogos/nethack/.

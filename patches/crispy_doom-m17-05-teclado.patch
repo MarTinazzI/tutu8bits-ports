@@ -1,0 +1,311 @@
+Licença: GPL-2.0 (a do Crispy Doom, onde o patch entra) (spec 053)
+
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 75fb4f7..6d90e85 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -88,6 +88,8 @@ set(GAME_SOURCE_FILES
+     i_timer.c           i_timer.h
+     i_truecolor.c       i_truecolor.h
+     i_video.c           i_video.h
++    teclado.c           teclado.h
++    teclado_sdl.c
+     i_videohr.c         i_videohr.h
+     i_winmusic.c
+     midifallback.c      midifallback.h
+diff --git a/src/doom/m_menu.c b/src/doom/m_menu.c
+index cefb127..94cdd4f 100644
+--- a/src/doom/m_menu.c
++++ b/src/doom/m_menu.c
+@@ -1068,6 +1068,35 @@ static boolean StartsWithMapIdentifier (char *str)
+ //
+ // User wants to save. Start string input for M_Responder
+ //
++#ifdef M17
++// M17 (spec 042, D-13): o nome do save pelo teclado virtual da spec 036, ja com o nome que o jogo propoe. OK e
++// cancelar seguem pelos caminhos do Enter e do Esc de sempre (evento posto na fila, tratado no M_Responder).
++#include "teclado.h"
++SDL_Renderer *I_M17Renderer(void);
++
++static void M17_NomeSave(char *texto, int max, const char *titulo)
++{
++    char b[SAVESTRINGSIZE];
++    event_t ev = { 0 };
++    M_StringCopy(b, texto, sizeof(b));
++    ev.type = ev_keydown;
++    ev.data1 = KEY_ESCAPE;
++    if (m17_teclado(I_M17Renderer(), titulo, b, max))
++    {
++        // a fonte do HUD so tem de '!' a '_' (maiusculas): o resto vira espaco, como na digitacao de antes
++        for (char *c = b; *c; c++)
++        {
++            *c = toupper(*c);
++            if (*c != ' ' && (*c - HU_FONTSTART < 0 || *c - HU_FONTSTART >= HU_FONTSIZE))
++                *c = ' ';
++        }
++        M_StringCopy(texto, b, max + 1);
++        ev.data1 = KEY_ENTER;
++    }
++    D_PostEvent(&ev);
++}
++#endif
++
+ void M_SaveSelect(int choice)
+ {
+     int x, y;
+@@ -1097,6 +1126,10 @@ void M_SaveSelect(int choice)
+         }
+     }
+     saveCharIndex = strlen(savegamestrings[choice]);
++#ifdef M17
++    M17_NomeSave(savegamestrings[choice], SAVESTRINGSIZE - 1, "Nome do save");
++    saveCharIndex = strlen(savegamestrings[choice]);
++#endif
+ }
+ 
+ //
+@@ -3314,6 +3347,20 @@ void M_SetupNextMenu(menu_t *menudef)
+ //
+ void M_Ticker (void)
+ {
++#ifdef M17
++    {
++        // M17 (spec 042, testes): M17_TESTE_SALVAR=<vaga> abre o save dessa vaga uma vez, no 1o tic de jogo
++        static int m17_feito = 0;
++        const char *v = getenv("M17_TESTE_SALVAR");
++        if (!m17_feito && v != NULL && *v && gamestate == GS_LEVEL && usergame && !menuactive && !demoplayback)
++        {
++            m17_feito = 1;
++            M_StartControlPanel();
++            M_SaveGame(0);
++            M_SaveSelect(atoi(v));
++        }
++    }
++#endif
+     if (--skullAnimCounter <= 0)
+     {
+ 	whichSkull ^= 1;
+diff --git a/src/heretic/mn_menu.c b/src/heretic/mn_menu.c
+index 24e74e3..7c9cbf0 100644
+--- a/src/heretic/mn_menu.c
++++ b/src/heretic/mn_menu.c
+@@ -844,6 +844,23 @@ int MN_TextBWidth(const char *text)
+ 
+ void MN_Ticker(void)
+ {
++#ifdef M17
++    {
++        // M17 (spec 042, testes): M17_TESTE_SALVAR=<vaga> abre o save dessa vaga uma vez, no 1o tic de jogo
++        static int m17_feito = 0;
++        const char *v = getenv("M17_TESTE_SALVAR");
++        if (!m17_feito && v != NULL && *v && gamestate == GS_LEVEL && usergame && !MenuActive && !demoplayback)
++        {
++            m17_feito = 1;
++            MN_ActivateMenu();
++            MN_LoadSlotText();
++            SetMenu(MENU_SAVE);
++            CurrentItPos = atoi(v);
++            SCSaveGame(CurrentItPos);
++            return;
++        }
++    }
++#endif
+     if (MenuActive == false)
+     {
+         return;
+@@ -1370,6 +1387,40 @@ static void SetDefaultSaveName(int slot)
+     joypadsave = false;
+ }
+ 
++#ifdef M17
++// M17 (spec 042, D-13): o nome do save pelo teclado virtual da spec 036, ja com o nome que o jogo propoe. OK e
++// cancelar seguem pelos caminhos do Enter e do Esc de sempre (evento posto na fila, tratado no MN_Responder).
++#include "teclado.h"
++SDL_Renderer *I_M17Renderer(void);
++
++static void M17_NomeSave(int option)
++{
++    char b[SLOTTEXTLEN + 1];
++    event_t ev = { 0 };
++    M_StringCopy(b, SlotText[option], sizeof(b));
++    if (slotptr >= 0 && slotptr <= SLOTTEXTLEN)
++        b[slotptr] = '\0';   // sem o cursor
++    ev.type = ev_keydown;
++    ev.data1 = KEY_ESCAPE;
++    if (m17_teclado(I_M17Renderer(), "Nome do save", b, SLOTTEXTLEN))
++    {
++        // so o que a digitacao de antes aceitava: letras (maiusculas), algarismos, espaco , . - !
++        for (char *c = b; *c; c++)
++        {
++            *c = toupper(*c);
++            if (!isalnum((unsigned char)*c) && !strchr(" ,.-!", *c))
++                *c = ' ';
++        }
++        M_StringCopy(SlotText[option], b, sizeof(SlotText[option]));
++        slotptr = strlen(SlotText[option]);
++        SlotText[option][slotptr] = ASCII_CURSOR;
++        SlotText[option][slotptr + 1] = '\0';
++        ev.data1 = KEY_ENTER;
++    }
++    D_PostEvent(&ev);
++}
++#endif
++
+ //---------------------------------------------------------------------------
+ //
+ // PROC SCSaveGame
+@@ -1427,6 +1478,9 @@ static boolean SCSaveGame(int option)
+         SlotStatus[option]++;
+         currentSlot = option;
+         slotptr = ptr - SlotText[option];
++#ifdef M17
++        M17_NomeSave(option);
++#endif
+         return false;
+     }
+     else
+diff --git a/src/hexen/mn_menu.c b/src/hexen/mn_menu.c
+index 35c2fa4..6d873df 100644
+--- a/src/hexen/mn_menu.c
++++ b/src/hexen/mn_menu.c
+@@ -863,6 +863,23 @@ int MN_TextBWidth(const char *text)
+ 
+ void MN_Ticker(void)
+ {
++#ifdef M17
++    {
++        // M17 (spec 042, testes): M17_TESTE_SALVAR=<vaga> abre o save dessa vaga uma vez, no 1o tic de jogo
++        static int m17_feito = 0;
++        const char *v = getenv("M17_TESTE_SALVAR");
++        if (!m17_feito && v != NULL && *v && gamestate == GS_LEVEL && usergame && !MenuActive && !demoplayback)
++        {
++            m17_feito = 1;
++            MN_ActivateMenu();
++            MN_LoadSlotText();
++            SetMenu(MENU_SAVE);
++            CurrentItPos = atoi(v);
++            SCSaveGame(CurrentItPos);
++            return;
++        }
++    }
++#endif
+     if (MenuActive == false)
+     {
+         return;
+@@ -1446,6 +1463,40 @@ static void SetDefaultSaveName(int slot)
+     joypadsave = false;
+ }
+ 
++#ifdef M17
++// M17 (spec 042, D-13): o nome do save pelo teclado virtual da spec 036, ja com o nome que o jogo propoe. OK e
++// cancelar seguem pelos caminhos do Enter e do Esc de sempre (evento posto na fila, tratado no MN_Responder).
++#include "teclado.h"
++SDL_Renderer *I_M17Renderer(void);
++
++static void M17_NomeSave(int option)
++{
++    char b[SLOTTEXTLEN + 1];
++    event_t ev = { 0 };
++    M_StringCopy(b, SlotText[option], sizeof(b));
++    if (slotptr >= 0 && slotptr <= SLOTTEXTLEN)
++        b[slotptr] = '\0';   // sem o cursor
++    ev.type = ev_keydown;
++    ev.data1 = KEY_ESCAPE;
++    if (m17_teclado(I_M17Renderer(), "Nome do save", b, SLOTTEXTLEN))
++    {
++        // so o que a digitacao de antes aceitava: letras (maiusculas), algarismos, espaco , . - !
++        for (char *c = b; *c; c++)
++        {
++            *c = toupper(*c);
++            if (!isalnum((unsigned char)*c) && !strchr(" ,.-!", *c))
++                *c = ' ';
++        }
++        M_StringCopy(SlotText[option], b, sizeof(SlotText[option]));
++        slotptr = strlen(SlotText[option]);
++        SlotText[option][slotptr] = ASCII_CURSOR;
++        SlotText[option][slotptr + 1] = '\0';
++        ev.data1 = KEY_ENTER;
++    }
++    D_PostEvent(&ev);
++}
++#endif
++
+ //---------------------------------------------------------------------------
+ //
+ // PROC SCSaveGame
+@@ -1501,6 +1552,9 @@ static void SCSaveGame(int option)
+         SlotStatus[option]++;
+         currentSlot = option;
+         slotptr = ptr - SlotText[option];
++#ifdef M17
++        M17_NomeSave(option);
++#endif
+         return;
+     }
+     else
+diff --git a/src/i_video.c b/src/i_video.c
+index f71f606..95e8372 100644
+--- a/src/i_video.c
++++ b/src/i_video.c
+@@ -59,6 +59,10 @@ int WIDESCREENDELTA; // [crispy] horizontal widescreen offset
+ 
+ static SDL_Window *screen;
+ static SDL_Renderer *renderer;
++#ifdef M17
++// M17 (spec 042, D-13): o teclado virtual (nome do save) desenha por cima do renderer do jogo
++SDL_Renderer *I_M17Renderer(void) { return renderer; }
++#endif
+ 
+ // Window title
+ 
+diff --git a/src/strife/m_menu.c b/src/strife/m_menu.c
+index 1574b3b..f311fa5 100644
+--- a/src/strife/m_menu.c
++++ b/src/strife/m_menu.c
+@@ -1016,6 +1016,35 @@ void M_DoSave(int slot)
+ //
+ // User wants to save. Start string input for M_Responder
+ //
++#ifdef M17
++// M17 (spec 042, D-13): o nome (do save e do personagem) pelo teclado virtual da spec 036, ja com o nome proposto
++// (patch 03: "STRIFE <n>"). OK e cancelar seguem pelos caminhos do Enter e do Esc (evento posto na fila).
++#include "teclado.h"
++SDL_Renderer *I_M17Renderer(void);
++
++static void M17_NomeSave(char *texto, int max, const char *titulo)
++{
++    char b[SAVESTRINGSIZE];
++    event_t ev = { 0 };
++    M_StringCopy(b, texto, sizeof(b));
++    ev.type = ev_keydown;
++    ev.data1 = KEY_ESCAPE;
++    if (m17_teclado(I_M17Renderer(), titulo, b, max))
++    {
++        // a fonte do HUD so tem de '!' a '_' (maiusculas): o resto vira espaco, como na digitacao de antes
++        for (char *c = b; *c; c++)
++        {
++            *c = toupper(*c);
++            if (*c != ' ' && (*c - HU_FONTSTART < 0 || *c - HU_FONTSTART >= HU_FONTSIZE))
++                *c = ' ';
++        }
++        M_StringCopy(texto, b, max + 1);
++        ev.data1 = KEY_ENTER;
++    }
++    D_PostEvent(&ev);
++}
++#endif
++
+ void M_SaveSelect(int choice)
+ {
+     int x, y;
+@@ -1044,6 +1073,10 @@ void M_SaveSelect(int choice)
+ #endif
+     }
+     saveCharIndex = strlen(savegamestrings[choice]);
++#ifdef M17
++    M17_NomeSave(savegamestrings[choice], SAVESTRINGSIZE - 1, namingCharacter ? "Nome do personagem" : "Nome do save");
++    saveCharIndex = strlen(savegamestrings[choice]);
++#endif
+ }
+ 
+ //

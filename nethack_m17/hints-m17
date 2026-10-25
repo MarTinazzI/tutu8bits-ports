@@ -1,0 +1,40 @@
+# hints do NetHack 3.6.7 no M17 (spec 036, plano D-17): copiado pela receita para sys/unix/hints/m17 e passado ao
+# sys/unix/setup.sh. A receita define na linha de comando do make: CC, M17_CFLAGS, M17_SDL_CFLAGS, M17_LDFLAGS,
+# M17_SDL_LIBS. Interface unica: a m17 (win/m17/, copiada pela receita); sem tty, sem compress; dados num DLB (nhdat).
+# A pasta do jogo (HACKDIR) vem em tempo de execucao pelo NETHACKDIR (lancar.sh); o sysconf e relativo a ela.
+#-PRE
+PREFIX=/nao-instalar
+HACKDIR=/nao-instalar
+SHELLDIR=$(PREFIX)/games
+INSTDIR=$(HACKDIR)
+VARDIR=$(HACKDIR)
+CFLAGS=$(M17_CFLAGS) -I../include -DNOTPARMDECL -DDLB -DNOTTYGRAPHICS -DM17 -DM17_GRAPHICS \
+	-DDEFAULT_WINDOW_SYS=\"m17\" -DSYSCF -DSYSCF_FILE=\"sysconf\" -DTIMED_DELAY -DSAFERHANGUP
+LINK=$(CC)
+LFLAGS=$(M17_LDFLAGS)
+WINSRC =
+WINOBJ = winm17.o m17nh_video.o m17nh_entrada.o m17entrada.o teclado.o teclado_sdl.o roda.o roda_sdl.o
+WINLIB = $(M17_SDL_LIBS) -lm
+CHOWN=true
+CHGRP=true
+VARDIRPERM = 0755
+VARFILEPERM = 0644
+GAMEPERM = 0755
+#-POST
+M17_DEPS = ../win/m17/m17nh.h ../win/m17/m17entrada.h ../win/m17/teclado.h ../win/m17/roda.h ../win/m17/roda_sdl.h
+winm17.o: ../win/m17/winm17.c $(HACK_H) $(M17_DEPS)
+	$(CC) $(CFLAGS) $(M17_SDL_CFLAGS) -c ../win/m17/winm17.c
+m17nh_video.o: ../win/m17/m17nh_video.c $(M17_DEPS)
+	$(CC) $(CFLAGS) $(M17_SDL_CFLAGS) -I../win/m17 -c ../win/m17/m17nh_video.c
+m17nh_entrada.o: ../win/m17/m17nh_entrada.c $(M17_DEPS)
+	$(CC) $(CFLAGS) $(M17_SDL_CFLAGS) -c ../win/m17/m17nh_entrada.c
+m17entrada.o: ../win/m17/m17entrada.c ../win/m17/m17entrada.h
+	$(CC) $(M17_CFLAGS) -DM17E_TESTE -c ../win/m17/m17entrada.c
+teclado.o: ../win/m17/teclado.c ../win/m17/teclado.h
+	$(CC) $(M17_CFLAGS) $(M17_SDL_CFLAGS) -c ../win/m17/teclado.c
+teclado_sdl.o: ../win/m17/teclado_sdl.c ../win/m17/teclado.h
+	$(CC) $(M17_CFLAGS) $(M17_SDL_CFLAGS) -I../win/m17 -c ../win/m17/teclado_sdl.c
+roda.o: ../win/m17/roda.c ../win/m17/roda.h
+	$(CC) $(M17_CFLAGS) -c ../win/m17/roda.c
+roda_sdl.o: ../win/m17/roda_sdl.c ../win/m17/roda_sdl.h ../win/m17/roda.h
+	$(CC) $(M17_CFLAGS) $(M17_SDL_CFLAGS) -I../win/m17 -c ../win/m17/roda_sdl.c

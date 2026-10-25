@@ -1,0 +1,49 @@
+Licença: GPL-3.0-or-later (a do GNU FreeDink, onde o patch entra) (spec 053)
+
+Spec 047 (plano D-02): o FreeDink 109.6 compila contra o SDL 2.28.5 e a SDL2_ttf 2.20 do projeto, sem fontconfig.
+- input.cpp: a dica SDL_HINT_ANDROID_SEPARATE_MOUSE_AND_TOUCH saiu do SDL 2.28 (so com a dica definida).
+- gfx_fonts.cpp: TTF_FontFaceFamilyName/StyleName devolvem const char* na SDL2_ttf 2.20.
+- configure: sem fontconfig (o configure.ac nao tem opcao para isso; a fonte vem no pkgdatadir, patch 02).
+
+diff -ru a/configure b/configure
+--- a/configure	2019-02-16 20:35:07.000000000 -0200
++++ b/configure	2026-10-23 16:13:51.358866073 -0300
+@@ -8744,7 +8744,8 @@
+     use_fontconfig="no"
+     ;;
+ *)
+-    use_fontconfig="yes"
++    # M17 (spec 047): sem fontconfig; a fonte vem no pkgdatadir (M17_PKGDATA)
++    use_fontconfig="no"
+     ;;
+ esac
+ if test x"$use_fontconfig" = x"yes"; then
+diff -ru a/src/gfx_fonts.cpp b/src/gfx_fonts.cpp
+--- a/src/gfx_fonts.cpp	2019-02-16 21:20:32.000000000 -0200
++++ b/src/gfx_fonts.cpp	2026-10-23 16:13:51.358079745 -0300
+@@ -293,10 +293,10 @@
+  */
+ void setup_font(TTF_Font *font)
+ {
+-  char *familyname = TTF_FontFaceFamilyName(font);
++  const char *familyname = TTF_FontFaceFamilyName(font);   /* M17: const na SDL2_ttf 2.20 */
+   if(familyname)
+     log_info("The family name of the face in the font is: %s", familyname);
+-  char *stylename = TTF_FontFaceStyleName(font);
++  const char *stylename = TTF_FontFaceStyleName(font);
+   if(stylename)
+     log_info("The name of the face in the font is: %s", stylename);
+   log_info("The font max height is: %d", TTF_FontHeight(font));
+diff -ru a/src/input.cpp b/src/input.cpp
+--- a/src/input.cpp	2019-01-22 13:20:16.000000000 -0200
++++ b/src/input.cpp	2026-10-23 16:13:51.357924775 -0300
+@@ -91,7 +91,9 @@
+ 
+   // TODO: don't attempt to simulate mouse events from touch events -
+   // fake mouse events often are de-centered
++#ifdef SDL_HINT_ANDROID_SEPARATE_MOUSE_AND_TOUCH   /* M17: a dica saiu do SDL 2.28 */
+   SDL_SetHint(SDL_HINT_ANDROID_SEPARATE_MOUSE_AND_TOUCH, "0");
++#endif
+ 
+   /* Touch devices */
+   {

@@ -1,0 +1,35 @@
+Licença: GPL-3.0 (a do NXEngine-evo, onde o patch entra) (spec 053)
+
+diff --git a/src/ResourceManager.cpp b/src/ResourceManager.cpp
+index 29355ae..b40a1da 100644
+--- a/src/ResourceManager.cpp
++++ b/src/ResourceManager.cpp
+@@ -2,6 +2,7 @@
+ #include <iostream>
+ #include <stdexcept>
+ #include <string>
++#include <cstdlib> // M17: getenv (NX_DADOS)
+ 
+ #if defined(__unix__) || defined(__APPLE__) || defined(__VITA__) || defined(__SWITCH__)
+ #include <sys/stat.h>
+@@ -140,6 +141,20 @@ std::string ResourceManager::getPath(const std::string &filename, bool localized
+   if (localized) _paths.push_back(_data + "lang/" + std::string(settings->language) + "/" + filename);
+   _paths.push_back(_data + filename);
+ 
++#if defined(M17)
++  // M17 (spec 030, plano D-05): os dados do jogo (freeware + o que o extract tirou do Doukutsu.exe)
++  // ficam na pasta do jogador, fora da base: procurados por ultimo, como se o data/ do motor tivesse
++  // sido copiado por cima deles (a instalacao oficial)
++  const char *_jogo = getenv("NX_DADOS");
++  if (_jogo && *_jogo)
++  {
++    std::string _j(_jogo);
++    if (_j.back() != '/') _j += "/";
++    if (localized) _paths.push_back(_j + "lang/" + std::string(settings->language) + "/" + filename);
++    _paths.push_back(_j + filename);
++  }
++#endif
++
+   for (auto &_tryPath: _paths)
+   {
+     if (fileExists(_tryPath))

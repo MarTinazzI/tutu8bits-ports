@@ -1,0 +1,246 @@
+Licença: GPL-2.0 (a do Crispy Doom, onde o patch entra) (spec 053)
+
+diff --git a/src/doom/g_game.c b/src/doom/g_game.c
+index f7f7f42..da414c8 100644
+--- a/src/doom/g_game.c
++++ b/src/doom/g_game.c
+@@ -465,8 +465,14 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
+ 
+     // [crispy] when "always run" is active,
+     // pressing the "run" key will result in walking
++#if defined(M17)
++    // M17 (spec 031, T12): sempre correndo; segurar o botao de correr (L2) anda devagar. Pela config so
++    // da um ou outro (joyb_speed >= MAX_JOY_BUTTONS liga o "sempre correr" e desliga o botao)
++    speed = true;
++#else
+     speed = (key_speed >= NUMKEYS
+          || joybspeed >= MAX_JOY_BUTTONS);
++#endif
+     speed ^= speedkeydown();
+  
+     forward = side = look = 0;
+diff --git a/src/doom/m_menu.c b/src/doom/m_menu.c
+index 6d929b8..cefb127 100644
+--- a/src/doom/m_menu.c
++++ b/src/doom/m_menu.c
+@@ -2411,8 +2411,17 @@ boolean M_Responder (event_t* ev)
+ 
+ #define JOY_BUTTON_MAPPED(x) ((x) >= 0)
+ #define JOY_BUTTON_PRESSED(x) (JOY_BUTTON_MAPPED(x) && (ev->data1 & (1 << (x))) != 0)
++#if defined(M17)
++// M17 (spec 031, T12): no menu, A (6) escolhe e B (11) volta, como no tutu8bits (KB 11k); sem isto o menu
++// seguiria o tiro (R2) e o usar (A)
++#define JOYB_MENU_OK 6
++#define JOYB_MENU_VOLTAR 11
++#else
++#define JOYB_MENU_OK joybfire
++#define JOYB_MENU_VOLTAR joybuse
++#endif
+ 
+-            if (JOY_BUTTON_PRESSED(joybfire))
++            if (JOY_BUTTON_PRESSED(JOYB_MENU_OK))
+             {
+                 // Simulate a 'Y' keypress when Doom show a Y/N dialog with Fire button.
+                 if (messageToPrint && messageNeedsInput)
+@@ -2435,7 +2444,7 @@ boolean M_Responder (event_t* ev)
+                 }
+                 joywait = I_GetTime() + 5;
+             }
+-            if (JOY_BUTTON_PRESSED(joybuse))
++            if (JOY_BUTTON_PRESSED(JOYB_MENU_VOLTAR))
+             {
+                 // Simulate a 'N' keypress when Doom show a Y/N dialog with Use button.
+                 if (messageToPrint && messageNeedsInput)
+diff --git a/src/heretic/g_game.c b/src/heretic/g_game.c
+index d22415f..084f309 100644
+--- a/src/heretic/g_game.c
++++ b/src/heretic/g_game.c
+@@ -425,8 +425,13 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
+ 
+     // [crispy] when "always run" is active,
+     // pressing the "run" key will result in walking
++#if defined(M17)
++    // M17 (spec 033, D-03; como no Doom): sempre correndo; segurar o botao de correr (L2) anda devagar
++    speed = true;
++#else
+     speed = (key_speed >= NUMKEYS
+          || joybspeed >= MAX_JOY_BUTTONS);
++#endif
+     speed ^= speedkeydown();
+ 
+     // haleyjd: removed externdriver crap
+diff --git a/src/heretic/mn_menu.c b/src/heretic/mn_menu.c
+index 352980d..24e74e3 100644
+--- a/src/heretic/mn_menu.c
++++ b/src/heretic/mn_menu.c
+@@ -2035,8 +2035,16 @@ boolean MN_Responder(event_t * event)
+ 
+ #define JOY_BUTTON_MAPPED(x) ((x) >= 0)
+ #define JOY_BUTTON_PRESSED(x) (JOY_BUTTON_MAPPED(x) && (event->data1 & (1 << (x))) != 0)
++#if defined(M17)
++// M17 (spec 033, D-03; como no Doom, spec 031): no menu, A (6) escolhe e B (11) volta, como no tutu8bits
++#define JOYB_MENU_OK 6
++#define JOYB_MENU_VOLTAR 11
++#else
++#define JOYB_MENU_OK joybfire
++#define JOYB_MENU_VOLTAR joybuse
++#endif
+ 
+-            if (JOY_BUTTON_PRESSED(joybfire))
++            if (JOY_BUTTON_PRESSED(JOYB_MENU_OK))
+             {
+                 // Simulate pressing "Enter" when we are supplying a save slot name
+                 if (FileMenuKeySteal)
+@@ -2054,7 +2062,7 @@ boolean MN_Responder(event_t * event)
+                 }
+                 joywait = I_GetTime() + 5;
+             }
+-            if (JOY_BUTTON_PRESSED(joybuse))
++            if (JOY_BUTTON_PRESSED(JOYB_MENU_VOLTAR))
+             {
+                 // If user was entering a save name, back out
+                 if (FileMenuKeySteal)
+@@ -2070,13 +2078,13 @@ boolean MN_Responder(event_t * event)
+         }
+         else if (askforquit)
+         {
+-            if (JOY_BUTTON_PRESSED(joybfire))
++            if (JOY_BUTTON_PRESSED(JOYB_MENU_OK))
+             {
+                 // Simulate a 'Y' keypress
+                 key = key_menu_confirm;
+                 joywait = I_GetTime() + 5;
+             }
+-            if (JOY_BUTTON_PRESSED(joybuse))
++            if (JOY_BUTTON_PRESSED(JOYB_MENU_VOLTAR))
+             {
+                 // Simulate a 'N' keypress
+                 key = key_menu_abort;
+diff --git a/src/i_joystick.c b/src/i_joystick.c
+index eb903de..258395f 100644
+--- a/src/i_joystick.c
++++ b/src/i_joystick.c
+@@ -28,6 +28,9 @@
+ #include "d_event.h"
+ #include "i_joystick.h"
+ #include "i_system.h"
++#if defined(M17)
++#include "m_controls.h"   // M17 (spec 033): as acoes ligadas a botoes (joyb_*)
++#endif
+ 
+ #include "m_config.h"
+ #include "m_fixed.h"
+@@ -763,6 +766,44 @@ static int GetDirectionalInput(int x, int y)
+     return (retval << DPAD_SHIFT);
+ }
+ 
++#if defined(M17)
++// M17 (spec 033, D-03): botao do D-pad livre = nenhum joyb_* ligado a ele (a configuracao do produto deixa os
++// botoes virtuais iguais aos fisicos, joystick_physical_buttonN = N)
++static boolean M17_BotaoLivre(int b)
++{
++    const int *acoes[] = {
++        &joybfire, &joybstrafe, &joybuse, &joybspeed, &joybjump, &joybstrafeleft, &joybstraferight,
++        &joybprevweapon, &joybnextweapon, &joybmenu, &joybautomap, &joybuseartifact, &joybinvleft,
++        &joybinvright, &joybflyup, &joybflydown, &joybflycenter,
++    };
++    size_t i;
++
++    for (i = 0; i < sizeof(acoes) / sizeof(acoes[0]); ++i)
++    {
++        if (*acoes[i] == b)
++        {
++            return false;
++        }
++    }
++    return true;
++}
++
++static int M17_EixoDpad(int neg, int pos)
++{
++    int result = 0;
++
++    if (M17_BotaoLivre(neg) && SDL_JoystickGetButton(joystick, neg))
++    {
++        result -= 32767;
++    }
++    if (M17_BotaoLivre(pos) && SDL_JoystickGetButton(joystick, pos))
++    {
++        result += 32767;
++    }
++    return result;
++}
++#endif
++
+ void I_UpdateJoystick(void)
+ {
+     if (use_gamepad)
+@@ -785,6 +826,19 @@ void I_UpdateJoystick(void)
+                                 joystick_strafe_dead_zone);
+         ev.data5 = GetAxisState(joystick_look_axis, joystick_look_invert,
+                                 joystick_look_dead_zone);
++#if defined(M17)
++        // M17 (spec 031, T12): o Crispy le uma fonte por eixo; com os analogicos nos eixos (key_mode 6),
++        // o D-pad do aparelho (botoes 13-16, KB 11k) vale quando o analogico esta parado: gira e anda.
++        // Spec 033 (D-03): so os botoes do D-pad sem acao (Heretic: inventario e voo; Strife: inventario)
++        if (ev.data2 == 0)
++        {
++            ev.data2 = M17_EixoDpad(14, 15);
++        }
++        if (ev.data3 == 0)
++        {
++            ev.data3 = M17_EixoDpad(13, 16);
++        }
++#endif
+         ev.data6 = GetDirectionalInput(ev.data2, ev.data3);
+         D_PostEvent(&ev);
+     }
+diff --git a/src/strife/g_game.c b/src/strife/g_game.c
+index cd1c433..fa4ca00 100644
+--- a/src/strife/g_game.c
++++ b/src/strife/g_game.c
+@@ -527,8 +527,13 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
+ 
+     // [crispy] when "always run" is active,
+     // pressing the "run" key will result in walking
++#if defined(M17)
++    // M17 (spec 033, D-03; como no Doom): sempre correndo; segurar o botao de correr (L2) anda devagar
++    speed = true;
++#else
+     speed = (key_speed >= NUMKEYS
+          || joybspeed >= MAX_JOY_BUTTONS);
++#endif
+     speed ^= speedkeydown();
+  
+     forward = side = 0;
+diff --git a/src/strife/m_menu.c b/src/strife/m_menu.c
+index e530dc1..231fccf 100644
+--- a/src/strife/m_menu.c
++++ b/src/strife/m_menu.c
+@@ -2383,8 +2383,16 @@ boolean M_Responder (event_t* ev)
+ 
+ #define JOY_BUTTON_MAPPED(x) ((x) >= 0)
+ #define JOY_BUTTON_PRESSED(x) (JOY_BUTTON_MAPPED(x) && (ev->data1 & (1 << (x))) != 0)
++#if defined(M17)
++// M17 (spec 033, D-03; como no Doom, spec 031): no menu, A (6) escolhe e B (11) volta, como no tutu8bits
++#define JOYB_MENU_OK 6
++#define JOYB_MENU_VOLTAR 11
++#else
++#define JOYB_MENU_OK joybfire
++#define JOYB_MENU_VOLTAR joybuse
++#endif
+ 
+-        if (JOY_BUTTON_PRESSED(joybfire))
++        if (JOY_BUTTON_PRESSED(JOYB_MENU_OK))
+         {
+             // Simulate a 'Y' keypress when Doom show a Y/N dialog with Fire button.
+             if (messageToPrint && messageNeedsInput)
+@@ -2401,7 +2409,7 @@ boolean M_Responder (event_t* ev)
+             joystick_fire_countdown = 5;
+             }
+         }
+-        if (JOY_BUTTON_PRESSED(joybuse))
++        if (JOY_BUTTON_PRESSED(JOYB_MENU_VOLTAR))
+         {
+             // Simulate a 'N' keypress when Doom show a Y/N dialog with Use button.
+             if (messageToPrint && messageNeedsInput)

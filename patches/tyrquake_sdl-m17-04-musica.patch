@@ -1,0 +1,33 @@
+Licença: GPL-2.0 (a do TyrQuake, onde o patch entra) (spec 053)
+
+diff --git a/common/snd_music.c b/common/snd_music.c
+index 4589205..2596b80 100644
+--- a/common/snd_music.c
++++ b/common/snd_music.c
+@@ -18,6 +18,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ 
+ */
+ 
++#include <stdio.h>
++
+ #include "cdaudio.h"
+ #include "cmd.h"
+ #include "console.h"
+@@ -810,9 +812,17 @@ BGM_PlayCDTrack(byte track, qboolean looping)
+             char trackname[16];
+             qsnprintf(trackname, sizeof(trackname), "track%02d", (int)track);
+             qboolean success = BGM_Play(trackname, looping);
++#ifdef M17
++            /* spec 050 (plano D-08): a musica no log do jogo (o teste e o diagnostico) */
++            fprintf(stderr, "[M17] musica: %s%s%s\n", trackname, bgm_type->extension, success ? "" : " nao tocou");
++#endif
+             if (success)
+                 return;
+         }
++#ifdef M17
++        else
++            fprintf(stderr, "[M17] musica: sem music/track%02d\n", (int)track);
++#endif
+     }
+ 
+     /* Otherwise, try CD Audio */

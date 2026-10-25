@@ -1,0 +1,16 @@
+{
+  "_origem": "spec 012, sessao 1 no aparelho (2026-10-11): gt_captura info + fluxo; specs/012-gametank-jogavel/evidencias/aparelho_sessao1/",
+  "_nota": "indices de botao do joystick SDL2 do i2c-keys (17 botoes, 4 eixos, 0 hats). SELECT (b12) fica de fora: no GameTank o 'back' abre o menu do emulador e o SELECT e do m17atalhos. Y fica de fora: nao foi pedido na captura (provavel b4).",
+  "guid": "19001e5a010000001200000000010000",
+  "nome": "i2c-keys",
+  "layout": {
+    "UP": "b13",
+    "DOWN": "b16",
+    "LEFT": "b14",
+    "RIGHT": "b15",
+    "A": "b6",
+    "B": "b11",
+    "X": "b9",
+    "START": "b5"
+  }
+}

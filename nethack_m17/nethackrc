@@ -1,0 +1,4 @@
+# Opcoes do NetHack no M17 (spec 036, plano D-18). O jogador pode trocar este arquivo inteiro por um seu em
+# home/config/nethackrc (o lancador usa o dele quando existe).
+OPTIONS=color,!autopickup,pickup_types:$,number_pad:0,time,showexp,!rest_on_space,!mail,!legacy
+OPTIONS=symset:plain,hilite_pet,suppress_alert:3.4.3,!verbose
